@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Calendar from "./components/Calendar";
-import "./styles.css"
+import "../styles.css"
 
 function App() {
     const [view, setView] = useState("calendar");   //This is read as: view starts as ="calendar", can be changed using setView

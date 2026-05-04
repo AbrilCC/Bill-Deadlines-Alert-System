@@ -1,6 +1,6 @@
 # Payment Deadlines Alert System
 A web-based application for tracking bills and card payments automatically, with an organizational calendar included and a Telegram bot to receive weekly summaries of the upcoming payments.
-It uses Google Extension ??? to access mails received through Gmail containing specific keywords, and ORM to scan PDF files and extract information such as the payment's Due Date and Amount.
+It uses Google's Gmail API to access mails received through Gmail containing specific keywords, and ORM to scan PDF files and extract information such as the payment's Due Date and Amount.
 (Next in development: Users will receive messages from the Telegram bot to create a downloadable excel spreadsheet to store expenses and small purchases).
 The Notion log file for documenting the process and decisions taken can be found on: [here](https://www.notion.so/cfbf91b18420835e934a81a6b15b7cc7?v=e89f91b1842083d39ef908590a9a2816&source=copy_link)
 
@@ -26,7 +26,7 @@ Users can:
 - Express
 
 ### Frontend
-- React
+- React (Vite)
 - HTML
 - Tailwind CSS
 

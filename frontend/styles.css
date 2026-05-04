@@ -5,7 +5,7 @@ body {
 /* TOPBAR */
 .topbar {
     height: 60px;
-    background: #77AEBA;
+    background: #df6b17;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -27,7 +27,7 @@ body {
 /* SIDEBAR */
 .sidebar {
     width: 220px;
-    background: #1e1e2f;
+    background: #423e3c;
     color: white;
     height: calc(300vh - 60px);
     padding: 20px;
@@ -37,7 +37,7 @@ body {
     width: 100%;
     margin-top: 10px;
     padding: 10px;
-    background: #618d96;
+    background: #df6b17;
     border: none;
     color: white;
     cursor: pointer;

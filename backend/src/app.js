@@ -1,11 +1,12 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+dotenv.config();
 
 import eventsRoutes from "./routes/events.routes.js";
 import client from "./utils/supabaseClient.js";
+import emailsRoutes from "./routes/emails.routes.js";
 
-dotenv.config();
 
 const app = express();
 app.use(cors());
@@ -19,10 +20,10 @@ async function testDB() {
   const res = await client.query("SELECT NOW()");
   console.log(res.rows);
 }
-
 testDB();
 
 app.use(eventsRoutes);
+app.use(emailsRoutes);
 
 app.get("/", (req, res) => {
   res.send("API running");
