@@ -1,5 +1,8 @@
 import { useState } from 'react'
 import Calendar from "./components/Calendar";
+import CreateSingle from "./components/CreateSingle";
+import CreateMonthly from "./components/CreateMonthly";
+import AutoEvents from "./components/AutoEvents";
 import "../styles.css"
 
 function App() {
@@ -12,17 +15,25 @@ function App() {
             <h2>Sistema de Vencimientos de Pagos</h2>
         </div>
 
-        {/* SIDEBAR */}
-        <div className="sidebar">
-            <h3>Panel</h3>
-            <button onClick={() => setView("calendar")}>Calendario</button>
-            <button onClick={() => setView("create")}>Agregar actividad</button>
-        </div>
+        <div className="app-container">
+            {/* SIDEBAR */}
+            <div className="sidebar">
+                <h3>Panel</h3>
+                <button onClick={() => setView("calendar")}>Calendario</button>
+                <button onClick={() => setView("single")}>Agregar pago único</button>
+                <button onClick={() => setView("monthly")}>Agregar pagos mensuales</button>
+                <button onClick={() => setView("auto")}>Ver mis pagos automáticos</button>
+            </div>
 
-        {/* MAIN */}
-        <div className="main">
-            {view === "calendar" && <Calendar/>}
-            {view === "create" && <div>Formulario</div>}
+            {/* MAIN */}
+            <div className="main">
+                <h3>Vista actual: {view}</h3>
+                {view === "calendar" && <Calendar/>}
+                {view === "single" && <CreateSingle />}
+                {view === "monthly" && <CreateMonthly />}
+                {view === "auto" && <AutoEvents />}
+            </div>
+
         </div>
     </div>
   );
