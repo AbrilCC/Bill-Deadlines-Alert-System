@@ -1,39 +1,44 @@
 import { google } from "googleapis";
+import { authenticate } from "@google-cloud/local-auth";
 import fs from "fs";
 import path from "path";
-import { authenticate } from "@google-cloud/local-auth";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const CREDENTIALS_PATH = path.join(__dirname, "../../credentials.json");
 
 const SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"];
-const CREDENTIALS_PATH = path.join(process.cwd(), "credentials.json");
+//const CREDENTIALS_PATH = path.join(process.cwd(), "credentials.json");
 
-/*export async function authorize() {
-    const content = fs.readFileSync(CREDENTIALS_PATH);
-    const credentials = JSON.parse(content);
-
-    const { client_secret, client_id, redirect_uris } = credentials.installed;
-
-    const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
-
-    const token = fs.readFileSync("token.json");
-    oAuth2Client.setCredentials(JSON.parse(token));
-
-    return oAuth2Client;
-};*/
+/* Defino las queries en 1 solo lugar, ya que tengo 1 sola funcion para hacer queries */
+const rules = [
+  /*{ query: '(subject:(Factura OR factura)) AND (from:(banco@gmail.com OR empresa@gmail.com))' },
+  { query: '(subject:(Factura OR factura)) AND (from:(banco@gmail.com OR empresa@gmail.com)) (has:attachment filename:pdf)' },
+  { query: 'subject:(Vencimiento OR vence)' },*/
+  { query: 'subject:(saldo vence)' },
+];
 
 export async function getAuth() {
     return await authenticate({
         scopes: SCOPES,
-        keyfilePath: "credentials.json",
+        keyfilePath: CREDENTIALS_PATH,
     });
 };
 
 export async function getEmails(auth) {
     const gmail = google.gmail({ version: "v1", auth});
-    const res= await gmail.users.messages.list({
-        userId: "me", //The user authenticated with the token
-        q: 'subject:(Reunión OR Reunion)',
-    });
-    return res.data.messages || [];
+    let allMessages = [];
+
+    for (const rule of rules) {
+        const res = await gmail.users.messages.list({
+            userId: "me", //The user authenticated with the token
+            q: rule.query,
+        });
+        allMessages = [...allMessages, ...(res.data.messages || [])];
+    }
+    return allMessages;
 };
 
 export async function getEmailDetail(auth, messageId) {
@@ -44,6 +49,22 @@ export async function getEmailDetail(auth, messageId) {
     });
     return res.data;
 };
+
+export function getBody(message) {
+  const parts = message.payload?.parts || [];
+
+  for (const part of parts) {
+    if (part.mimeType === "text/plain" && part.body?.data) {
+      return Buffer.from(part.body.data, "base64").toString("utf-8");
+    }
+
+    if (part.mimeType === "text/html" && part.body?.data) {
+      return Buffer.from(part.body.data, "base64").toString("utf-8");
+    }
+  }
+
+  return "";
+}
 
 export async function getAttachments(auth, message) {
     const gmail = google.gmail({ version: "v1", auth});

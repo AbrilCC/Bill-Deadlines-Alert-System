@@ -146,6 +146,7 @@ input {
 .inputWithSymbol {
   display: flex;
   align-items: center;
+  justify-content: center;
   border: 1px solid #ccc;
   border-radius: 6px;
   padding: 0 8px;
@@ -172,13 +173,63 @@ input {
   border-radius: 6px;
 }
 
+/* PARA LAS BOXES DE VENCIMIENTOS EN EL CALENDARIO */
 .event-box {
-  min-width: 120px;
-  max-width: 180px;
-  height: 75px;
+  min-width: 180px;
   padding: 10px;
   border-radius: 8px;
   font-size: 14px;
   color: white;
   background: #df6b17;
+  cursor: pointer;
+}
+
+.fc-daygrid-event {
+  white-space: normal;
+}
+.fc-event {
+  border-radius: 8px !important;
+  padding: 4px !important;
+}
+
+/* MODAL */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 400px;
+  position: relative;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.closeBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
 }

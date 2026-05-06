@@ -2,7 +2,7 @@ import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-export default function CreateMonthly() {
+export default function CreateMonthly({ setView }) {
   const [form, setForm] = useState({
     type: "",
     description: "",
@@ -41,12 +41,14 @@ export default function CreateMonthly() {
   };
 
   const handleSubmit = async () => {
-    await fetch("http://localhost:3000/events/recurring", {
+    const res = await fetch("http://localhost:3000/events/monthly", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify(form),
     });
-
+    if (res.ok) {
+      setView("calendar");
+    }
     alert("Eventos generados");
   };
 
@@ -77,7 +79,7 @@ export default function CreateMonthly() {
         
         <DatePicker selected={startDate} onChange={(date) => {
           setStartDate(date);
-          setForm({ ...form, start_date: date });
+          setForm({ ...form, start_date: date.toISOString() });
         }} dateFormat="dd/MM/yyyy" className="customDate"/>
       </div>
 

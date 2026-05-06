@@ -3,10 +3,17 @@ import process from 'node:process';
 import {authenticate} from '@google-cloud/local-auth';
 import {google} from 'googleapis';
 
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const CREDENTIALS_PATH = path.join(__dirname, "../../credentials.json");
+
 // The scope for reading Gmail labels.
 const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
 // The path to the credentials file.
-const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.json');
+//const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.json');
 
 /**
  * Lists the labels in the user's account.

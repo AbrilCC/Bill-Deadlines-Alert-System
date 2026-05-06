@@ -27,13 +27,11 @@ function App() {
 
             {/* MAIN */}
             <div className="main">
-                <h3>Vista actual: {view}</h3>
-                {view === "calendar" && <Calendar/>}
-                {view === "single" && <CreateSingle />}
-                {view === "monthly" && <CreateMonthly />}
+                {view === "calendar" && <Calendar key={view} />}
+                {view === "single" && <CreateSingle setView={setView} />}
+                {view === "monthly" && <CreateMonthly setView={setView} />}
                 {view === "auto" && <AutoEvents />}
             </div>
-
         </div>
     </div>
   );
