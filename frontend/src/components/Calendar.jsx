@@ -29,6 +29,8 @@ function Calendar() {
   };
 
   useEffect(() => {
+    fetchEvents();
+
     const lastSync = Number(localStorage.getItem("lastSync"));
     const now = Date.now();
 
@@ -36,9 +38,8 @@ function Calendar() {
       fetch("http://localhost:3000/emails/sync").then(() => {
         localStorage.setItem("lastSync", now);
         fetchEvents();
-      });
-    } else {
-      fetchEvents();
+      })
+      .catch(console.error);
     }
   }, []);
 
@@ -113,7 +114,7 @@ function Calendar() {
 
             <h2>{selectedEvent.title}</h2>
             <p>{selectedEvent.extendedProps.description}</p>
-            <p>Monto: ${selectedEvent.extendedProps.amount}</p>
+            <p>Monto: {formatCurrency(selectedEvent.extendedProps.amount)}</p>
             <p>Vencimiento: {new Date(selectedEvent.start).toLocaleDateString("es-AR")}</p>
             <p>Estado del pago: {selectedEvent.extendedProps.paid ? "Pagado" : "Pendiente"}</p>
 
@@ -121,11 +122,13 @@ function Calendar() {
               ? "Marcar como NO pagado"
               : "Marcar como pagado"}</button>
             <button onClick={handleDelete}>Eliminar notificación</button>
-            <a
-              href={`https://mail.google.com/mail/u/0/#inbox/${selectedEvent.extendedProps.email_id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >Ver mail</a>
+            {selectedEvent.extendedProps.email_id && (
+              <a
+                href={`https://mail.google.com/mail/u/0/#inbox/${selectedEvent.extendedProps.email_id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >Ver mail</a>
+            )}
 
           </div>
         </div>

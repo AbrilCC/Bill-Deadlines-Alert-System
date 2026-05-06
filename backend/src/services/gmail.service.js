@@ -17,7 +17,7 @@ const rules = [
   /*{ query: '(subject:(Factura OR factura)) AND (from:(banco@gmail.com OR empresa@gmail.com))' },
   { query: '(subject:(Factura OR factura)) AND (from:(banco@gmail.com OR empresa@gmail.com)) (has:attachment filename:pdf)' },
   { query: 'subject:(Vencimiento OR vence)' },*/
-  { query: 'subject:(saldo vence)' },
+  { query: 'subject:(saldo vence) newer_than:30d' },
 ];
 
 export async function getAuth() {

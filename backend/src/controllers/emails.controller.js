@@ -5,7 +5,7 @@ import {
   getBody,
   getAttachments,
 } from "../services/gmail.service.js";
-import { parseInvoice, parseInvoiceFromText, detectType } from "../services/parser.service.js";
+import { parseInvoice, parseInvoiceFromText, detectType, extractTextFromImage } from "../services/parser.service.js";
 import { createSingleEvent } from "../services/events.service.js";
 import client from "../utils/supabaseClient.js";
 //import { create } from "domain";
@@ -37,16 +37,40 @@ export const syncEmails = async (req, res) => {
       if (existing.rows.length > 0) continue;
 
       let parsed = null;
-      //We give priority to pdf files instead of body content
+
       if (attachments.length) {
         for (const att of attachments) {
+          //Find pdfs:
           if (att.filename.endsWith(".pdf")) {
             parsed = await parseInvoice(att.data);
-            break;
+            
+            //OCR fallback if no data was found:
+            if (!parsed.amount || !parsed.due_date) {
+              const text = await extractTextFromImage(att.data);
+              parsed = parseInvoiceFromText(text);
+            }
+
+            if (parsed?.amount && parsed?.due_date) break;
+          }
+
+          //Find images:
+          if (att.filename.endsWith(".png") || 
+              att.filename.endsWith(".jpg") ||
+              att.filename.endsWith(".jpeg")) {
+            const text = await extractTextFromImage(att.data);
+            parsed = parseInvoiceFromText(text);
+
+            if (parsed?.amount && parsed?.due_date) break;
+          }
+
+          //Find in body text:
+          if ((!parsed || !parsed.amount || !parsed.due_date) && bodyText) {
+            parsed = parseInvoiceFromText(bodyText);
           }
         }
-      } else if (bodyText) {
-        parsed = parseInvoiceFromText(bodyText);
+      } else if (bodyText || subject) {
+        const combinedText = `${subject}\n${bodyText}`;
+        parsed = parseInvoiceFromText(combinedText);
       }
 
       if (!parsed || !parsed.amount || !parsed.due_date) continue;

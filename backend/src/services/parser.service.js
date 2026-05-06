@@ -1,5 +1,6 @@
 //import pdf from "pdf-parse";
 import { createRequire } from "module";
+import Tesseract from "tesseract.js";
 const require = createRequire(import.meta.url);
 const pdf = require("pdf-parse");
 
@@ -21,7 +22,7 @@ export async function parseInvoice(buffer) {
   const lowerText = text.toLowerCase();
 
   // ===== MONTO =====
-  const amountMatches = [...text.matchAll(/\$\s?([\d.,]+)/g)];
+  const amountMatches = [...text.matchAll(/\$\s?(\d{1,3}(?:\.\d{3})*(?:,\d{2})?)/g)];
 
   const amountKeywords = ["total", "importe total", "monto total"];
 
@@ -151,6 +152,12 @@ export function parseInvoiceFromText(text) {
   }
 
   return {amount: chosenAmount, due_date: chosenDate};
+}
+
+//For mails with an image pdf:
+export async function extractTextFromImage(buffer) {
+  const result = await Tesseract.recognize(buffer, "spa");
+  return result.data.text;
 }
 
 //Detect the type of the event (hardcoded)

@@ -4,11 +4,11 @@ export const getAllEvents = async (client) => {
 };
 
 export const createSingleEvent = async (client, event) => {
-  const { type, description, amount, due_date } = event;
+  const { type, description, amount, due_date, source, email_id } = event;
 
   const result = await client.query(
-    "INSERT INTO events (type, description, amount, due_date, paid, source) VALUES ($1, $2, $3, $4, false, 'manual') RETURNING *",
-    [type, description, amount, due_date]
+    "INSERT INTO events (type, description, amount, due_date, paid, source, email_id) VALUES ($1, $2, $3, $4, false, $5, $6) RETURNING *",
+    [type, description, amount, due_date, source, email_id]
   );
 
   return result.rows[0];

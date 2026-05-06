@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import "./bot/telegramBot.js";
 import dotenv from "dotenv";
 dotenv.config();
 
