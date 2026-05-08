@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-//import "./bot/telegramBot.js";
+import "./bot/telegramBot.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -18,13 +18,13 @@ app.use(cors({
 }));
 app.use(express.json());
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Servidor corriendo en el puerto ${PORT}`);
-});
-
 async function testDB() {
-  const res = await client.query("SELECT NOW()");
-  console.log(res.rows);
+  try {
+    const res = await client.query("SELECT NOW()");
+    console.log(res.rows);
+  } catch (err) {
+    console.error("DB ERROR:", err);
+  }
 }
 testDB();
 
@@ -36,3 +36,8 @@ app.use(dashboardRoutes);
 app.get("/", (req, res) => {
   res.send("API running");
 });
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Servidor corriendo en el puerto ${PORT}`);
+});
+
