@@ -1,9 +1,20 @@
 body {
   font-family: Arial;
+  background: #e7e8e8;  
 }
 .app-container {
   display: flex;
   flex: 1;
+}
+
+.appLayout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.mainContent {
+    flex: 1;
+    padding: 30px;
 }
 
 input {
@@ -15,10 +26,10 @@ input {
     font-size: 16px;
 }
 
-/* TOPBAR */
+/* ---------------------------TOPBAR--------------------------- */
 .topbar {
     height: 60px;
-    background: #df6b17;
+    background: #1f2a40;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -29,39 +40,65 @@ input {
 }
 .topbar .menu {
     display: flex;
-    gap: 25px;
+    gap: 40px;
+    margin-right: 20px;
 }
-.topbar .menu a {
-    color: white;
+.topbar .menu button {
+    color: #fe6601;
     text-decoration: none;
     font-weight: 600;
+    font-size: 25px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    padding: 10px;
+    transform: translateY(-1px);
+}
+.topbar button:hover{
+  transform: translateY(-2px);
+}
+.divider {
+    color: #fe6601;
+    font-size: 38px;
 }
 
-/* SIDEBAR */
+/* ---------------------------SIDEBAR--------------------------- */
 .sidebar {
-    width: 220px;
-    background: #423e3c;
+    width: 240px;
+    min-width: 240px;
+    max-width: 240px;
+    background: #24314b;
     color: white;
-    height: calc(300vh - 60px);
+    height: calc(150vh - 60px);
     padding: 20px;
 }
 
 .sidebar button {
     width: 100%;
+    height: 60px;
     margin-top: 10px;
     padding: 10px;
-    background: #df6b17;
+    background: transparent;
     border: none;
     color: white;
     cursor: pointer;
-    border-radius: 8px;
+    /*border-radius: 8px;*/
     font-size: 18px;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
 }
 .sidebar button:hover {
     background: #313b54;
+    color: #fe6601;
+    transform: translateY(-2px);
+}
+.activeSidebar {
+    background: #f28b16 !important;
+    color: white !important;
 }
 
-/* MAIN */
+/* ---------------------------MAIN--------------------------- */
 .main {
     width: 100%;
     max-width: 1500px;
@@ -71,6 +108,7 @@ input {
     flex: 1;
 }
 
+/* ---------------------------CARDS--------------------------- */
 .card {
     background: white;
     width: 1350px;
@@ -101,6 +139,72 @@ input {
     background: #bbdfe7;
 }
 
+/* ---------------------------DASHBOARD CARDS--------------------------- */
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.dashboardCard {
+  background: white;
+  width: 1250px;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+  font-size: 20px;
+}
+.chartCard {
+  grid-column: 1 / span 3;
+  width: 80%;
+}
+.gmailCard {
+  width: 80%;
+}
+
+/* ---------------------------MODAL--------------------------- */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 400px;
+  position: relative;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.closeBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+/* ---------------------------FORMS--------------------------- */
 #formStyle {
     max-width: 1000px;
     margin: 0 auto;
@@ -192,44 +296,66 @@ input {
   padding: 4px !important;
 }
 
-/* MODAL */
-.modalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
+
+
+/**
+	loader--5
+**/
+.loader--5 {
+	--tilt-deg: 40deg;
+	--anim-duration: 0.6s;
+	aspect-ratio: 1 / 1;
+	perspective: 50vmin;
+	transform-style: preserve-3d;
+	animation: loader-5-1 calc(var(--anim-duration) * 3) linear alternate-reverse infinite;
 }
 
-.modal {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  width: 400px;
-  position: relative;
-  animation: fadeIn 0.2s ease;
+.loader--5::before,
+.loader--5::after {
+	width: 50%;
+	aspect-ratio: 1 / 1;
+	background-color: currentColor;
+	top: 25%;
+	left: 25%;
+	clip-path: polygon(50% 0, 100% 100%, 0 100%);
+	animation: loader-5 var(--anim-duration) cubic-bezier(0.07, 0.59, 0.56, 0.88) infinite;
 }
 
-@keyframes fadeIn {
-  from {
-    transform: scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+.loader--5::before {
+	--turn-deg: 360deg;
 }
 
-.closeBtn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  cursor: pointer;
+.loader--5::after {
+	--turn-deg: 410deg;
+	animation-delay: calc(var(--anim-duration) / 1.8 * -1);
+}
+
+@keyframes loader-5 {
+	0% {
+		transform: scale(0.3) translateZ(-5vmin);
+	}
+	
+	0%, 100% {
+		opacity: 0;
+	}
+	
+	66% {
+		opacity: 0.8;
+		transform: scale(1.2) translateZ(5vmin) rotate(var(--turn-deg));
+	}
+	
+	100% {
+		transform: scale(1) translateZ(3vmin) rotate(calc(var(--turn-deg) * 1.2));
+	}
+}
+
+@keyframes loader-5-1 {
+	0% {
+		transform: rotateX(var(--tilt-deg)) rotateY(-15deg);
+	}
+
+	100% {
+		transform: rotateX(var(--tilt-deg)) rotateY(15deg);
+	}
 }

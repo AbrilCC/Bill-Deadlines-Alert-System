@@ -1,7 +1,9 @@
 import {
   getAllEvents,
   createSingleEvent,
+  createWeeklyEvents,
   createMonthlyEvents,
+  updateEvent,
   markEventAsPaid,
   markEventAsUnpaid,
   deleteEvent,
@@ -36,6 +38,16 @@ export const createSingle = async (req, res) => {
   }
 }
 
+export const createWeekly = async (req, res) => {
+  try {
+    const events = await createWeeklyEvents(client, req.body);
+    res.json(events);
+  } catch (error) {
+    console.error("ERROR CREATE WEEKLY:", error);
+    res.status(500).json({ error: error.message });
+  }
+}
+
 export const createMonthly = async (req, res) => {
   try {
     const events = await createMonthlyEvents(client, req.body);
@@ -45,6 +57,18 @@ export const createMonthly = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 }
+
+export const editEvent = async (req, res) => {
+  try {
+    const event = await updateEvent(client, req.params.id, req.body);
+    res.json({
+        message: "Event edited!",
+        event
+    });;
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 export const patchEventPaid = async (req, res) => {
   try {

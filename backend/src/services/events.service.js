@@ -7,12 +7,75 @@ export const createSingleEvent = async (client, event) => {
   const { type, description, amount, due_date, source, email_id } = event;
 
   const result = await client.query(
-    "INSERT INTO events (type, description, amount, due_date, paid, source, email_id) VALUES ($1, $2, $3, $4, false, $5, $6) RETURNING *",
+    `INSERT INTO events 
+    (type, description, amount, due_date, paid, source, email_id)
+    VALUES ($1, $2, $3, $4, false, $5, $6) 
+    RETURNING *`,
     [type, description, amount, due_date, source, email_id]
   );
 
   return result.rows[0];
 };
+
+export const createWeeklyEvents = async (client, event) => {
+  const { type, description, amount, start_date, end_date, weekday } = event;
+
+  const ruleRes = await client.query(
+    `
+    INSERT INTO event_rules
+    (type, description, payment_frequency, start_date, end_date, weekday)
+    VALUES ($1, $2, 'weekly', $3, $4, $5)
+    RETURNING *
+    `,
+    [type, description, start_date, end_date, weekday]
+  );
+
+  const rule = ruleRes.rows[0];
+
+  const events = [];
+
+  let current = new Date(start_date);
+
+  const targetWeekday = Number(weekday);
+
+  // alineamos al weekday correcto
+  while (current.getDay() !== targetWeekday) {
+    current.setDate(current.getDate() + 1);
+  }
+
+  const end = end_date
+    ? new Date(end_date)
+    : (() => {
+        const d = new Date(start_date);
+        d.setFullYear(d.getFullYear() + 1);
+        return d;
+      })();
+
+  while (current <= end) {
+
+    const res = await client.query(
+      `
+      INSERT INTO events
+      (type, description, amount, due_date, paid, source, rule_id)
+      VALUES ($1, $2, $3, $4, false, 'rule', $5)
+      ON CONFLICT (rule_id, due_date)
+      DO NOTHING
+      RETURNING *
+      `,
+      [type, description, amount, current, rule.id]
+    );
+
+    if (res.rows[0]) {
+      events.push(res.rows[0]);
+    }
+
+    // avanzar una semana
+    current.setDate(current.getDate() + 7);
+  }
+
+  return events;
+};
+
 
 export const createMonthlyEvents = async (client, data) => {
   const { type, description, amount, start_date, end_date, payment_frequency } = data;
@@ -43,13 +106,35 @@ export const createMonthlyEvents = async (client, data) => {
     const due_date = new Date(current);
     due_date.setDate(startDay);
     const res = await client.query(
-      "INSERT INTO events (type, description, amount, due_date, paid, source, rule_id) VALUES ($1, $2, $3, $4, false, 'rule', $5) RETURNING *",
+      `INSERT INTO events
+      (type, description, amount, due_date, paid, source, rule_id)
+      VALUES ($1, $2, $3, $4, false, 'rule', $5)
+      ON CONFLICT (rule_id, due_date)
+      DO NOTHING
+      RETURNING *`,
       [type, description, amount, due_date, rule.id]
     );
-    events.push(res.rows[0]);
+    if (res.rows[0]) {
+      events.push(res.rows[0]);
+    }
     current.setMonth(current.getMonth() + 1);
   }
   return events;
+};
+
+export const updateEvent = async (client, id, data) => {
+  const { type, description, amount, due_date } = data;
+  const result = await client.query(
+    `UPDATE events SET
+      type = $1,
+      description = $2,
+      amount = $3,
+      due_date = $4
+      WHERE id = $5 RETURNING *`,
+    [type, description, amount, due_date, id]
+  );
+
+  return result.rows[0];
 };
 
 export const markEventAsPaid = async (client, id) => {

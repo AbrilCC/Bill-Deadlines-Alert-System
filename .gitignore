@@ -1,5 +1,5 @@
 node_modules
 .env
+backend/.env
+frontend/.env
 credentials.json
-# No estoy segura de si tenemos un token.json exactamente...
-token.json

@@ -4,9 +4,11 @@ import "./bot/telegramBot.js";
 import dotenv from "dotenv";
 dotenv.config();
 
-import eventsRoutes from "./routes/events.routes.js";
 import client from "./utils/supabaseClient.js";
+import eventsRoutes from "./routes/events.routes.js";
 import emailsRoutes from "./routes/emails.routes.js";
+import authRoutes from "./routes/auth.routes.js";
+import dashboardRoutes from "./routes/dashboard.routes.js";
 
 
 const app = express();
@@ -25,6 +27,8 @@ testDB();
 
 app.use(eventsRoutes);
 app.use(emailsRoutes);
+app.use(authRoutes);
+app.use(dashboardRoutes);
 
 app.get("/", (req, res) => {
   res.send("API running");

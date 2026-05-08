@@ -12,9 +12,11 @@ function getCurrentWeekRange() {
 
   const monday = new Date(now);
   monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+  monday.setHours(0, 0, 0, 0);
 
   const sunday = new Date(monday);
   sunday.setDate(monday.getDate() + 6);
+  sunday.setHours(23, 59, 59, 999);
 
   return {
     start: monday,
@@ -22,6 +24,7 @@ function getCurrentWeekRange() {
   };
 }
 
+/*
 function getNextWeekRange() {
   const now = new Date();
 
@@ -34,6 +37,41 @@ function getNextWeekRange() {
   return {
     start: nextMonday,
     end: nextSunday
+  };
+}*/
+
+function getNextWeekRange() {
+  const now = new Date();
+
+  const day = now.getDay();
+
+  // días hasta el próximo lunes real
+  const daysUntilNextMonday = day === 1
+    ? 7
+    : (8 - day);
+
+  const nextMonday = new Date(now);
+  nextMonday.setDate(now.getDate() + daysUntilNextMonday);
+
+  nextMonday.setHours(0, 0, 0, 0);
+
+  const nextSunday = new Date(nextMonday);
+  nextSunday.setDate(nextMonday.getDate() + 6);
+  nextSunday.setHours(23, 59, 59, 999);
+
+  return {
+    start: nextMonday,
+    end: nextSunday
+  };
+}
+
+function getCurrentAndNextWeekRange() {
+  const current = getCurrentWeekRange();
+  const next = getNextWeekRange();
+
+  return {
+    start: current.start,
+    end: next.end
   };
 }
 
@@ -213,22 +251,27 @@ bot.onText(/\/verPendientes/, async (msg) => {
 });
 
 bot.onText(/\/marcarPagado/, async (msg) => {
-  const chatId = msg.chat.id;
+    const chatId = msg.chat.id;
+    const { start, end } = getCurrentAndNextWeekRange();
 
-  const events = await client.query(`
-    SELECT id, type FROM events WHERE paid = false
-  `);
+    const events = await client.query(
+        `SELECT id, type, due_date
+        FROM events
+        WHERE paid = false
+        AND due_date BETWEEN $1 AND $2
+        ORDER BY due_date ASC`,
+        [start, end]);
 
-  const keyboard = events.rows.map(e => [{
-    text: e.type,
-    callback_data: `pay_${e.id}`
-  }]);
+    const keyboard = events.rows.map(e => [{
+        text: e.type,
+        callback_data: `pay_${e.id}`
+    }]);
 
-  bot.sendMessage(chatId, "Seleccioná el servicio que ya pagaste:", {
-    reply_markup: {
-      inline_keyboard: keyboard
-    }
-  });
+    bot.sendMessage(chatId, "Seleccioná el servicio que ya pagaste:", {
+        reply_markup: {
+            inline_keyboard: keyboard
+        }
+    }); 
 });
 
 bot.on("callback_query", async (query) => {
@@ -247,7 +290,7 @@ cron.schedule("0 9 * * 4", async () => {
   const users = await client.query(`SELECT chat_id FROM users`);
 
   const events = await getNextWeekEvents();
-  const text = formatMessage(events);
+  const text = formatNextWeekMessage(events);
 
   for (const u of users.rows) {
     await bot.sendMessage(u.chat_id, text, { parse_mode: "Markdown" });

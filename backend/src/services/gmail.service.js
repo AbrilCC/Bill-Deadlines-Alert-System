@@ -10,15 +10,31 @@ const __dirname = path.dirname(__filename);
 const CREDENTIALS_PATH = path.join(__dirname, "../../credentials.json");
 
 const SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"];
-//const CREDENTIALS_PATH = path.join(process.cwd(), "credentials.json");
+
+const TRUSTED_SENDERS = [
+    "avisos@aysadigital.com.ar",    //AGUA
+    "facturadigital@edenor.com",    //LUZ
+    "facturahuertomosconi.noresponder@rudis.com.ar",    //COLEGIO
+    "no-reply@metrogas.com.ar",  //GAS
+    "factura@email.claro.com.ar",   //CLARO
+    "facturacion@email.personal.com.ar" //PERSONAL
+];
+
+const KEYWORDS = [
+    "saldo",
+    "vence",
+    "vencimiento",
+    "factura",
+    "pago",
+    "pagar"
+];
+
+const senderQuery = TRUSTED_SENDERS.join(" OR ");
+const keywordQuery = KEYWORDS.join(" OR ");
 
 /* Defino las queries en 1 solo lugar, ya que tengo 1 sola funcion para hacer queries */
-const rules = [
-  /*{ query: '(subject:(Factura OR factura)) AND (from:(banco@gmail.com OR empresa@gmail.com))' },
-  { query: '(subject:(Factura OR factura)) AND (from:(banco@gmail.com OR empresa@gmail.com)) (has:attachment filename:pdf)' },
-  { query: 'subject:(Vencimiento OR vence)' },*/
-  { query: 'subject:(saldo vence) newer_than:30d' },
-];
+
+const query = `(from:(${senderQuery}) AND subject:(${keywordQuery})) newer_than:30d`;
 
 export async function getAuth() {
     return await authenticate({
@@ -29,16 +45,13 @@ export async function getAuth() {
 
 export async function getEmails(auth) {
     const gmail = google.gmail({ version: "v1", auth});
-    let allMessages = [];
 
-    for (const rule of rules) {
-        const res = await gmail.users.messages.list({
-            userId: "me", //The user authenticated with the token
-            q: rule.query,
-        });
-        allMessages = [...allMessages, ...(res.data.messages || [])];
-    }
-    return allMessages;
+    const res = await gmail.users.messages.list({
+        userId: "me", //The user authenticated with the token
+        q: query,
+    });
+
+    return res.data.messages|| [];
 };
 
 export async function getEmailDetail(auth, messageId) {

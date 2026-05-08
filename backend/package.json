@@ -9,10 +9,12 @@
   },
   "dependencies": {
     "@google-cloud/local-auth": "^2.1.0",
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^16.6.1",
     "express": "^4.22.1",
     "googleapis": "^105.0.0",
+    "jsonwebtoken": "^9.0.3",
     "node-cron": "^4.2.1",
     "node-telegram-bot-api": "^0.63.0",
     "pdf-parse": "^2.4.5",

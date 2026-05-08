@@ -8,7 +8,6 @@ import {
 import { parseInvoice, parseInvoiceFromText, detectType, extractTextFromImage } from "../services/parser.service.js";
 import { createSingleEvent } from "../services/events.service.js";
 import client from "../utils/supabaseClient.js";
-//import { create } from "domain";
 
 //Para que la fecha se vea día/mes/año
 function formatDate(dateStr) {

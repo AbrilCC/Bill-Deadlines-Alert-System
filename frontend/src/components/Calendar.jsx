@@ -7,6 +7,13 @@ function Calendar() {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editForm, setEditForm] = useState({
+    type: "",
+    description: "",
+    amount: "",
+    due_date: ""
+  })
 
   const fetchEvents = async () => {
     const res = await fetch("http://localhost:3000/events");
@@ -30,17 +37,6 @@ function Calendar() {
 
   useEffect(() => {
     fetchEvents();
-
-    const lastSync = Number(localStorage.getItem("lastSync"));
-    const now = Date.now();
-
-    if (!lastSync || now - lastSync> 5 * 60 * 1000) { //5min de intervalo
-      fetch("http://localhost:3000/emails/sync").then(() => {
-        localStorage.setItem("lastSync", now);
-        fetchEvents();
-      })
-      .catch(console.error);
-    }
   }, []);
 
   const handleTogglePaid = async () => {
@@ -52,6 +48,22 @@ function Calendar() {
 
     await fetch(url, { method: "PATCH" });
 
+    setShowModal(false);
+    fetchEvents();
+  };
+
+  const handleEdit = async () => {
+    await fetch(
+      `http://localhost:3000/events/${selectedEvent.id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(editForm)
+      }
+    );
+    setEditing(false);
     setShowModal(false);
     fetchEvents();
   };
@@ -88,7 +100,9 @@ function Calendar() {
             plugins={[dayGridPlugin]}
             locale={esLocale}
             initialView="dayGridMonth"
-            height="80vh"
+            height="auto"
+            contentHeight="auto"
+            fixedWeekCount={false}
             events={events}
             eventContent={(arg) => (
               <div className="event-box" style={{
@@ -101,6 +115,12 @@ function Calendar() {
             )}
             eventClick={(info) => {
               setSelectedEvent(info.event);
+              setEditForm({
+                type: info.event.title,
+                description: info.event.extendedProps.description,
+                amount: info.event.extendedProps.amount,
+                due_date: info.event.start
+              });
               setShowModal(true);
             }}
           />
@@ -110,14 +130,39 @@ function Calendar() {
         <div className="modalOverlay" onClick={() => setShowModal(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
 
-            <button className="closeBtn" onClick={() => setShowModal(false)}>X</button>
+            <button className="closeBtn" onClick={() => {setShowModal(false); setEditing(false)}}>X</button>
 
-            <h2>{selectedEvent.title}</h2>
-            <p>{selectedEvent.extendedProps.description}</p>
-            <p>Monto: {formatCurrency(selectedEvent.extendedProps.amount)}</p>
-            <p>Vencimiento: {new Date(selectedEvent.start).toLocaleDateString("es-AR")}</p>
-            <p>Estado del pago: {selectedEvent.extendedProps.paid ? "Pagado" : "Pendiente"}</p>
+            {editing ? (
+                <>
+                  <input value={editForm.type} onChange={(e) => 
+                    setEditForm({...editForm, type: e.target.value})}/>
 
+                  <input value={editForm.description} onChange={(e) =>
+                      setEditForm({...editForm, description: e.target.value})}/>
+
+                  <input type="number" value={editForm.amount} onChange={(e) =>
+                      setEditForm({...editForm, amount: e.target.value})}/>
+
+                  <input type="date" value={
+                      editForm.due_date ? new Date(editForm.due_date).toISOString().split("T")[0] : ""
+                    } onChange={(e) => setEditForm({...editForm, due_date: e.target.value})}/>
+                </>
+              ) : (
+                <>
+                  <h2>{selectedEvent.title}</h2>
+
+                  <p>{selectedEvent.extendedProps.description}</p>
+                  <p>Monto: {formatCurrency(selectedEvent.extendedProps.amount)}</p>
+
+                  <p>Vencimiento: {new Date(selectedEvent.start).toLocaleDateString("es-AR")}</p>
+
+                  <p>Estado del pago: {selectedEvent.extendedProps.paid ? "Pagado" : "Pendiente"}</p>
+                </>
+              )
+            }
+
+            <button onClick={() => setEditing(true)}>Editar</button>
+            {editing && (<button onClick={handleEdit}>Guardar cambios</button>)}
             <button onClick={handleTogglePaid}>{selectedEvent.extendedProps.paid
               ? "Marcar como NO pagado"
               : "Marcar como pagado"}</button>
