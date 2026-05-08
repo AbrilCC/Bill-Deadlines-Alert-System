@@ -10,10 +10,11 @@ import emailsRoutes from "./routes/emails.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
 
+const PORT = process.env.PORT || 3000;
 
 const app = express();
 app.use(cors({
-  origin: [process.env.FRONTEND_URL, "https://alertavencimientos.vercel.app/"]
+  origin: [process.env.FRONTEND_URL, "https://alertavencimientos.vercel.app"]
 }));
 app.use(express.json());
 
