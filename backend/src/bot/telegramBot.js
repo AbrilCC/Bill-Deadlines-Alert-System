@@ -298,6 +298,11 @@ bot.on(/\sincronizarGmail/, async (msg) => {
     }
 });
 
+bot.on(/\paginaWeb/, async (msg) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, "https://alertavencimientos.vercel.app", { parse_mode: "Markdown"})
+});
+
 //------------------------ BOT MESSAGES --------------------------------------//
 ///// SEND WEEKLY MESSAGE /////
 cron.schedule("0 9 * * 4", async () => {
@@ -331,12 +336,14 @@ bot.on("message", async (msg) => {
 
 📌 Utiliza los siguientes comandos para que te pueda ayudar:
 
-🗓️/estaSemana → Ver vencimientos de esta semana
+🗓️*/estaSemana* → Ver vencimientos de esta semana
 📆/semanaSiguiente → Ver vencimientos de la próxima semana  
 🧷/verPendientes → Ver facturas pendientes de esta semana
 ✅/marcarPagado → Marcar una factura como pagada
-📧/sincronizarGmail → Actualiza los vencimientos con los nuevos mails que te hayan llegado, te recomiendo clickearlo cada vez que entres a este chat para no perderte de ningún vencimiento!
+
 💻/paginaWeb → Ir a la página web para tener más herramientas disponibles
+
+📧/sincronizarGmail → Actualiza los vencimientos con los nuevos mails que te hayan llegado, te recomiendo clickearlo cada vez que entres a este chat para no perderte de ningún vencimiento!
 
 Solo los tenés que escribir recordando usar "/", o escribiéndome "hola" te los vuelvo a enviar.
 
