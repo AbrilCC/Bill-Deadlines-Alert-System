@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+const BACKEND_API_URL = import.meta.env.VITE_BACKEND_URL;
+
 function Auth() {
     const [isLogin, setIsLogin] = useState(false);
 
@@ -9,8 +11,8 @@ function Auth() {
     const [loading, setLoading] = useState(false);
 
     const endpoint = isLogin
-        ? "http://localhost:3000/auth/login"
-        : "http://localhost:3000/auth/register";
+        ? `${BACKEND_API_URL}/auth/login`
+        : `${BACKEND_API_URL}/auth/register`;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -41,7 +43,7 @@ function Auth() {
             );
 
         } catch (error) {
-            alert(error.message);
+            status(500).json({error: error.message});
         } finally {
             setLoading(false);
         }

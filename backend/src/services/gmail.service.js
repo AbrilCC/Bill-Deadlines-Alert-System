@@ -29,12 +29,13 @@ const KEYWORDS = [
     "pagar"
 ];
 
-const senderQuery = TRUSTED_SENDERS.join(" OR ");
-const keywordQuery = KEYWORDS.join(" OR ");
+const senderQuery = TRUSTED_SENDERS.map(sender => `from:${sender}`).join(" OR ");;
+const keywordQuery = KEYWORDS.map(word => `subject:${word}`).join(" OR ");
 
 /* Defino las queries en 1 solo lugar, ya que tengo 1 sola funcion para hacer queries */
 
-const query = `(from:(${senderQuery}) AND subject:(${keywordQuery})) newer_than:30d`;
+//const query = `(from:(${senderQuery}) AND subject:(${keywordQuery})) newer_than:30d`;
+const query = `(${keywordQuery}) newer_than:30d`;
 
 export async function getAuth() {
     return await authenticate({
@@ -64,18 +65,16 @@ export async function getEmailDetail(auth, messageId) {
 };
 
 export function getBody(message) {
+    if (message.payload?.body?.data) {
+        return Buffer.from(message.payload.body.data, "base64").toString("utf-8");
+    }
   const parts = message.payload?.parts || [];
 
   for (const part of parts) {
-    if (part.mimeType === "text/plain" && part.body?.data) {
-      return Buffer.from(part.body.data, "base64").toString("utf-8");
-    }
-
-    if (part.mimeType === "text/html" && part.body?.data) {
+    if ((part.mimeType === "text/plain" || part.mimeType === "text/html") && part.body?.data) {
       return Buffer.from(part.body.data, "base64").toString("utf-8");
     }
   }
-
   return "";
 }
 
@@ -93,7 +92,10 @@ export async function getAttachments(auth, message) {
             });
             
             const data = att.data.data;
-            const buffer = Buffer.from(data, "base64");
+            //const buffer = Buffer.from(data, "base64");
+            const fixedBase64 = data.replace(/-/g, "+").replace(/_/g, "/");
+
+            const buffer = Buffer.from(fixedBase64, "base64");
             attachments.push({
                 filename: part.filename,
                 data: buffer,

@@ -12,11 +12,13 @@ import dashboardRoutes from "./routes/dashboard.routes.js";
 
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: [process.env.FRONTEND_URL, "https://alertavencimientos.vercel.app/"]
+}));
 app.use(express.json());
 
-app.listen(3000, () => {
-  console.log("Servidor en http://localhost:3000");
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
 
 async function testDB() {

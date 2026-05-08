@@ -8,6 +8,7 @@ import {
   Cell
 } from "recharts";
 import { useEffect, useState } from "react";
+const BACKEND_API_URL = import.meta.env.VITE_BACKEND_URL;
 
 const COLORS = [
   "#f7931e",
@@ -22,7 +23,7 @@ function PaymentsChart() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-  fetch("http://localhost:3000/dashboard/monthly-summary")
+  fetch(`${BACKEND_API_URL}/dashboard/monthly-summary`)
     .then(res => res.json())
     .then(data => {
       const daysInMonth = new Date(

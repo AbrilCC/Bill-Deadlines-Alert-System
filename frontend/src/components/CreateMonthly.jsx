@@ -2,6 +2,8 @@ import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
+const BACKEND_API_URL = import.meta.env.VITE_BACKEND_URL;
+
 export default function CreateMonthly({ setView }) {
   const [form, setForm] = useState({
     type: "",
@@ -41,7 +43,7 @@ export default function CreateMonthly({ setView }) {
   };
 
   const handleSubmit = async () => {
-    const res = await fetch("http://localhost:3000/events/monthly", {
+    const res = await fetch(`${BACKEND_API_URL}/events/monthly`, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify(form),

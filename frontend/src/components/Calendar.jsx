@@ -3,6 +3,8 @@ import FullCalendar from "@fullcalendar/react";
 import esLocale from "@fullcalendar/core/locales/es";
 import dayGridPlugin from "@fullcalendar/daygrid";
 
+const BACKEND_API_URL = import.meta.env.VITE_BACKEND_URL;
+
 function Calendar() {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -16,7 +18,7 @@ function Calendar() {
   })
 
   const fetchEvents = async () => {
-    const res = await fetch("http://localhost:3000/events");
+    const res = await fetch(`${BACKEND_API_URL}/events`);
     const data = await res.json();
 
     const formatted = data.map(e => ({
@@ -43,8 +45,8 @@ function Calendar() {
     const isPaid = selectedEvent.extendedProps.paid;
 
     const url = isPaid
-      ? `http://localhost:3000/events/${selectedEvent.id}/unpay`
-      : `http://localhost:3000/events/${selectedEvent.id}/pay`;
+      ? `${BACKEND_API_URL}/events/${selectedEvent.id}/unpay`
+      : `${BACKEND_API_URL}/events/${selectedEvent.id}/pay`;
 
     await fetch(url, { method: "PATCH" });
 
@@ -52,24 +54,24 @@ function Calendar() {
     fetchEvents();
   };
 
-  const handleEdit = async () => {
-    await fetch(
-      `http://localhost:3000/events/${selectedEvent.id}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(editForm)
-      }
-    );
-    setEditing(false);
-    setShowModal(false);
-    fetchEvents();
-  };
+    const handleEdit = async () => {
+      await fetch(
+        `${BACKEND_API_URL}/events/${selectedEvent.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(editForm)
+        }
+      );
+      setEditing(false);
+      setShowModal(false);
+      fetchEvents();
+    };
 
   const handleDelete = async () => {
-    await fetch(`http://localhost:3000/events/${selectedEvent.id}`, {
+    await fetch(`${BACKEND_API_URL}/events/${selectedEvent.id}`, {
       method: "DELETE",
     });
 
@@ -78,8 +80,8 @@ function Calendar() {
   };
   
   const handleSyncEmails = async () => {
-    await fetch("http://localhost:3000/emails/sync");
-    await fetchEvents(); // 🔥 recarga eventos
+    await fetch(`${BACKEND_API_URL}/emails/sync`);
+    await fetchEvents();
   };
 
   const formatCurrency = (value) => {

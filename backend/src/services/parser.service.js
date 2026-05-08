@@ -1,4 +1,3 @@
-//import pdf from "pdf-parse";
 import { createRequire } from "module";
 import Tesseract from "tesseract.js";
 const require = createRequire(import.meta.url);
@@ -6,24 +5,69 @@ const pdf = require("pdf-parse");
 
 
 //Para que el dinero pase de 10.000,99 a 10000.99 y se guarde bien en la DB
+//Tambien incluye casos de 10,000,99 -> 10000.99
 function normalizeAmount(str) {
   if (!str) return null;
-  return parseFloat(
-    str
-      .replace(/\./g, "")   // elimina miles
-      .replace(",", ".")    // convierte decimal
-  );
+
+  let cleaned = str.replace(/\s/g, "");
+
+  // Caso raro: 154,201,00
+  // Interpretarlo como 154201,00
+  if ((cleaned.match(/,/g) || []).length === 2) {
+    const lastComma = cleaned.lastIndexOf(",");
+    
+    cleaned =
+      cleaned.slice(0, lastComma).replace(/,/g, "") +
+      "." +
+      cleaned.slice(lastComma + 1);
+  } else {
+    cleaned = cleaned
+      .replace(/\./g, "") // elimina miles
+      .replace(",", "."); // convierte decimal
+  }
+  const value = parseFloat(cleaned);
+  return isNaN(value) ? null : value;
 }
 
 
 export async function parseInvoice(buffer) {
-  const data = await pdf(buffer);
-  const text = data.text;
+  let data;
+  try {
+    data = await pdf(buffer);
+  } catch (error) {
+    console.log("PDF PARSE ERROR:", error.message);
+
+    return {
+      amount: null,
+      due_date: null,
+    };
+  }
+  const text = data.text || "";
   const lowerText = text.toLowerCase();
+  console.log("PDF TEXT:");
+  console.log(text);
+
+  // ===== BUSCAR PARES FECHA + IMPORTE =====
+  const paymentMatches = [
+    ...text.matchAll(
+      /(vencimiento|vence|hasta)[^\d]*(\d{2}\/\d{2}\/\d{4}).*?\$\s?([\d.,]+)/gis
+    )
+  ];
+  if (paymentMatches.length > 0) {
+    const first = paymentMatches[0];
+
+    return {
+      due_date: first[2],
+      amount: normalizeAmount(first[3]),
+    };
+  }
 
   // ===== MONTO =====
-  const amountMatches = [...text.matchAll(/\$\s?(\d{1,3}(?:\.\d{3})*(?:,\d{2})?)/g)];
-
+  const amountMatches = [
+    ...text.matchAll(
+      /(total|importe|saldo|monto|pagar)[^$\d]{0,30}\$\s?([\d.,]+)/gi
+    )
+  ];
   const amountKeywords = ["total", "importe total", "monto total"];
 
   let amountIndex = -1;
@@ -46,7 +90,7 @@ export async function parseInvoice(buffer) {
       const distance = Math.abs(match.index - amountIndex);
       if (distance < minDistance) {
         minDistance = distance;
-        closest = match[1];
+        closest = match[2];
       }
     }
 

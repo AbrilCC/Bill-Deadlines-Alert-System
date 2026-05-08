@@ -12,8 +12,6 @@ const CREDENTIALS_PATH = path.join(__dirname, "../../credentials.json");
 
 // The scope for reading Gmail labels.
 const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
-// The path to the credentials file.
-//const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.json');
 
 /**
  * Lists the labels in the user's account.

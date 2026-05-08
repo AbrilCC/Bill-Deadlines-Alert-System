@@ -1,6 +1,7 @@
 import TelegramBot from "node-telegram-bot-api";
 import cron from "node-cron";
 import client from "../utils/supabaseClient.js";
+import { syncEmailsService } from "../services/emails.service.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -284,6 +285,19 @@ bot.on("callback_query", async (query) => {
   bot.answerCallbackQuery(query.id, { text: "Marcado como pagado ✅" });
 });
 
+bot.on(/\sincronizarGmail/, async (msg) => {
+    const chatId = msg.chat.id;
+    try {
+        await syncEmailsService();
+        bot.sendMessage(chatId, `
+            ✅ Gmail sincronizado
+            Escribe hola o envía /`);
+    } catch (error) {
+        console.log(error);
+        bot.sendMessage(chatId, "❌ Error al sincronizar Gmail");
+    }
+});
+
 //------------------------ BOT MESSAGES --------------------------------------//
 ///// SEND WEEKLY MESSAGE /////
 cron.schedule("0 9 * * 4", async () => {
@@ -317,10 +331,12 @@ bot.on("message", async (msg) => {
 
 📌 Utiliza los siguientes comandos para que te pueda ayudar:
 
-/estaSemana → Ver vencimientos de esta semana
-/semanaSiguiente → Ver vencimientos de la próxima semana  
-/verPendientes → Ver facturas pendientes de esta semana
-/marcarPagado → Marcar una factura como pagada  
+🗓️/estaSemana → Ver vencimientos de esta semana
+📆/semanaSiguiente → Ver vencimientos de la próxima semana  
+🧷/verPendientes → Ver facturas pendientes de esta semana
+✅/marcarPagado → Marcar una factura como pagada
+📧/sincronizarGmail → Actualiza los vencimientos con los nuevos mails que te hayan llegado, te recomiendo clickearlo cada vez que entres a este chat para no perderte de ningún vencimiento!
+💻/paginaWeb → Ir a la página web para tener más herramientas disponibles
 
 Solo los tenés que escribir recordando usar "/", o escribiéndome "hola" te los vuelvo a enviar.
 
