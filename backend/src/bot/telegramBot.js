@@ -286,9 +286,9 @@ bot.on(/\/sincronizarGmail/, async (msg) => {
     }
 });
 
-bot.on(/\/paginaWeb/, async (msg) => {
+bot.onText(/\/paginaWeb/, async (msg) => {
     const chatId = msg.chat.id;
-    bot.sendMessage(chatId, "https://alertavencimientos.vercel.app", { parse_mode: "Markdown"})
+    bot.sendMessage(chatId, "Accedé a la página web en este link: https://alertavencimientos.vercel.app", { parse_mode: "Markdown"})
 });
 
 //------------------------ BOT MESSAGES --------------------------------------//
