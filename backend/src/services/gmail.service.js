@@ -1,15 +1,4 @@
 import { google } from "googleapis";
-import { authenticate } from "@google-cloud/local-auth";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const CREDENTIALS_PATH = path.join(__dirname, "../../credentials.json");
-
-const SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"];
 
 const TRUSTED_SENDERS = [
     "avisos@aysadigital.com.ar",    //AGUA
@@ -33,15 +22,22 @@ const senderQuery = TRUSTED_SENDERS.map(sender => `from:${sender}`).join(" OR ")
 const keywordQuery = KEYWORDS.map(word => `subject:${word}`).join(" OR ");
 
 /* Defino las queries en 1 solo lugar, ya que tengo 1 sola funcion para hacer queries */
-
 //const query = `(from:(${senderQuery}) AND subject:(${keywordQuery})) newer_than:30d`;
 const query = `(${keywordQuery}) newer_than:30d`;
 
-export async function getAuth() {
-    return await authenticate({
-        scopes: SCOPES,
-        keyfilePath: CREDENTIALS_PATH,
+export const oauth2Client = new google.auth.OAuth2(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+  process.env.GOOGLE_REDIRECT_URI
+);
+
+export function getAuth(access_token, refresh_token) {
+    oauth2Client.setCredentials({
+        access_token,
+        refresh_token
     });
+
+    return oauth2Client;
 };
 
 export async function getEmails(auth) {

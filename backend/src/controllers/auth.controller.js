@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import client from "../utils/supabaseClient.js";
 import {
     hashPassword,
@@ -5,7 +6,44 @@ import {
     generateToken
 } from "../services/auth.service.js";
 import { validatePassword } from "../utils/validators.js"
+import { oauth2Client } from "../services/gmail.service.js";
 
+const SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"];
+
+
+export const googleAuth = (req, res) => {
+    const token = req.query.token;
+    const url = oauth2Client.generateAuthUrl({
+        access_type: "offline",
+        scope: SCOPES,
+        prompt: "consent",
+        state: token
+    });
+
+    res.redirect(url);
+};
+
+export const googleCallback = async (req, res) => {
+  try {
+    const code = req.query.code;
+    const { tokens } = await oauth2Client.getToken(code);
+
+    const token = req.query.state;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    await client.query(`
+      UPDATE users
+      SET google_access_token = $1,
+          google_refresh_token = $2,
+          gmail_connected = true
+      WHERE id = $3
+    `, [tokens.access_token, tokens.refresh_token, decoded.id]);
+
+    res.redirect(process.env.FRONTEND_URL);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 export const register = async (req, res) => {
     try {
@@ -48,7 +86,7 @@ export const login = async (req, res) => {
         );
         const user = result.rows[0];
         if (!user) {
-            return res.statur(500).json({error: "Invalid credentials"});
+            return res.status(500).json({error: "Invalid credentials"});
         }
 
         const valid = await comparePasswords(password, user.password_hash);

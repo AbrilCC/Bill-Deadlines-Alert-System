@@ -36,6 +36,7 @@ function Auth() {
                 return;
             }
             localStorage.setItem("token", data.token);
+            window.location.reload();
             alert(
                 isLogin
                     ? "Inición sesiada ✅"
@@ -43,7 +44,7 @@ function Auth() {
             );
 
         } catch (error) {
-            status(500).json({error: error.message});
+            console.error(error);
         } finally {
             setLoading(false);
         }

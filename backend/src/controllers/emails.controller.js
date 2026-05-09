@@ -2,7 +2,7 @@ import { syncEmailsService } from "../services/emails.service.js";
 
 export const syncEmails = async (req, res) => {
   try {
-    await syncEmailsService();
+    await syncEmailsService(req.user.id);
 
     res.json({
       success: true,

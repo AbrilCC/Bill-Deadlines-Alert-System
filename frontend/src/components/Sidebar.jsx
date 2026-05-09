@@ -8,7 +8,13 @@ import {
 function Sidebar({ setView, view }) {
   return (
     <div className="sidebar">
-      <h2 style={{"color": "#fe6601"}}>Panel de control</h2>
+        <div className="sidebarTitle">
+            <img src="logo/orange-round.png" className="sidebarLogo"></img>
+            <h2 style={{"color": "#fe6601"}}>Panel de control</h2>
+        </div>
+                
+        
+      
 
       <button className={view === "dashboard" ? "activeSidebar" : ""} onClick={() => setView("dashboard")}>
         <LayoutDashboard size={18} />

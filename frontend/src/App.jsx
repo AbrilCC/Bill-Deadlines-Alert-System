@@ -21,15 +21,21 @@ function App() {
   return (
     <div>
         <div className="topbar">
-            <h2>Sistema de Vencimientos de Pagos</h2>
+            <h2>Mango - Sistema de alerta de vencimientos</h2>
 
             <div className="menu">
                 <button onClick={() => setView("dashboard")}>Inicio</button>
                 <span className="divider">|</span>
-                <button onClick={() => setView("login")}>
-                    Login
-                    <LogIn size={25} />              
+                <button
+                    onClick={() => {
+                        localStorage.removeItem("token");
+                        window.location.reload();
+                    }}
+                    >
+                    Logout
+                    <LogIn size={25} />
                     </button>
+
             </div>
         </div>
 

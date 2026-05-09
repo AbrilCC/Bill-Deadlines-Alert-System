@@ -15,7 +15,8 @@ function Calendar() {
     description: "",
     amount: "",
     due_date: ""
-  })
+  });
+  const [syncLoading, setSyncLoading] = useState(false);
 
   const fetchEvents = async () => {
     const res = await fetch(`${BACKEND_API_URL}/events`);
@@ -54,21 +55,21 @@ function Calendar() {
     fetchEvents();
   };
 
-    const handleEdit = async () => {
-      await fetch(
-        `${BACKEND_API_URL}/events/${selectedEvent.id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(editForm)
-        }
-      );
-      setEditing(false);
-      setShowModal(false);
-      fetchEvents();
-    };
+  const handleEdit = async () => {
+    await fetch(
+      `${BACKEND_API_URL}/events/${selectedEvent.id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(editForm)
+      }
+    );
+    setEditing(false);
+    setShowModal(false);
+    fetchEvents();
+  };
 
   const handleDelete = async () => {
     await fetch(`${BACKEND_API_URL}/events/${selectedEvent.id}`, {
@@ -78,10 +79,34 @@ function Calendar() {
     setShowModal(false);
     fetchEvents();
   };
-  
+
   const handleSyncEmails = async () => {
-    await fetch(`${BACKEND_API_URL}/emails/sync`);
-    await fetchEvents();
+    try {
+      setSyncLoading(true);
+      await fetch(`${BACKEND_API_URL}/emails/sync`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+      await fetchEvents();
+
+    } catch (error) {
+      console.error(error);
+    } finally {
+        setSyncLoading(false);
+    }
+  };
+
+  const handleConnectGoogle = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      window.location.href = `${BACKEND_API_URL}/auth/google?token=${token}`;
+
+      await handleSyncEmails();
+
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const formatCurrency = (value) => {
@@ -90,12 +115,23 @@ function Calendar() {
       currency: "ARS",
     }).format(value);
   };
+  
+  //Sync loading overlay for Sincronizar con Gmail
+  if (syncLoading) {
+    return (
+      <div className="loadingOverlay">
+        <div className="spinner"></div>
+        <p>Sincronizando Gmail...</p>
+      </div>
+    );
+  }
 
   return (
     <div style={{ width: "100%" }} className="card">
       <h2>Calendario de pagos</h2>
 
       <button onClick={handleSyncEmails}>Sincronizar con Gmail</button>
+      <button onClick={handleConnectGoogle}>Conectar mi Gmail</button>
 
       <div style={{ width: "100%" }}>
           <FullCalendar

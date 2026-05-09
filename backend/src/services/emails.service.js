@@ -31,9 +31,20 @@ function isValidInvoiceText(text) {
   return requiredKeywords.some(word => lower.includes(word));
 }
 
-export const syncEmailsService = async () => {
+export const syncEmailsService = async (user_id) => {
   try {
-    const auth = await getAuth();
+    const userRes = await client.query(
+    `SELECT google_access_token, google_refresh_token
+    FROM users
+    WHERE id = $1`,
+    [user_id]
+    );
+    const user = userRes.rows[0];
+
+    if (!user?.google_access_token) {
+    throw new Error("Gmail no conectado");
+    }
+    const auth = getAuth(user.google_access_token, user.google_refresh_token);
     const emails = await getEmails(auth);
 
     for (const email of emails) {
@@ -47,6 +58,7 @@ export const syncEmailsService = async () => {
         `SELECT 1 FROM events WHERE email_id = $1`,
         [email.id]
       );
+
       //console.log("EMAIL LINK: https://mail.google.com/mail/u/0/#inbox/", email_id);
       console.log("EMAIL:", email.id);
       console.log("EXISTING:", existing.rows);
@@ -120,6 +132,7 @@ export const syncEmailsService = async () => {
       try {
         //Push the event to the DB
         await createSingleEvent(client, {
+          user_id,
           type: detectType(subject, from, bodyText),
           description: parsed.amount == null ? "Monto pendiente de completar" : "Importado de gmail",
           amount: parsed.amount,
