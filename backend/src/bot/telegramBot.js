@@ -2,6 +2,7 @@ import TelegramBot from "node-telegram-bot-api";
 import cron from "node-cron";
 import client from "../utils/supabaseClient.js";
 import { syncEmailsService } from "../services/emails.service.js";
+import moment from "moment-timezone";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -9,40 +10,24 @@ const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, {polling: true});
 
 ///// HELPERS /////
 function getCurrentWeekRange() {
-  const now = new Date();
+  const now = moment().tz("America/Argentina/Buenos_Aires");
 
-  const monday = new Date(now);
+  /*const monday = new Date(now);
   monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
   monday.setHours(0, 0, 0, 0);
 
   const sunday = new Date(monday);
   sunday.setDate(monday.getDate() + 6);
-  sunday.setHours(23, 59, 59, 999);
+  sunday.setHours(23, 59, 59, 999);*/
 
   return {
-    start: monday,
-    end: sunday
+    start: now.clone().startOf("isoWeek").toDate(),
+    end: now.clone().endOf("isoWeek").toDate()
   };
 }
 
-/*
 function getNextWeekRange() {
-  const now = new Date();
-
-  const nextMonday = new Date(now);
-  nextMonday.setDate(now.getDate() + ((8 - now.getDay()) % 7));
-
-  const nextSunday = new Date(nextMonday);
-  nextSunday.setDate(nextMonday.getDate() + 6);
-
-  return {
-    start: nextMonday,
-    end: nextSunday
-  };
-}*/
-
-function getNextWeekRange() {
-  const now = new Date();
+  const now = moment().tz("America/Argentina/Buenos_Aires");
 
   const day = now.getDay();
 
@@ -51,14 +36,17 @@ function getNextWeekRange() {
     ? 7
     : (8 - day);
 
-  const nextMonday = new Date(now);
+  /*const nextMonday = new Date(now);
   nextMonday.setDate(now.getDate() + daysUntilNextMonday);
 
   nextMonday.setHours(0, 0, 0, 0);
 
   const nextSunday = new Date(nextMonday);
   nextSunday.setDate(nextMonday.getDate() + 6);
-  nextSunday.setHours(23, 59, 59, 999);
+  nextSunday.setHours(23, 59, 59, 999);*/
+
+  const nextMonday = now.clone().startOf("isoWeek").add(1, "week");
+  const nextSunday = nextMonday.clone().endOf("isoWeek");
 
   return {
     start: nextMonday,
@@ -213,7 +201,7 @@ function formatNextWeekMessage(events) {
         });
         msg += `${getEmoji(e.type)} *${e.type}*\n`;
         msg += `   ${capitalize(date)} | ${formatCurrency(e.amount)}\n\n`
-        total += e.amount;
+        total += Number(e.amount);
     }
     msg += `💰 *Total: ${formatCurrency(total)}*`;
     return msg;
@@ -285,7 +273,7 @@ bot.on("callback_query", async (query) => {
   bot.answerCallbackQuery(query.id, { text: "Marcado como pagado ✅" });
 });
 
-bot.on(/\sincronizarGmail/, async (msg) => {
+bot.on(/\/sincronizarGmail/, async (msg) => {
     const chatId = msg.chat.id;
     try {
         await syncEmailsService();
@@ -298,7 +286,7 @@ bot.on(/\sincronizarGmail/, async (msg) => {
     }
 });
 
-bot.on(/\paginaWeb/, async (msg) => {
+bot.on(/\/paginaWeb/, async (msg) => {
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, "https://alertavencimientos.vercel.app", { parse_mode: "Markdown"})
 });
@@ -336,9 +324,12 @@ bot.on("message", async (msg) => {
 
 📌 Utiliza los siguientes comandos para que te pueda ayudar:
 
-🗓️*/estaSemana* → Ver vencimientos de esta semana
+🗓️/estaSemana → Ver vencimientos de esta semana
+
 📆/semanaSiguiente → Ver vencimientos de la próxima semana  
+
 🧷/verPendientes → Ver facturas pendientes de esta semana
+
 ✅/marcarPagado → Marcar una factura como pagada
 
 💻/paginaWeb → Ir a la página web para tener más herramientas disponibles
