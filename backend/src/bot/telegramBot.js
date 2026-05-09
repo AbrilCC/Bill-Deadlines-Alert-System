@@ -273,7 +273,7 @@ bot.on("callback_query", async (query) => {
   bot.answerCallbackQuery(query.id, { text: "Marcado como pagado ✅" });
 });
 
-bot.on(/\/sincronizarGmail/, async (msg) => {
+bot.onText(/\/sincronizarGmail/, async (msg) => {
     const chatId = msg.chat.id;
     try {
         await syncEmailsService();
