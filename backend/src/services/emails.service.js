@@ -31,7 +31,7 @@ function isValidInvoiceText(text) {
   return requiredKeywords.some(word => lower.includes(word));
 }
 
-export const syncEmailsService = async (req, res) => {
+export const syncEmailsService = async () => {
   try {
     const auth = await getAuth();
     const emails = await getEmails(auth);
@@ -133,8 +133,8 @@ export const syncEmailsService = async (req, res) => {
         throw error;
       }
     }
-    res.json({ message: "Sync complete" });
+    return { message: "Sync complete" };
   } catch (err) {
-      res.status(500).json({ error: err.message });
+      throw err;
   }
 };
