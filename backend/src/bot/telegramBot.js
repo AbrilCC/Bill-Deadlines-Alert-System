@@ -29,7 +29,7 @@ function getCurrentWeekRange() {
 function getNextWeekRange() {
   const now = moment().tz("America/Argentina/Buenos_Aires");
 
-  const day = now.getDay();
+  /*const day = now.getDay();
 
   // días hasta el próximo lunes real
   const daysUntilNextMonday = day === 1
