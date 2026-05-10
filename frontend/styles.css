@@ -250,6 +250,43 @@ input {
   cursor: pointer;
 }
 
+/* ---------------------------ADMIN PAGE BUTTON TIPS--------------------------- */
+.tooltipWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltipText {
+  visibility: hidden;
+
+  position: absolute;
+
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+
+  background: #222;
+  color: white;
+
+  padding: 8px 12px;
+
+  border-radius: 10px;
+
+  font-size: 13px;
+
+  width: 220px;
+
+  opacity: 0;
+  transition: opacity 0.2s ease;
+
+  z-index: 999;
+}
+
+.tooltipWrapper:hover .tooltipText {
+  visibility: visible;
+  opacity: 1;
+}
+
 /* ---------------------------SYNC OVERLAY--------------------------- */
 .loadingOverlay {
   position: fixed;

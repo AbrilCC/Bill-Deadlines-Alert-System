@@ -11,6 +11,18 @@ export default function Admin() {
     const [editAmount, setEditAmount] = useState("");
     const [modalOpen, setModalOpen] = useState(false);
     const [editing, setEditing] = useState(false);
+    const [paymentMethod, setPaymentMethod] = useState("");
+    const [customPaymentMethod, setCustomPaymentMethod] = useState("");
+
+    const PAYMENT_METHODS = [
+        "Efectivo",
+        "Mercado Pago",
+        "Tarjeta de débito",
+        "Tarjeta de crédito",
+        "Transferencia bancaria",
+        "Débito automático",
+        "Otro..."
+    ];
     
     async function fetchData() {
         try {
@@ -87,8 +99,7 @@ export default function Admin() {
             <div className="card" style={{"width": "50%", "textAlign": "center"}}>
                 No tenés vencimientos cargados, empezá agregando algunos o conectá tu Gmail para importarlos automáticamente.
             </div>)
-    };
-
+    } else {
     return(
         <div>
             <div className="adminPage">
@@ -174,17 +185,21 @@ export default function Admin() {
                             <button onClick={() => setEditing(true)}>
                                 Editar
                             </button>
+                            <span className="tooltipText">
+                                Modificá el nombre, descripción, y actualizá el precio del servicio
+                            </span>
                         </>)}
 
                         <div className="adminModalButtons">
                             <button onClick={deleteService}
                             style={{"background": "#971e1e", "color": "white"}}>
-                                Borrar todas las notificaciones sobre este servicio
+                                Borrar este servicio
                             </button>
+                            <span className="tooltipText">
+                                Elimina todos los vencimientos relacionados a este servicio. Esta acción no se puede deshacer. Deberás volver a crearlo manualmente o importarlo desde Gmail.
+                            </span>
 
-                            <button
-                                onClick={() => setModalOpen(false)}
-                            >
+                            <button onClick={() => setModalOpen(false)}>
                                 Cerrar
                             </button>
 
@@ -196,4 +211,5 @@ export default function Admin() {
             )}
         </div>
     )
+    }
 };

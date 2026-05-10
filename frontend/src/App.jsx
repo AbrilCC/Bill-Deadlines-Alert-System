@@ -32,7 +32,7 @@ function App() {
                         window.location.reload();
                     }}
                     >
-                    Logout
+                    Cerrar Sesión
                     <LogIn size={25} />
                     </button>
 
