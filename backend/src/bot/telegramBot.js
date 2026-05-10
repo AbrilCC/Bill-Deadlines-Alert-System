@@ -9,6 +9,7 @@ dotenv.config();
 if (!global.telegramBot) {
     global.telegramBot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN,{ polling: true });
 }
+const bot = telegramBot;
 
 ///// HELPERS /////
 function getCurrentWeekRange() {
