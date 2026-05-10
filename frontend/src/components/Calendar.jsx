@@ -40,31 +40,38 @@ function Calendar() {
     );
     const data = await res.json();
 
-    const formatted = data.map(e => ({
-      id: e.id,
-      title: e.type,
-      start: new Date(e.due_date),
-      backgroundColor: e.paid ? "#9c9c9c" : "#df6b17",
-      extendedProps: {
-        amount: e.amount,
-        description: e.description,
-        paid: e.paid,
-        email_id: e.email_id,
-        preferred_days: e.preferred_days,
-      },
-    }));
+    const formatted = data.map(e => {
+      const [year, month, day] = e.due_date.split("-");
+      return {
+        id: e.id,
+        title: e.type,
+        start: new Date(year, month - 1, day),
+        backgroundColor: e.paid ? "#9c9c9c" : "#df6b17",
+        extendedProps: {
+          amount: e.amount,
+          description: e.description,
+          paid: e.paid,
+          email_id: e.email_id,
+          preferred_days: e.preferred_days,
+        },
+      };
+    });
     const suggestionEvents = [];
     for (const e of data) {
       if (e.paid) continue;
       if (new Date(e.due_date) < new Date()) continue;
+
       const dueDate = new Date(e.due_date);
+      dueDate.setHours(0,0,0,0);
       const startWindow = new Date(dueDate);
       startWindow.setDate(startWindow.getDate() - 7);
+      startWindow.setHours(0,0,0,0);
 
       //Look for preferred days 1 week before the due date
       for (const day of e.preferred_days || []) {
         const targetDay = dayMap[day];
         const current = new Date(startWindow);
+        current.setHours(0,0,0,0);
 
         while (current < dueDate) {
           if (current.getDay() === targetDay) {
@@ -300,7 +307,7 @@ function Calendar() {
             <button onClick={handleDelete}>Eliminar notificación</button>
             {selectedEvent.extendedProps.email_id && (
               <a
-                href={`https://mail.google.com/mail/u/0/#inbox/${selectedEvent.extendedProps.email_id}`}
+                href={`https://mail.google.com/mail/u/all/#inbox/${selectedEvent.extendedProps.email_id}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >Ver mail</a>

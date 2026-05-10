@@ -14,15 +14,6 @@ const bot = telegramBot;
 ///// HELPERS /////
 function getCurrentWeekRange() {
   const now = moment().tz("America/Argentina/Buenos_Aires");
-
-  /*const monday = new Date(now);
-  monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
-  monday.setHours(0, 0, 0, 0);
-
-  const sunday = new Date(monday);
-  sunday.setDate(monday.getDate() + 6);
-  sunday.setHours(23, 59, 59, 999);*/
-
   return {
     start: now.clone().startOf("isoWeek").toDate(),
     end: now.clone().endOf("isoWeek").toDate()
@@ -31,29 +22,12 @@ function getCurrentWeekRange() {
 
 function getNextWeekRange() {
   const now = moment().tz("America/Argentina/Buenos_Aires");
-
-  /*const day = now.getDay();
-
-  // días hasta el próximo lunes real
-  const daysUntilNextMonday = day === 1
-    ? 7
-    : (8 - day);
-
-  /*const nextMonday = new Date(now);
-  nextMonday.setDate(now.getDate() + daysUntilNextMonday);
-
-  nextMonday.setHours(0, 0, 0, 0);
-
-  const nextSunday = new Date(nextMonday);
-  nextSunday.setDate(nextMonday.getDate() + 6);
-  nextSunday.setHours(23, 59, 59, 999);*/
-
   const nextMonday = now.clone().startOf("isoWeek").add(1, "week");
   const nextSunday = nextMonday.clone().endOf("isoWeek");
 
   return {
-    start: nextMonday,
-    end: nextSunday
+    start: nextMonday.toDate(),
+    end: nextSunday.toDate()
   };
 }
 
@@ -278,11 +252,20 @@ bot.on("callback_query", async (query) => {
 
 bot.onText(/\/sincronizarGmail/, async (msg) => {
     const chatId = msg.chat.id;
+    const userRes = await client.query(
+        `SELECT id FROM users WHERE chat_id = $1`, [chatId]
+    );
+    const user = userRes.rows[0];
+    if (!user) {
+      return bot.sendMessage(chatId,
+          `Necesitás primero vincular tu cuenta de Gmail desde la página web: https://alertavencimientos.vercel.app`
+      )
+    }
     try {
-        await syncEmailsService();
+        await syncEmailsService(user.id);
         bot.sendMessage(chatId, `
             ✅ Gmail sincronizado
-            Escribe hola o envía /`);
+            Para ver si tienes nuevos vencimientos cargados, escribe hola o envía /verPendientes`);
     } catch (error) {
         console.log(error);
         bot.sendMessage(chatId, "❌ Error al sincronizar Gmail");
