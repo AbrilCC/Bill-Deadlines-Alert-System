@@ -9,7 +9,7 @@ function Sidebar({ setView, view }) {
   return (
     <div className="sidebar">
         <div className="sidebarTitle">
-            <img src="logo/orange-round.png" className="sidebarLogo"></img>
+            <img src="/logo/orange-round.png" alt="Logo" className="sidebarLogo"></img>
             <h2 style={{"color": "#fe6601"}}>Panel de control</h2>
         </div>
                 
