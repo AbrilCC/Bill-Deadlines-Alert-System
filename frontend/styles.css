@@ -443,6 +443,28 @@ input {
   text-decoration: underline;
 }
 
+/* PARA EL OJITO DE VER CONTRASEÑA */
+.passwordInputContainer {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.passwordInputContainer input {
+    width: 100%;
+    padding-right: 45px;
+}
+.showPasswordBtn {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+}
+
 /* PARA LAS BOXES DE VENCIMIENTOS EN EL CALENDARIO */
 .event-box {
   min-width: 180px;
@@ -462,7 +484,7 @@ input {
   padding: 4px !important;
 }
 
-/* ---------------------------BOX DE UPLOAD PDF--------------------------- */
+/* ---------------------------BOX UPLOAD PDF--------------------------- */
 .uploadDropzone {
     border: 2px dashed #7b61ff;
     border-radius: 18px;

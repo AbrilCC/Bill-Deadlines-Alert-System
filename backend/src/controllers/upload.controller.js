@@ -1,4 +1,3 @@
-import { formatDate } from "../services/emails.service.js";
 import { parseInvoice, parseInvoiceFromText, extractTextFromImage } from "../services/parser.service.js";
 
 

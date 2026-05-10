@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 const BACKEND_API_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -8,6 +9,7 @@ function Auth() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [forgotMode, setForgotMode] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const [loading, setLoading] = useState(false);
 
@@ -77,12 +79,19 @@ function Auth() {
             {!forgotMode && (
             <div className="formInputRow">
                 <label>Contraseña</label>
-                <input
-                    type="password"
-                    placeholder="Debe tener un mínimo de 8 caracteres e incluir 1 letra y 1 número."
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
+                <div className="passwordInputContainer">
+                    <input type={showPassword ? "text" : "password"}
+                        placeholder="Debe tener un mínimo de 8 caracteres e incluir 1 letra y 1 número."
+                        value={password} onChange={(e) => setPassword(e.target.value)}/>
+
+                    <button type="button" className="showPasswordBtn" onClick={() => setShowPassword(!showPassword)}>
+                        {
+                            showPassword
+                                ? <EyeOff size={20} />
+                                : <Eye size={20} />
+                        }
+                    </button>
+                </div>
             </div>)}
 
             <button type="submit" disabled={loading}>
