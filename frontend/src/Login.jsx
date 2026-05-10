@@ -17,8 +17,6 @@ function Auth() {
             : mode === "login"
                 ? `${BACKEND_API_URL}/auth/login`
                 : `${BACKEND_API_URL}/auth/register`;
-    console.log("MODE:", mode);
-    console.log("ENDPOINT:", endpoint);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -40,7 +38,7 @@ function Auth() {
             let data;
             try { data = await res.json();}
             catch {throw new Error("Respuesta inválida del servidor");}
-            
+
             if (!res.ok) {
                 setLoading(false);
                 alert(data.error);
@@ -138,7 +136,8 @@ function Auth() {
             </>)}
 
             {mode === "forgot" && (
-                <button type="button" className="backToLoginBtn" onClick={() => setMode("login")}>
+                <button type="button" className="backToLoginBtn"
+                onClick={() => {setMode("login"); setPassword(""); setEmail(""); setShowPassword(false);}}>
                     <ArrowBigLeft size={28} /> Volver al login
                 </button>
             )}

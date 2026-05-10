@@ -6,7 +6,9 @@ import moment from "moment-timezone";
 import dotenv from "dotenv";
 dotenv.config();
 
-const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, {polling: true});
+if (!global.telegramBot) {
+    global.telegramBot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN,{ polling: true });
+}
 
 ///// HELPERS /////
 function getCurrentWeekRange() {

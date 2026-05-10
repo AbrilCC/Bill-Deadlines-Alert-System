@@ -95,7 +95,14 @@ export default function Admin() {
         });
         await fetchData();
         setModalOpen(false);
-    }
+    };
+
+    const formatCurrency = (value) => {
+        return new Intl.NumberFormat("es-AR", {
+            style: "currency",
+            currency: "ARS",
+        }).format(value || 0);
+    };
 
         
     if (!data) {
@@ -107,7 +114,7 @@ export default function Admin() {
     return(
         <div>
             <div className="adminPage">
-                <h2>Servicios de pago único:</h2>
+                <h2 className="adminSectionTitle">Servicios de pago único:</h2>
                 
                 <div className="adminGrid">
                     {data.single.map(event => (
@@ -115,7 +122,7 @@ export default function Admin() {
                         onClick={() => {setSelectedItem(event); setSelectedType("event"); setModalOpen(true);}}>
                             <h3>{event.type}</h3>
                             <p>{event.description}</p>
-                            <p>{event.amount}</p>
+                            <p>{formatCurrency(event.amount)}</p>
                             <div className="paymentTag">
                                 {event.payment_method || <h5>Agregá un método de pago</h5>}
                             </div>
@@ -123,7 +130,7 @@ export default function Admin() {
                     ))}
                 </div>
 
-                <h2>Servicios semanales:</h2>
+                <h2 className="adminSectionTitle">Servicios semanales:</h2>
 
                 <div className="adminGrid">
                     {data.weekly.map(rule => (
@@ -131,7 +138,7 @@ export default function Admin() {
                         onClick={() => {setSelectedItem(rule); setSelectedType("rule"); setModalOpen(true);}}>
                             <h3>{rule.type}</h3>
                             <p>{rule.description}</p>
-                            <p>{rule.amount}</p>
+                            <p>{formatCurrency(rule.amount)}</p>
                             <div className="paymentTag">
                                 {rule.payment_method || <h5>Agregá un método de pago</h5>}
                             </div>
@@ -139,15 +146,15 @@ export default function Admin() {
                     ))}
                 </div>
 
-                <h2>Servicios mensuales:</h2>
+                <h2 className="adminSectionTitle">Servicios mensuales:</h2>
 
                 <div className="adminGrid">
                     {data.monthly.map(rule => (
                         <div key={rule.rule_id} className="adminCard"
-                        onClick={() => {setSelectedItem(rule); setModalOpen(true);}}>
+                        onClick={() => {setSelectedItem(rule); setSelectedType("rule"); setModalOpen(true);}}>
                             <h3>{rule.type}</h3>
                             <p>{rule.description}</p>
-                            <p>{rule.amount}</p>
+                            <p>{formatCurrency(rule.amount)}</p>
                             <div className="paymentTag">
                                 {rule.payment_method || <h5>Agregá un método de pago</h5>}
                             </div>
@@ -155,15 +162,15 @@ export default function Admin() {
                     ))}
                 </div>
 
-                <h2>Servicios importados desde Gmail:</h2>
+                <h2 className="adminSectionTitle">Servicios importados desde Gmail:</h2>
                 
                 <div className="adminGrid">
                     {data.gmail.map(event => (
                         <div key={event.id} className="adminCard"
-                        onClick={() => {setSelectedItem(event); setModalOpen(true);}}>
+                        onClick={() => {setSelectedItem(event); setSelectedType("event"); setModalOpen(true);}}>
                             <h3>{event.type}</h3>
                             <p>{event.description}</p>
-                            <p>{event.amount}</p>
+                            <p>{formatCurrency(event.amount)}</p>
                             <div className="paymentTag">
                                 {event.payment_method || <h5>Agregá un método de pago</h5>}
                             </div>
@@ -174,8 +181,8 @@ export default function Admin() {
 
 
             {modalOpen && selectedItem && (
-                <div className="modal" onClick={() => setModalOpen(false)}>
-                    <div className="modalOverlay" onClick={(e) => e.stopPropagation()}>
+                <div className="modalOverlay" onClick={() => setModalOpen(false)}>
+                    <div className="modal" onClick={(e) => e.stopPropagation()}>
                         <button className="closeBtn" 
                         onClick={() => {setModalOpen(false); setSelectedItem(null); setEditing(false)}}>X</button>
 
@@ -213,7 +220,7 @@ export default function Admin() {
                         <>
                             <h2>{selectedItem.type}</h2>
                             <p>{selectedItem.description}</p>
-                            <p>${selectedItem.amount}</p>
+                            <p>{formatCurrency(selectedItem.amount)}</p>
                             <div className="paymentTag">
                                 {event.payment_method || <h5>Agregá un método de pago</h5>}
                             </div>
