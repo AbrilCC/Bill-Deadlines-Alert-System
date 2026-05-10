@@ -15,12 +15,11 @@ export default function Admin() {
     const [customPaymentMethod, setCustomPaymentMethod] = useState("");
 
     const PAYMENT_METHODS = [
-        "Efectivo",
-        "Mercado Pago",
-        "Tarjeta de débito",
-        "Tarjeta de crédito",
-        "Transferencia bancaria",
-        "Débito automático",
+        "💵 Efectivo",
+        "📱 Mercado Pago",
+        "💳 Tarjeta de débito",
+        "💳 Tarjeta de crédito",
+        "🏛️Transferencia bancaria",
         "Otro..."
     ];
     
@@ -50,6 +49,7 @@ export default function Admin() {
             setEditType(selectedItem.type || "");
             setEditDescription(selectedItem.description || "");
             setEditAmount(selectedItem.amount || "");
+            setPaymentMethod(selectedItem.payment_method || "");
         }
     }, [selectedItem]);
 
@@ -69,7 +69,11 @@ export default function Admin() {
             body: JSON.stringify({
                 type: editType,
                 description: editDescription,
-                amount: editAmount
+                amount: editAmount,
+                payment_method:
+                    paymentMethod === "Otro..."
+                    ? customPaymentMethod
+                    : paymentMethod
             })
         });
 
@@ -112,6 +116,9 @@ export default function Admin() {
                             <h3>{event.type}</h3>
                             <p>{event.description}</p>
                             <p>{event.amount}</p>
+                            <div className="paymentTag">
+                                {event.payment_method || <h5>Agregá un método de pago</h5>}
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -125,6 +132,9 @@ export default function Admin() {
                             <h3>{rule.type}</h3>
                             <p>{rule.description}</p>
                             <p>{rule.amount}</p>
+                            <div className="paymentTag">
+                                {rule.payment_method || <h5>Agregá un método de pago</h5>}
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -138,6 +148,9 @@ export default function Admin() {
                             <h3>{rule.type}</h3>
                             <p>{rule.description}</p>
                             <p>{rule.amount}</p>
+                            <div className="paymentTag">
+                                {rule.payment_method || <h5>Agregá un método de pago</h5>}
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -151,6 +164,9 @@ export default function Admin() {
                             <h3>{event.type}</h3>
                             <p>{event.description}</p>
                             <p>{event.amount}</p>
+                            <div className="paymentTag">
+                                {event.payment_method || <h5>Agregá un método de pago</h5>}
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -173,6 +189,22 @@ export default function Admin() {
                             <input type="number" value={editAmount}
                                 onChange={(e) => setEditAmount(e.target.value)}/>
 
+                            <label>Método de pago</label>
+                            <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}>
+                                <option value="">
+                                    Seleccionar método de pago
+                                </option>
+                                {PAYMENT_METHODS.map(method => (
+                                    <option key={method} value={method}>
+                                        {method}
+                                    </option>
+                                ))}
+                            </select>
+                            {paymentMethod === "Otro..." && (
+                                <input type="text" placeholder="Agregá otro método de pago" 
+                                value={customPaymentMethod} onChange={(e) => setCustomPaymentMethod(e.target.value)}/>
+                            )}
+
                             <button onClick={saveChanges}>
                                 Guardar cambios
                             </button>
@@ -182,22 +214,31 @@ export default function Admin() {
                             <h2>{selectedItem.type}</h2>
                             <p>{selectedItem.description}</p>
                             <p>${selectedItem.amount}</p>
-                            <button onClick={() => setEditing(true)}>
-                                Editar
-                            </button>
-                            <span className="tooltipText">
-                                Modificá el nombre, descripción, y actualizá el precio del servicio
-                            </span>
+                            <div className="paymentTag">
+                                {event.payment_method || <h5>Agregá un método de pago</h5>}
+                            </div>
+                            <div className="tooltipWrapper">
+                                <button onClick={() => setEditing(true)}>
+                                    Editar
+                                </button>
+                                <span className="tooltipText">
+                                    Modificá el nombre, descripción, y actualizá el precio del servicio. Agregá un método de pago.
+                                </span>
+                            </div>
+                            
                         </>)}
 
                         <div className="adminModalButtons">
-                            <button onClick={deleteService}
-                            style={{"background": "#971e1e", "color": "white"}}>
-                                Borrar este servicio
-                            </button>
-                            <span className="tooltipText">
-                                Elimina todos los vencimientos relacionados a este servicio. Esta acción no se puede deshacer. Deberás volver a crearlo manualmente o importarlo desde Gmail.
-                            </span>
+                            <div className="tooltipWrapper">
+                                <button onClick={deleteService}
+                                style={{"background": "#971e1e", "color": "white"}}>
+                                    Borrar este servicio
+                                </button>
+                                <span className="tooltipText">
+                                    Elimina todos los vencimientos relacionados a este servicio. Esta acción no se puede deshacer. Deberás volver a crearlo manualmente o importarlo desde Gmail.
+                                </span>
+                            </div>
+                            
 
                             <button onClick={() => setModalOpen(false)}>
                                 Cerrar
