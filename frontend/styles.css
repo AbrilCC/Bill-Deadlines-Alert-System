@@ -1,7 +1,7 @@
 body {
   font-family: Arial;
   background: #e7e8e8;  
-  background-image: url('logo/background3.png');
+  background-image: url('/logo/background3.png');
   background-size: cover;
 }
 .app-container {
