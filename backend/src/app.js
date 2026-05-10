@@ -10,6 +10,7 @@ import emailsRoutes from "./routes/emails.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
+import preferencesRoutes from "./routes/preferences.routes.js";
 
 const PORT = process.env.PORT || 3000;
 
@@ -34,6 +35,7 @@ app.use(emailsRoutes);
 app.use(authRoutes);
 app.use(dashboardRoutes);
 app.use(adminRoutes);
+app.use(preferencesRoutes);
 
 app.get("/", (req, res) => {
   res.send("API running");

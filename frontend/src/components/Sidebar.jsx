@@ -3,7 +3,8 @@ import {
   Calendar,
   CreditCard,
   Bot,
-  FileChartColumnIncreasing
+  FolderCog,
+  ArrowUpFromLine
 } from "lucide-react";
 
 function Sidebar({ setView, view }) {
@@ -40,8 +41,13 @@ function Sidebar({ setView, view }) {
       </button>
 
       <button className={view === "admin" ? "activeSidebar" : ""} onClick={() => setView("admin")}>
-        <FileChartColumnIncreasing size={18} />
+        <FolderCog size={18} />
         Administrar mis servicios
+      </button>
+
+      <button className={view === "uploadPDF" ? "activeSidebar" : ""} onClick={() => setView("uploadPDF")}>
+        <ArrowUpFromLine size={18} />
+        Cargá tu factura
       </button>
 
       <button onClick={() => window.open("https://t.me/payment_deadlines_alert_bot", "_blank")}>

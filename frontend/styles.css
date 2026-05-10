@@ -157,6 +157,32 @@ input {
     background: #bbdfe7;
 }
 
+
+.suggestionsCard {
+    margin-top: 24px;
+    padding: 18px;
+    border-radius: 16px;
+    background: #f2ebff;
+    border: 2px solid #b39cff;
+}
+.daysSelector {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+.daysSelector button {
+    border: none;
+    padding: 10px 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    background: white;
+}
+.selectedDay {
+    background: #7b61ff !important;
+    color: white;
+}
+
 /* ---------------------------DASHBOARD CARDS--------------------------- */
 .dashboardGrid {
   display: grid;
@@ -434,4 +460,22 @@ input {
 .fc-event {
   border-radius: 8px !important;
   padding: 4px !important;
+}
+
+/* ---------------------------BOX DE UPLOAD PDF--------------------------- */
+.uploadDropzone {
+    border: 2px dashed #7b61ff;
+    border-radius: 18px;
+    min-height: 350px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    transition: 0.2s;
+}
+.uploadDropzone.dragging {
+    background: rgba(123,97,255,0.1);
+    transform: scale(1.01);
 }

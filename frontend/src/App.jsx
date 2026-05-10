@@ -3,6 +3,7 @@ import Sidebar from "./components/Sidebar";
 import Dashboard from "./components/dashboard/Dashboard";
 import Calendar from "./components/Calendar";
 import Admin from "./components/Admin";
+import UploadManual from "./components/UploadManual";
 import CreateSingle from "./components/CreateSingle";
 import CreateWeekly from "./components/CreateWeekly";
 import CreateMonthly from "./components/CreateMonthly";
@@ -50,6 +51,8 @@ function App() {
                 {view === "calendar" && <Calendar />}
 
                 {view === "admin" && <Admin />}
+
+                {view === "uploadPDF" && <UploadManual />}
 
                 {view === "single" && (
                     <CreateSingle setView={setView} />

@@ -19,6 +19,7 @@ router.get("/events", authMiddleware, getEvents);
 router.post("/events/single", authMiddleware, createSingle);
 router.post("/events/weekly", authMiddleware, createWeekly);
 router.post("/events/monthly", authMiddleware, createMonthly);
+router.post("/events/manual", createSingle);
 
 router.patch("/events/:id", authMiddleware, editEvent);
 router.patch("/events/:id/pay", authMiddleware, patchEventPaid);

@@ -10,8 +10,10 @@ export default function CreateSingle({ setView }) {
     description: "",
     amount: "",
     due_date: "",
+    
   });
   const [startDate, setStartDate] = useState(null); 
+  const [preferredDays, setPreferredDays] = useState([]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -22,7 +24,7 @@ export default function CreateSingle({ setView }) {
     const res = await fetch(`${BACKEND_API_URL}/events/single`, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
-      body: JSON.stringify(form),
+      body: JSON.stringify({...form, preferred_days: preferredDays}),
     });
     if (res.ok) {
       setView("calendar");
@@ -30,6 +32,16 @@ export default function CreateSingle({ setView }) {
 
     alert("Evento creado");
   };
+
+  function toggleDay(day) {
+        if (preferredDays.includes(day)) {
+            setPreferredDays(
+                preferredDays.filter(d => d !== day)
+            );
+        } else {
+            setPreferredDays([...preferredDays, day]);
+        }
+    };
 
   return (
     <form onSubmit={handleSubmit} className="card" id="formStyle">
@@ -59,6 +71,30 @@ export default function CreateSingle({ setView }) {
           setStartDate(date);
           setForm({ ...form, due_date: date.toISOString() });
         }} dateFormat="dd/MM/yyyy" className="customDate"/>
+      </div>
+
+      <div className="suggestionsCard">
+        <h3>💡 Bienvenido a la sección de sugerencias</h3>
+        <p>Elegí qué días de la semana suelen quedarte cómodos para pagar servicios. Este paso es completamente opcional.</p>
+        <div className="daysSelector">
+            {[
+                "monday",
+                "tuesday",
+                "wednesday",
+                "thursday",
+                "friday",
+                "saturday",
+                "sunday"
+            ].map(day => (
+                <button type="button" key={day}
+                    className={
+                        preferredDays.includes(day)
+                        ? "selectedDay"
+                        : "" } onClick={() => toggleDay(day)}>
+                    {day}
+                </button>
+            ))}
+        </div>
       </div>
 
       <button type="submit">Guardar</button>

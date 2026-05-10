@@ -14,12 +14,30 @@ function Calendar() {
     type: "",
     description: "",
     amount: "",
-    due_date: ""
+    due_date: "",
+    preferred_days: []
   });
   const [syncLoading, setSyncLoading] = useState(false);
+  const dayMap = {
+      sunday: 0,
+      monday: 1,
+      tuesday: 2,
+      wednesday: 3,
+      thursday: 4,
+      friday: 5,
+      saturday: 6
+  };
 
   const fetchEvents = async () => {
-    const res = await fetch(`${BACKEND_API_URL}/events`);
+    const token = localStorage.getItem("token");
+    const res = await fetch(
+      `${BACKEND_API_URL}/events`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
     const data = await res.json();
 
     const formatted = data.map(e => ({
@@ -32,10 +50,44 @@ function Calendar() {
         description: e.description,
         paid: e.paid,
         email_id: e.email_id,
+        preferred_days: e.preferred_days,
       },
     }));
+    const suggestionEvents = [];
+    for (const e of data) {
+      if (e.paid) continue;
+      if (new Date(e.due_date) < new Date()) continue;
+      const dueDate = new Date(e.due_date);
+      const startWindow = new Date(dueDate);
+      startWindow.setDate(startWindow.getDate() - 7);
 
-    setEvents(formatted);
+      //Look for preferred days 1 week before the due date
+      for (const day of e.preferred_days || []) {
+        const targetDay = dayMap[day];
+        const current = new Date(startWindow);
+
+        while (current < dueDate) {
+          if (current.getDay() === targetDay) {
+            suggestionEvents.push({
+                id: `suggestion-${e.id}-${current.toISOString()}`,
+                title: `💡 ${e.type}`,
+                start: new Date(current),
+                backgroundColor: "#7b61ff",
+                extendedProps: {
+                    isSuggestion: true,
+                    originalEventId: e.id,
+                    amount: e.amount,
+                    description: e.description,
+                    paid: e.paid,
+                    preferred_days: e.preferred_days
+                }
+            });
+          }
+          current.setDate(current.getDate() + 1);
+        }
+      }
+    }
+    setEvents([...formatted, ...suggestionEvents]);
   };
 
   useEffect(() => {
@@ -44,10 +96,14 @@ function Calendar() {
 
   const handleTogglePaid = async () => {
     const isPaid = selectedEvent.extendedProps.paid;
+    const realId =
+    selectedEvent.extendedProps.isSuggestion
+    ? selectedEvent.extendedProps.originalEventId
+    : selectedEvent.id;
 
     const url = isPaid
-      ? `${BACKEND_API_URL}/events/${selectedEvent.id}/unpay`
-      : `${BACKEND_API_URL}/events/${selectedEvent.id}/pay`;
+      ? `${BACKEND_API_URL}/events/${realId}/unpay`
+      : `${BACKEND_API_URL}/events/${realId}/pay`;
 
     await fetch(url, { method: "PATCH" });
 
@@ -109,6 +165,20 @@ function Calendar() {
     }
   };
 
+  function toggleDay(day) {
+    if (editForm.preferred_days.includes(day)) {
+        setEditForm({
+            ...editForm,
+            preferred_days: editForm.preferred_days.filter(d => d !== day)
+        });
+    } else {
+        setEditForm({
+            ...editForm,
+            preferred_days: [...editForm.preferred_days, day]
+        });
+    }
+  }
+
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("es-AR", {
       style: "currency",
@@ -157,7 +227,8 @@ function Calendar() {
                 type: info.event.title,
                 description: info.event.extendedProps.description,
                 amount: info.event.extendedProps.amount,
-                due_date: info.event.start
+                due_date: info.event.start,
+                preferred_days: info.event.extendedProps.preferred_days || []
               });
               setShowModal(true);
             }}
@@ -184,6 +255,26 @@ function Calendar() {
                   <input type="date" value={
                       editForm.due_date ? new Date(editForm.due_date).toISOString().split("T")[0] : ""
                     } onChange={(e) => setEditForm({...editForm, due_date: e.target.value})}/>
+
+                  <label>Días en los que normalmente puedo pagar:</label>
+                  <div className="daysSelector">
+                      {[
+                          "monday",
+                          "tuesday",
+                          "wednesday",
+                          "thursday",
+                          "friday",
+                          "saturday",
+                          "sunday"
+                      ].map(day => (
+                          <button key={day} type="button" className={
+                                  editForm.preferred_days.includes(day)
+                                  ? "selectedDay"
+                                  : ""} onClick={() => toggleDay(day)}>
+                              {day}
+                          </button>
+                      ))}
+                  </div>
                 </>
               ) : (
                 <>

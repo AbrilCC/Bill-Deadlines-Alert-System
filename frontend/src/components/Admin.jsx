@@ -222,7 +222,7 @@ export default function Admin() {
                                     Editar
                                 </button>
                                 <span className="tooltipText">
-                                    Modificá el nombre, descripción, y actualizá el precio del servicio. Agregá un método de pago.
+                                    Modificá el nombre, descripción, actualizá el precio del servicio, o agregá un método de pago.
                                 </span>
                             </div>
                             

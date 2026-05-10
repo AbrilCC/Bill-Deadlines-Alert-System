@@ -14,6 +14,7 @@ export default function CreateMonthly({ setView }) {
     payment_frequency: "monthly",
   });
   const [startDate, setStartDate] = useState(null); 
+  const [preferredDays, setPreferredDays] = useState([]);
 
   const generateMonths = () => {
     const months = [];
@@ -46,13 +47,23 @@ export default function CreateMonthly({ setView }) {
     const res = await fetch(`${BACKEND_API_URL}/events/monthly`, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
-      body: JSON.stringify(form),
+      body: JSON.stringify({...form, preferred_days: preferredDays}),
     });
     if (res.ok) {
       setView("calendar");
     }
     alert("Eventos generados");
   };
+
+  function toggleDay(day) {
+        if (preferredDays.includes(day)) {
+            setPreferredDays(
+                preferredDays.filter(d => d !== day)
+            );
+        } else {
+            setPreferredDays([...preferredDays, day]);
+        }
+    };
 
   return (
     <div className="card" id="formStyle">
@@ -99,6 +110,29 @@ export default function CreateMonthly({ setView }) {
             </option>
           ))}
         </select>
+      </div>
+      <div className="suggestionsCard">
+        <h3>💡 Bienvenido a la sección de sugerencias</h3>
+        <p>Elegí qué días de la semana suelen quedarte cómodos para pagar servicios. Este paso es completamente opcional.</p>
+        <div className="daysSelector">
+            {[
+                "monday",
+                "tuesday",
+                "wednesday",
+                "thursday",
+                "friday",
+                "saturday",
+                "sunday"
+            ].map(day => (
+                <button type="button" key={day}
+                    className={
+                        preferredDays.includes(day)
+                        ? "selectedDay"
+                        : "" } onClick={() => toggleDay(day)}>
+                    {day}
+                </button>
+            ))}
+        </div>
       </div>
 
       <button onClick={handleSubmit}>Generar</button>
