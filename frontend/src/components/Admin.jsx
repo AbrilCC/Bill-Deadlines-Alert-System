@@ -114,68 +114,74 @@ export default function Admin() {
     return(
         <div>
             <div className="adminPage">
-                <h2 className="adminSectionTitle">Servicios de pago único:</h2>
-                
-                <div className="adminGrid">
-                    {data.single.map(event => (
-                        <div key={event.id} className="adminCard"
-                        onClick={() => {setSelectedItem(event); setSelectedType("event"); setModalOpen(true);}}>
-                            <h3>{event.type}</h3>
-                            <p>{event.description}</p>
-                            <p>{formatCurrency(event.amount)}</p>
-                            <div className="paymentTag">
-                                {event.payment_method || <h5>Agregá un método de pago</h5>}
+
+                <div className="adminSection">
+                    <h2 className="adminSectionTitle">Servicios de pago único:</h2>                    
+                    <div className="adminGrid">
+                        {data.single.map(event => (
+                            <div key={event.id} className="adminCard"
+                            onClick={() => {setSelectedItem(event); setSelectedType("event"); setModalOpen(true);}}>
+                                <h3>{event.type}</h3>
+                                <p>{event.description}</p>
+                                <p>{formatCurrency(event.amount)}</p>
+                                <div className="paymentTag">
+                                    {event.payment_method || <h5>Agregá un método de pago</h5>}
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
 
-                <h2 className="adminSectionTitle">Servicios semanales:</h2>
-
-                <div className="adminGrid">
-                    {data.weekly.map(rule => (
-                        <div key={rule.rule_id} className="adminCard"
-                        onClick={() => {setSelectedItem(rule); setSelectedType("rule"); setModalOpen(true);}}>
-                            <h3>{rule.type}</h3>
-                            <p>{rule.description}</p>
-                            <p>{formatCurrency(rule.amount)}</p>
-                            <div className="paymentTag">
-                                {rule.payment_method || <h5>Agregá un método de pago</h5>}
+                <div className="adminSection">
+                    <h2 className="adminSectionTitle">Servicios semanales:</h2>
+                    <div className="adminGrid">
+                        {data.weekly.map(rule => (
+                            <div key={rule.rule_id} className="adminCard"
+                            onClick={() => {setSelectedItem(rule); setSelectedType("rule"); setModalOpen(true);}}>
+                                <h3>{rule.type}</h3>
+                                <p>{rule.description}</p>
+                                <p>{formatCurrency(rule.amount)}</p>
+                                <div className="paymentTag">
+                                    {rule.payment_method || <h5>Agregá un método de pago</h5>}
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
 
-                <h2 className="adminSectionTitle">Servicios mensuales:</h2>
 
-                <div className="adminGrid">
-                    {data.monthly.map(rule => (
-                        <div key={rule.rule_id} className="adminCard"
-                        onClick={() => {setSelectedItem(rule); setSelectedType("rule"); setModalOpen(true);}}>
-                            <h3>{rule.type}</h3>
-                            <p>{rule.description}</p>
-                            <p>{formatCurrency(rule.amount)}</p>
-                            <div className="paymentTag">
-                                {rule.payment_method || <h5>Agregá un método de pago</h5>}
+                <div className="adminSection">
+                    <h2 className="adminSectionTitle">Servicios mensuales:</h2>
+                    <div className="adminGrid">
+                        {data.monthly.map(rule => (
+                            <div key={rule.rule_id} className="adminCard"
+                            onClick={() => {setSelectedItem(rule); setSelectedType("rule"); setModalOpen(true);}}>
+                                <h3>{rule.type}</h3>
+                                <p>{rule.description}</p>
+                                <p>{formatCurrency(rule.amount)}</p>
+                                <div className="paymentTag">
+                                    {rule.payment_method || <h5>Agregá un método de pago</h5>}
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
 
-                <h2 className="adminSectionTitle">Servicios importados desde Gmail:</h2>
-                
-                <div className="adminGrid">
-                    {data.gmail.map(event => (
-                        <div key={event.id} className="adminCard"
-                        onClick={() => {setSelectedItem(event); setSelectedType("event"); setModalOpen(true);}}>
-                            <h3>{event.type}</h3>
-                            <p>{event.description}</p>
-                            <p>{formatCurrency(event.amount)}</p>
-                            <div className="paymentTag">
-                                {event.payment_method || <h5>Agregá un método de pago</h5>}
+                <div className="adminSection">
+                    <h2 className="adminSectionTitle">Servicios importados desde Gmail:</h2>
+                    <div className="adminGrid">
+                        {data.gmail.map(event => (
+                            <div key={event.id} className="adminCard"
+                            onClick={() => {setSelectedItem(event); setSelectedType("event"); setModalOpen(true);}}>
+                                <h3>{event.type}</h3>
+                                <p>{event.description}</p>
+                                <p>{formatCurrency(event.amount)}</p>
+                                <div className="paymentTag">
+                                    {event.payment_method || <h5>Agregá un método de pago</h5>}
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             </div>
 

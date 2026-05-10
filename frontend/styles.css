@@ -208,6 +208,8 @@ input {
 /* ---------------------------ADMIN PAGE--------------------------- */
 .adminPage {
   padding: 24px;
+}
+.adminSection {
   margin-bottom: 60px;
 }
 .adminGrid {
@@ -225,7 +227,7 @@ input {
   padding-left: 14px;
 }
 .adminCard {
-  background: linear-gradient(135deg, #ff8c42, #e9b28f);
+  background: linear-gradient(#df6b17, #ff8c42);
   color: white;
   border-radius: 16px;
   padding: 20px;
@@ -482,7 +484,9 @@ input {
 
 /* PARA LAS BOXES DE VENCIMIENTOS EN EL CALENDARIO */
 .event-box {
-  min-width: 180px;
+  /*min-width: 180px;*/
+  width: 100%;
+  box-sizing: border-box;
   padding: 10px;
   border-radius: 8px;
   font-size: 14px;
@@ -496,6 +500,10 @@ input {
   border: none !important;
   background: transparent !important;
   padding: 0 !important;
+  margin-bottom: 4px;
+}
+.fc-daygrid-event-harness {
+  width: 100%;
 }
 .fc-event {
   border-radius: 8px !important;

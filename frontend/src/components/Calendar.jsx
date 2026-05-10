@@ -30,7 +30,6 @@ function Calendar() {
 
   const fetchEvents = async () => {
     const token = localStorage.getItem("token");
-    console.log(`Token: ${token}`);
     const res = await fetch(
       `${BACKEND_API_URL}/events`,
       {
@@ -44,7 +43,7 @@ function Calendar() {
     const formatted = data.map(e => ({
       id: e.id,
       title: e.type,
-      start: `${e.due_date}T12:00:00`,
+      start: new Date(e.due_date),
       backgroundColor: e.paid ? "#9c9c9c" : "#df6b17",
       extendedProps: {
         amount: e.amount,
@@ -88,6 +87,8 @@ function Calendar() {
         }
       }
     }
+    console.log(data);
+    console.log(formatted);
     setEvents([...formatted, ...suggestionEvents]);
   };
 
