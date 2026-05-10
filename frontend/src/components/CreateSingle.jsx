@@ -75,16 +75,16 @@ export default function CreateSingle({ setView }) {
 
       <div className="suggestionsCard">
         <h3>💡 Bienvenido a la sección de sugerencias</h3>
-        <p>Elegí qué días de la semana suelen quedarte cómodos para pagar servicios. Este paso es completamente opcional.</p>
+        <p>Elegí qué días de la semana suelen quedarte cómodos para pagar este servicio, para recordártelo cerca de la fecha. Este paso es completamente opcional.</p>
         <div className="daysSelector">
             {[
-                "monday",
-                "tuesday",
-                "wednesday",
-                "thursday",
-                "friday",
-                "saturday",
-                "sunday"
+                "Lunes",
+                "Martes",
+                "Miércoles",
+                "Jueves",
+                "Viernes",
+                "Sábado",
+                "Domingo"
             ].map(day => (
                 <button type="button" key={day}
                     className={
