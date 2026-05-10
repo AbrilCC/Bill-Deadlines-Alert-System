@@ -17,6 +17,8 @@ function Auth() {
             : mode === "login"
                 ? `${BACKEND_API_URL}/auth/login`
                 : `${BACKEND_API_URL}/auth/register`;
+    console.log("MODE:", mode);
+    console.log("ENDPOINT:", endpoint);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -35,14 +37,20 @@ function Auth() {
                 )
             });
 
-            const data = await res.json();
+            let data;
+            try { data = await res.json();}
+            catch {throw new Error("Respuesta inválida del servidor");}
+            
             if (!res.ok) {
+                setLoading(false);
                 alert(data.error);
                 return;
             };
             if (mode === "forgot") {
                 alert("Te enviamos un mail para recuperar tu contraseña");
                 setMode("login");
+                setPassword("");
+                setEmail("");
                 return;
             };
 
@@ -117,7 +125,7 @@ function Auth() {
                     marginTop: "16px",
                     cursor: "pointer",
                     color: "#df6b17",
-                    "text-decoration": "underline"}} onClick={() => setMode(mode === "login" ? "register" : "login")}>
+                    "text-decoration": "underline"}} onClick={() => {setMode(mode === "login" ? "register" : "login"); setPassword(""); setEmail("")}}>
                     {mode === "login"
                         ? "¿No tenés cuenta? Registrate"
                         : "¿Ya tenés cuenta? Iniciar sesión"}
@@ -125,7 +133,7 @@ function Auth() {
                 <p style={{ 
                     marginTop: "16px",
                     cursor: "pointer",
-                    color: "#df6b17"}} onClick={() => {setMode("forgot"); setPassword("")}}>
+                    color: "#df6b17"}} onClick={() => {setMode("forgot"); setPassword(""); setEmail("")}}>
                     Olvidé mi contraseña</p>
             </>)}
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Upload } from "lucide-react";
 
-const BACKEND_API_URL = import.meta.env.VITE_BACKEND_URL;
+const BACKEND_API_URL = import.meta.env.VITE_BACKEND_URL;  
 
 function UploadManual() {
     const [dragging, setDragging] = useState(false);
@@ -14,6 +14,14 @@ function UploadManual() {
         amount: "",
         due_date: ""
     });
+
+    
+    const formatCurrency = (value) => {
+        return new Intl.NumberFormat("es-AR", {
+        style: "currency",
+        currency: "ARS",
+        }).format(value);
+    };
 
     async function handleDrop(e) {
         e.preventDefault();
@@ -71,6 +79,8 @@ function UploadManual() {
             });
         } catch (error) {
             console.log(error);
+        } finally {
+            setFile(null);
         }
     };
 
@@ -90,7 +100,7 @@ function UploadManual() {
             <div className="spinner"></div>
             <p>Procesando factura...</p>
         </div>
-        )};
+        )}
 
         <div className="card">
             <h3>Si te llegó una factura por fuera de Gmail y querés
@@ -113,13 +123,26 @@ function UploadManual() {
             {parsedData && (
             <>
                 <h3>{file?.name}</h3>
-                <input placeholder="Tipo" value={form.type} onChange={(e) => setForm({...form, type: e.target.value})}/>
+                <div className="formInputRow">
+                    <label>Nombre:</label>
+                    <input placeholder="ej.: Factura de Claro" value={form.type} onChange={(e) => setForm({...form, type: e.target.value})}/>
+                </div>
 
-                <textarea placeholder="Descripción" value={form.description} onChange={(e) => setForm({...form, description: e.target.value})}/>
+                <div className="formInputRow">
+                    <label>Descripción:</label>
+                    <input placeholder="ej.: Celu Valen" value={form.description} onChange={(e) => setForm({...form, description: e.target.value})}/>
+                </div>
 
-                <input type="number" value={form.amount} onChange={(e) => setForm({...form, amount: e.target.value})}/>
+                <div className="formInputRow">
+                    <label>Monto:</label>
+                    <input type="number" value={form.amount} onChange={(e) => setForm({...form, amount: e.target.value})}/>
+                    <small>{formatCurrency(form.amount)}</small>
+                </div>
 
-                <input type="date" value={form.due_date} onChange={(e) => setForm({...form, due_date: e.target.value})}/>
+                <div className="formInputRow">
+                    <label>Fecha de vencimiento:</label>
+                    <input type="date" value={form.due_date} onChange={(e) => setForm({...form, due_date: e.target.value})}/>
+                </div>
 
                 <button onClick={handleSave}>
                     Guardar factura

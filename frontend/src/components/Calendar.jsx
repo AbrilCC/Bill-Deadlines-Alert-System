@@ -30,6 +30,7 @@ function Calendar() {
 
   const fetchEvents = async () => {
     const token = localStorage.getItem("token");
+    console.log(`Token: ${token}`);
     const res = await fetch(
       `${BACKEND_API_URL}/events`,
       {
