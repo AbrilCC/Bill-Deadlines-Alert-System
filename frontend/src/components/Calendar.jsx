@@ -28,6 +28,12 @@ function Calendar() {
       saturday: 6
   };
 
+  
+  function parseLocalDate(dateStr) {
+    const [year, month, day] = dateStr.split("-");
+    return new Date(year, month - 1, day);
+  }
+
   const fetchEvents = async () => {
     const token = localStorage.getItem("token");
     const res = await fetch(
@@ -41,11 +47,10 @@ function Calendar() {
     const data = await res.json();
 
     const formatted = data.map(e => {
-      const [year, month, day] = e.due_date.split("-");
       return {
         id: e.id,
         title: e.type,
-        start: new Date(year, month - 1, day),
+        start: parseLocalDate(e.due_date),
         backgroundColor: e.paid ? "#9c9c9c" : "#df6b17",
         extendedProps: {
           amount: e.amount,
@@ -61,7 +66,7 @@ function Calendar() {
       if (e.paid) continue;
       if (new Date(e.due_date) < new Date()) continue;
 
-      const dueDate = new Date(e.due_date);
+      const dueDate = parseLocalDate(e.due_date);
       dueDate.setHours(0,0,0,0);
       const startWindow = new Date(dueDate);
       startWindow.setDate(startWindow.getDate() - 7);
@@ -194,6 +199,7 @@ function Calendar() {
       currency: "ARS",
     }).format(value);
   };
+
   
   //Sync loading overlay for Sincronizar con Gmail
   if (syncLoading) {

@@ -25,7 +25,7 @@ export default function CreateSingle({ setView }) {
     const res = await fetch(`${BACKEND_API_URL}/events/single`, {
       method: "POST",
       headers: {"Content-Type": "application/json", Authorization: `Bearer ${token}`},
-      body: JSON.stringify({...form, preferred_days: preferredDays}),
+      body: JSON.stringify({...form, preferred_days: preferredDays, source: "manual"}),
     });
     if (res.ok) {
       setView("calendar");
@@ -70,7 +70,9 @@ export default function CreateSingle({ setView }) {
         <label>Fecha de vencimiento:</label>        
         <DatePicker selected={startDate} onChange={(date) => {
           setStartDate(date);
-          setForm({ ...form, due_date: date.toISOString() });
+          const localDate =`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
+          setForm({ ...form, due_date: localDate});
         }} dateFormat="dd/MM/yyyy" className="customDate"/>
       </div>
 
@@ -79,20 +81,20 @@ export default function CreateSingle({ setView }) {
         <p>Elegí qué días de la semana suelen quedarte cómodos para pagar este servicio, para recordártelo cerca de la fecha. Este paso es completamente opcional.</p>
         <div className="daysSelector">
             {[
-                "Lunes",
-                "Martes",
-                "Miércoles",
-                "Jueves",
-                "Viernes",
-                "Sábado",
-                "Domingo"
+                { label: "Lunes", value: "monday" },
+                { label: "Martes", value: "tuesday" },
+                { label: "Miércoles", value: "wednesday" },
+                { label: "Jueves", value: "thursday" },
+                { label: "Viernes", value: "friday" },
+                { label: "Sábado", value: "saturday" },
+                { label: "Domingo", value: "sunday" }
             ].map(day => (
-                <button type="button" key={day}
+                <button type="button" key={day.value}
                     className={
-                        preferredDays.includes(day)
+                        preferredDays.includes(day.value)
                         ? "selectedDay"
                         : "" } onClick={() => toggleDay(day)}>
-                    {day}
+                    {day.label}
                 </button>
             ))}
         </div>
