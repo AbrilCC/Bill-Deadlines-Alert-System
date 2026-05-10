@@ -161,3 +161,39 @@ export const markEventAsUnpaid = async (client, id, user_id) => {
 export const deleteEvent = async (client, id, user_id) => {
   await client.query("DELETE FROM events WHERE id = $1 AND user_id =$2", [id, user_id]);
 };
+
+export const updateRule = async (client, rule_id, user_id, data) => {
+  const { type, description, amount } = data;
+  const ruleRes = await client.query(
+    `UPDATE event_rules
+    SET type = $1, description = $2
+    WHERE id = $3
+    AND user_id = $4
+    RETURNING *`,
+    [type, description, rule_id, user_id]
+  );
+  await client.query(
+    `UPDATE events
+    SET type = $1, description = $2, amount = $3
+    WHERE rule_id = $4 AND user_id = $5`,
+    [type, description, amount, rule_id, user_id]
+  );
+
+  return ruleRes.rows[0];
+};
+
+export const deleteRule = async (client, rule_id, user_id) => {
+  //Delete associated events
+  await client.query(
+    `DELETE FROM events
+    WHERE rule_id = $1 AND user_id = $2`,
+    [rule_id, user_id]
+  );
+
+  //Delete the rules
+  await client.query(
+    `DELETE FROM event_rules
+    WHERE id = $1 AND user_id = $2`,
+    [rule_id, user_id]
+  );
+}

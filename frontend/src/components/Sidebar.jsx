@@ -2,7 +2,8 @@ import {
   LayoutDashboard,
   Calendar,
   CreditCard,
-  Bot
+  Bot,
+  FileChartColumnIncreasing
 } from "lucide-react";
 
 function Sidebar({ setView, view }) {
@@ -12,9 +13,6 @@ function Sidebar({ setView, view }) {
             <img src="/logo/orange-round.png" alt="Logo" className="sidebarLogo"></img>
             <h2 style={{"color": "#fe6601"}}>Panel de control</h2>
         </div>
-                
-        
-      
 
       <button className={view === "dashboard" ? "activeSidebar" : ""} onClick={() => setView("dashboard")}>
         <LayoutDashboard size={18} />
@@ -39,6 +37,11 @@ function Sidebar({ setView, view }) {
       <button className={view === "monthly" ? "activeSidebar" : ""} onClick={() => setView("monthly")}>
         <CreditCard size={18} />
         Agregar pagos mensuales
+      </button>
+
+      <button className={view === "admin" ? "activeSidebar" : ""} onClick={() => setView("admin")}>
+        <FileChartColumnIncreasing size={18} />
+        Administrar mis servicios
       </button>
 
       <button onClick={() => window.open("https://t.me/payment_deadlines_alert_bot", "_blank")}>

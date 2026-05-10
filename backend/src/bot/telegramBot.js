@@ -105,13 +105,13 @@ function getEmoji(type) {
   const map = {
     "Personal": "📱",
     "Claro": "📱",
-    "Fibertel": "🌐",
+    "Fibertel": "📶",
     "Tarjeta Visa": "💳",
     "Tarjeta Mastercard": "💳",
-    "Banco Santander": "🏦",
-    "Banco Galicia": "🏦",
+    "Banco Santander": "🏛️",
+    "Banco Galicia": "🏛️",
     "Luz": "💡",
-    "Aysa": "🚰",
+    "Aysa": "💧",
     "Inglés": "📖",
     "Factura": "📄"
   };

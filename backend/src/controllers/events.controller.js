@@ -6,7 +6,9 @@ import {
   updateEvent,
   markEventAsPaid,
   markEventAsUnpaid,
+  updateRule,
   deleteEvent,
+  deleteRule,
 } from "../services/events.service.js";
 import client from "../utils/supabaseClient.js";
 
@@ -91,6 +93,15 @@ export const patchEventUnpaid = async (req, res) => {
   }
 };
 
+export const patchRule = async (req, res) => {
+  try {
+    const updated = await updateRule(client, req.params.id, req.user.id, req.body);
+    res.json(updated);
+  } catch (error) {
+    res.status(500).json({error: error.message});
+  }
+};
+
 export const removeEvent = async (req, res) => {
   try {
     await deleteEvent(client, req.params.id, req.user.id);
@@ -99,3 +110,12 @@ export const removeEvent = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const removeRule = async (req, res) => {
+  try {
+    await deleteRule(client, req.params.id, req.user.id);
+    res.json({message: "Rule deleted!"});
+  } catch (error) {
+    res.status(500).json({error: error.message});
+  }
+}

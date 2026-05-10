@@ -9,6 +9,7 @@ import eventsRoutes from "./routes/events.routes.js";
 import emailsRoutes from "./routes/emails.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
 
 const PORT = process.env.PORT || 3000;
 
@@ -32,6 +33,7 @@ app.use(eventsRoutes);
 app.use(emailsRoutes);
 app.use(authRoutes);
 app.use(dashboardRoutes);
+app.use(adminRoutes);
 
 app.get("/", (req, res) => {
   res.send("API running");

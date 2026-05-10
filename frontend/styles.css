@@ -30,6 +30,7 @@ input {
 
 /* ---------------------------TOPBAR--------------------------- */
 .topbar {
+    font-family: "Stack Sans Headline", sans-serif;
     height: 60px;
     background: #1f2a40;
     display: flex;
@@ -37,7 +38,7 @@ input {
     align-items: center;
     gap: 40px;
     padding: 0 20px;
-    color: white;
+    color: #f5dac8;
     font-size: 20px;
 }
 .topbar .menu {
@@ -177,6 +178,34 @@ input {
 }
 .gmailCard {
   width: 80%;
+}
+
+/* ---------------------------ADMIN PAGE--------------------------- */
+.adminPage {
+  padding: 24px;
+}
+.adminGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+.adminCard {
+  background: #1f2a40;
+  color: white;
+  border-radius: 16px;
+  padding: 20px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.adminCard:hover {
+  transform: translateY(-3px);
+}
+.adminModalButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 24px;
 }
 
 /* ---------------------------MODAL--------------------------- */
@@ -333,6 +362,14 @@ input {
   border-radius: 6px;
 }
 
+/* PARA EL OLVIDE MI CONTRASEÑA */
+.forgotPassword {
+  margin-top: 12px;
+  color: #df6b17;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 /* PARA LAS BOXES DE VENCIMIENTOS EN EL CALENDARIO */
 .event-box {
   min-width: 180px;
@@ -350,68 +387,4 @@ input {
 .fc-event {
   border-radius: 8px !important;
   padding: 4px !important;
-}
-
-
-
-
-/**
-	loader--5
-**/
-.loader--5 {
-	--tilt-deg: 40deg;
-	--anim-duration: 0.6s;
-	aspect-ratio: 1 / 1;
-	perspective: 50vmin;
-	transform-style: preserve-3d;
-	animation: loader-5-1 calc(var(--anim-duration) * 3) linear alternate-reverse infinite;
-}
-
-.loader--5::before,
-.loader--5::after {
-	width: 50%;
-	aspect-ratio: 1 / 1;
-	background-color: currentColor;
-	top: 25%;
-	left: 25%;
-	clip-path: polygon(50% 0, 100% 100%, 0 100%);
-	animation: loader-5 var(--anim-duration) cubic-bezier(0.07, 0.59, 0.56, 0.88) infinite;
-}
-
-.loader--5::before {
-	--turn-deg: 360deg;
-}
-
-.loader--5::after {
-	--turn-deg: 410deg;
-	animation-delay: calc(var(--anim-duration) / 1.8 * -1);
-}
-
-@keyframes loader-5 {
-	0% {
-		transform: scale(0.3) translateZ(-5vmin);
-	}
-	
-	0%, 100% {
-		opacity: 0;
-	}
-	
-	66% {
-		opacity: 0.8;
-		transform: scale(1.2) translateZ(5vmin) rotate(var(--turn-deg));
-	}
-	
-	100% {
-		transform: scale(1) translateZ(3vmin) rotate(calc(var(--turn-deg) * 1.2));
-	}
-}
-
-@keyframes loader-5-1 {
-	0% {
-		transform: rotateX(var(--tilt-deg)) rotateY(-15deg);
-	}
-
-	100% {
-		transform: rotateX(var(--tilt-deg)) rotateY(15deg);
-	}
 }

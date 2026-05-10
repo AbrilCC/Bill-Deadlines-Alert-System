@@ -2,10 +2,10 @@ import { useState } from 'react'
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./components/dashboard/Dashboard";
 import Calendar from "./components/Calendar";
+import Admin from "./components/Admin";
 import CreateSingle from "./components/CreateSingle";
 import CreateWeekly from "./components/CreateWeekly";
 import CreateMonthly from "./components/CreateMonthly";
-import AutoEvents from "./components/AutoEvents";
 import Auth from "./Login";
 import "../styles.css"
 import { LogIn } from "lucide-react";
@@ -14,9 +14,9 @@ function App() {
     const token = localStorage.getItem("token");    
     const [view, setView] = useState("dashboard");
 
-    if (!token) {
+    /*if (!token) {
         return <Auth />;    //Only show the site to registered users
-    }
+    }*/
 
   return (
     <div>
@@ -49,6 +49,8 @@ function App() {
 
                 {view === "calendar" && <Calendar />}
 
+                {view === "admin" && <Admin />}
+
                 {view === "single" && (
                     <CreateSingle setView={setView} />
                 )}
@@ -60,8 +62,6 @@ function App() {
                 {view === "monthly" && (
                     <CreateMonthly setView={setView} />
                 )}
-
-                {view === "auto" && <AutoEvents />}
 
             </div>
 

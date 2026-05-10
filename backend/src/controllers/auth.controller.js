@@ -7,6 +7,7 @@ import {
 } from "../services/auth.service.js";
 import { validatePassword } from "../utils/validators.js"
 import { oauth2Client } from "../services/gmail.service.js";
+import { sendResetPasswordEmail } from "../services/mail.service.js"
 
 const SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"];
 
@@ -102,4 +103,73 @@ export const login = async (req, res) => {
     } catch (error) {
         res.status(500).json({error: error.message});
     }
-}
+};
+
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const result = await client.query(
+      "SELECT * FROM users WHERE email = $1",
+      [email]
+    );
+
+    const user = result.rows[0];
+
+    if (!user) {
+      return res.json({
+        message: "Si el email existe, se enviará un link"
+      });
+    }
+
+    const resetToken = jwt.sign(
+      { id: user.id },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+
+    await sendResetPasswordEmail(user.email, resetLink);
+
+    res.json({
+      message: "Mail enviado"
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  try {
+    const { token, password } = req.body;
+
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET
+    );
+
+    if (!validatePassword(password)) {
+      return res.status(400).json({
+        error: "Contraseña inválida"
+      });
+    }
+
+    const password_hash = await hashPassword(password);
+
+    await client.query(
+      `UPDATE users
+      SET password_hash = $1
+      WHERE id = $2`,
+      [password_hash, decoded.id]
+    );
+
+    res.json({
+      message: "Contraseña actualizada"
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
