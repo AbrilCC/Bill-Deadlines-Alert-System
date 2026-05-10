@@ -13,7 +13,7 @@ const KEYWORDS = [
     "saldo",
     "vence",
     "vencimiento",
-    "factura",
+    "importe",
     "pago",
     "pagar"
 ];

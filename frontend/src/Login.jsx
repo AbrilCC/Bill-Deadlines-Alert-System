@@ -1,23 +1,22 @@
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, ArrowBigLeft } from "lucide-react";
 
 const BACKEND_API_URL = import.meta.env.VITE_BACKEND_URL;
 
 function Auth() {
-    const [isLogin, setIsLogin] = useState(false);
-
+    const [mode, setMode] = useState("register");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [forgotMode, setForgotMode] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
     const [loading, setLoading] = useState(false);
 
-    const endpoint = forgotMode
-        ? `${BACKEND_API_URL}/auth/forgot-password`
-        : isLogin
-            ? `${BACKEND_API_URL}/auth/login`
-            : `${BACKEND_API_URL}/auth/register`;
+    const endpoint = 
+        mode === "forgot"
+            ? `${BACKEND_API_URL}/auth/forgot-password`
+            : mode === "login"
+                ? `${BACKEND_API_URL}/auth/login`
+                : `${BACKEND_API_URL}/auth/register`;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -30,7 +29,7 @@ function Auth() {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(
-                    forgotMode
+                    mode === "forgot"
                         ? { email }
                         : { email, password }
                 )
@@ -40,14 +39,21 @@ function Auth() {
             if (!res.ok) {
                 alert(data.error);
                 return;
-            }
+            };
+            if (mode === "forgot") {
+                alert("Te enviamos un mail para recuperar tu contraseña");
+                setMode("login");
+                return;
+            };
+
+            // For Login / Register
             localStorage.setItem("token", data.token);
-            window.location.reload();
             alert(
-                isLogin
+                mode === "login"
                     ? "Inición sesiada ✅"
                     : "Cuenta creada ✅"
             );
+            window.location.reload();
 
         } catch (error) {
             console.error(error);
@@ -59,10 +65,13 @@ function Auth() {
     return (
         <form onSubmit={handleSubmit} className="card" id="formStyle">
 
-            <h2>
-                {isLogin
-                    ? "Iniciar sesión"
-                    : "Crear cuenta"}
+            <h2> {
+                    mode === "forgot"
+                        ? "Recuperar contraseña"
+                        : mode === "login"
+                            ? "Iniciar sesión"
+                            : "Crear cuenta"
+                }
             </h2>
 
             <div className="formInputRow">
@@ -76,7 +85,7 @@ function Auth() {
                 />
             </div>
 
-            {!forgotMode && (
+            {mode !== "forgot" && (
             <div className="formInputRow">
                 <label>Contraseña</label>
                 <div className="passwordInputContainer">
@@ -95,32 +104,36 @@ function Auth() {
             </div>)}
 
             <button type="submit" disabled={loading}>
-                {isLogin
-                    ? "Ingresar"
-                    : "Crear cuenta"}
+                {mode === "forgot"
+                    ? "Enviar mail"
+                    : mode === "login"
+                        ? "Ingresar"
+                        : "Crear cuenta"}
             </button>
 
-            <p style={{
+            {mode !== "forgot" && (
+            <>
+                <p style={{
                     marginTop: "16px",
                     cursor: "pointer",
                     color: "#df6b17",
-                    "text-decoration": "underline"
-                }} onClick={() => setIsLogin(!isLogin)}>
-                {
-                    isLogin
-                    ? "¿No tenés cuenta? Registrate"
-                    : "¿Ya tenés cuenta? Iniciar sesión"
-                }
-            </p>
-
-            <p style={{
+                    "text-decoration": "underline"}} onClick={() => setMode(mode === "login" ? "register" : "login")}>
+                    {mode === "login"
+                        ? "¿No tenés cuenta? Registrate"
+                        : "¿Ya tenés cuenta? Iniciar sesión"}
+                </p>
+                <p style={{ 
                     marginTop: "16px",
                     cursor: "pointer",
-                    color: "#df6b17"
-                }} onClick={() => setForgotMode(!forgotMode)}>
-            Olvidé mi contraseña
-            </p>
+                    color: "#df6b17"}} onClick={() => {setMode("forgot"); setPassword("")}}>
+                    Olvidé mi contraseña</p>
+            </>)}
 
+            {mode === "forgot" && (
+                <button type="button" className="backToLoginBtn" onClick={() => setMode("login")}>
+                    <ArrowBigLeft size={28} /> Volver al login
+                </button>
+            )}
         </form>
     );
 }

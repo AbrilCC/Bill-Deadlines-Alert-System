@@ -28,9 +28,10 @@ export default function CreateWeekly({ setView }) {
         alert("Completá todos los campos obligatorios");
         return;
     }
+    const token = localStorage.getItem("token");
     const res = await fetch(`${BACKEND_API_URL}/events/weekly`, {
       method: "POST",
-      headers: {"Content-Type": "application/json"},
+      headers: {"Content-Type": "application/json", Authorization: `Bearer ${token}`},
       body: JSON.stringify({...form, preferred_days: preferredDays}),
     });
     

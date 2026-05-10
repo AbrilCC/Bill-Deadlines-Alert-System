@@ -43,7 +43,7 @@ function Calendar() {
     const formatted = data.map(e => ({
       id: e.id,
       title: e.type,
-      start: e.due_date,
+      start: `${e.due_date}T12:00:00`,
       backgroundColor: e.paid ? "#9c9c9c" : "#df6b17",
       extendedProps: {
         amount: e.amount,

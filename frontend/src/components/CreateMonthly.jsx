@@ -44,9 +44,10 @@ export default function CreateMonthly({ setView }) {
   };
 
   const handleSubmit = async () => {
+    const token = localStorage.getItem("token");
     const res = await fetch(`${BACKEND_API_URL}/events/monthly`, {
       method: "POST",
-      headers: {"Content-Type": "application/json"},
+      headers: {"Content-Type": "application/json", Authorization: `Bearer ${token}`},
       body: JSON.stringify({...form, preferred_days: preferredDays}),
     });
     if (res.ok) {
