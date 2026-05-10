@@ -15,9 +15,9 @@ function App() {
     const token = localStorage.getItem("token");    
     const [view, setView] = useState("dashboard");
 
-    /*if (!token) {
+    if (!token) {
         return <Auth />;    //Only show the site to registered users
-    }*/
+    }
 
   return (
     <div>
