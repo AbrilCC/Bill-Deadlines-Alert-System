@@ -55,10 +55,11 @@ export default function Admin() {
 
     async function saveChanges() {
         const token = localStorage.getItem("token");
+        const itemId = selectedItem.rule_id || selectedItem.id;
         const endpoint =
             selectedType === "rule"
-            ? `${BACKEND_API_URL}/rules/${selectedItem.id}`
-            : `${BACKEND_API_URL}/events/${selectedItem.id}`;
+            ? `${BACKEND_API_URL}/rules/${itemId}`
+            : `${BACKEND_API_URL}/events/${itemId}`;
 
         await fetch(endpoint, {
             method: "PATCH",
@@ -82,10 +83,11 @@ export default function Admin() {
 
     async function deleteService() {
         const token = localStorage.getItem("token");
+        const itemId = selectedItem.rule_id || selectedItem.id;
         const endpoint =
             selectedType === "rule"
-            ? `${BACKEND_API_URL}/rules/${selectedItem.id}`
-            : `${BACKEND_API_URL}/events/${selectedItem.id}`;
+            ? `${BACKEND_API_URL}/rules/${itemId}`
+            : `${BACKEND_API_URL}/events/${itemId}`;
 
         await fetch(endpoint, {
             method: "DELETE",
@@ -125,7 +127,7 @@ export default function Admin() {
                                 <p>{event.description}</p>
                                 <p>{formatCurrency(event.amount)}</p>
                                 <div className="paymentTag">
-                                    {event.payment_method || <h3>Agregá un método de pago</h3>}
+                                    {event.payment_method || <h4>Agregá un método de pago</h4>}
                                 </div>
                             </div>
                         ))}
@@ -142,7 +144,7 @@ export default function Admin() {
                                 <p>{rule.description}</p>
                                 <p>{formatCurrency(rule.amount)}</p>
                                 <div className="paymentTag">
-                                    {rule.payment_method || <h3>Agregá un método de pago</h3>}
+                                    {rule.payment_method || <h4>Agregá un método de pago</h4>}
                                 </div>
                             </div>
                         ))}
@@ -160,7 +162,7 @@ export default function Admin() {
                                 <p>{rule.description}</p>
                                 <p>{formatCurrency(rule.amount)}</p>
                                 <div className="paymentTag">
-                                    {rule.payment_method || <h3>Agregá un método de pago</h3>}
+                                    {rule.payment_method || <h4>Agregá un método de pago</h4>}
                                 </div>
                             </div>
                         ))}
@@ -177,7 +179,7 @@ export default function Admin() {
                                 <p>{event.description}</p>
                                 <p>{formatCurrency(event.amount)}</p>
                                 <div className="paymentTag">
-                                    {event.payment_method || <h3>Agregá un método de pago</h3>}
+                                    {event.payment_method || <h4>Agregá un método de pago</h4>}
                                 </div>
                             </div>
                         ))}
@@ -228,7 +230,7 @@ export default function Admin() {
                             <p>{selectedItem.description}</p>
                             <p>{formatCurrency(selectedItem.amount)}</p>
                             <div className="paymentTag">
-                                {event.payment_method || <h3>Agregá un método de pago</h3>}
+                                {selectedItem.payment_method || <h3>Agregá un método de pago</h3>}
                             </div>
                             <div className="tooltipWrapper">
                                 <button onClick={() => setEditing(true)}>

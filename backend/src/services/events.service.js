@@ -20,16 +20,16 @@ export const createSingleEvent = async (client, event) => {
 };
 
 export const createWeeklyEvents = async (client, event) => {
-  const { user_id, type, description, amount, start_date, end_date, weekday } = event;
+  const { user_id, type, description, amount, start_date, end_date, weekday,  payment_method, preferred_days } = event;
 
   const ruleRes = await client.query(
     `
     INSERT INTO event_rules
-    (user_id, type, description, payment_frequency, start_date, end_date, weekday)
-    VALUES ($1, $2, $3, 'weekly', $4, $5, $6)
+    (user_id, type, description, amount, start_date, end_date, weekday, payment_method, preferred_days, payment_frequency)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'weekly')
     RETURNING *
     `,
-    [user_id, type, description, start_date, end_date, weekday]
+    [user_id, type, description, amount, start_date, end_date, weekday, payment_method, preferred_days]
   );
 
   const rule = ruleRes.rows[0];
@@ -80,14 +80,15 @@ export const createWeeklyEvents = async (client, event) => {
 
 
 export const createMonthlyEvents = async (client, data) => {
-  const { user_id, type, description, amount, start_date, end_date, payment_frequency } = data;
+  const { user_id, type, description, amount, start_date, end_date, payment_method, preferred_days } = data;
 
   //Create the rule
   const ruleRes = await client.query(
     `INSERT INTO event_rules
-    (user_id, type, description, payment_frequency, start_date, end_date)
-    VALUES ($1, $2, $3, 'monthly', $4, $5) RETURNING *`,
-    [user_id, type, description, start_date, end_date]
+    (user_id, type, description, amount, start_date, end_date, payment_method, preferred_days, payment_frequency)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'monthly')
+    RETURNING *`,
+    [user_id, type, description, amount, start_date, end_date, payment_method, preferred_days]
   );
   const rule = ruleRes.rows[0];
 
@@ -163,14 +164,14 @@ export const deleteEvent = async (client, id, user_id) => {
 };
 
 export const updateRule = async (client, rule_id, user_id, data) => {
-  const { type, description, amount } = data;
+  const { type, description, amount, payment_method, preferred_days } = data;
   const ruleRes = await client.query(
     `UPDATE event_rules
-    SET type = $1, description = $2
-    WHERE id = $3
-    AND user_id = $4
+    SET type = $1, description = $2, amount = $3, payment_method = $4, preferred_days = $5
+    WHERE id = $6
+    AND user_id = $7
     RETURNING *`,
-    [type, description, rule_id, user_id]
+    [type, description, amount, payment_method, preferred_days, rule_id, user_id]
   );
   await client.query(
     `UPDATE events

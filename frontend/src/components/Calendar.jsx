@@ -83,6 +83,9 @@ function Calendar() {
 
       //Look for preferred days 1 week before the due date
       for (const day of e.preferred_days || []) {
+        console.log("PREFERRED DAYS:", e.preferred_days);
+        console.log(typeof e.preferred_days);
+        
         const targetDay = dayMap[day];
         const current = new Date(startWindow);
         current.setHours(0,0,0,0);
