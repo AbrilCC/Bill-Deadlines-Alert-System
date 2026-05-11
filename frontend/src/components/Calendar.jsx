@@ -69,7 +69,11 @@ function Calendar() {
     const suggestionEvents = [];
     for (const e of data) {
       if (e.paid) continue;
-      if (new Date(e.due_date) < new Date()) continue;
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      const due = new Date(e.due_date);
+      due.setHours(0,0,0,0);
+      if (due < today) continue;
 
       const dueDate = parseLocalDate(e.due_date);
       dueDate.setHours(0,0,0,0);
@@ -308,7 +312,7 @@ function Calendar() {
                           <button key={day} type="button" className={
                                   editForm.preferred_days.includes(day)
                                   ? "selectedDay"
-                                  : ""} onClick={() => toggleDay(day.value)}>
+                                  : ""} onClick={() => toggleDay(day)}>
                               {day}
                           </button>
                       ))}

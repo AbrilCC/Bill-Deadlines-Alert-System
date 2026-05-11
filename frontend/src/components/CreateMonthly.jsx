@@ -129,7 +129,7 @@ export default function CreateMonthly({ setView }) {
                     className={
                         preferredDays.includes(day.value)
                         ? "selectedDay"
-                        : "" } onClick={() => toggleDay(day)}>
+                        : "" } onClick={() => toggleDay(day.value)}>
                     {day.label}
                 </button>
             ))}
