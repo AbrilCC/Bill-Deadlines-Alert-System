@@ -47,6 +47,8 @@ export const syncEmailsService = async (user_id) => {
     const auth = getAuth(user.google_access_token, user.google_refresh_token);
     const emails = await getEmails(auth);
 
+    console.log("AMOUNT OF EMAILS: ", emails.length);
+
     for (const email of emails) {
       const detail = await getEmailDetail(auth, email.id);
       const attachments = await getAttachments(auth, detail);
