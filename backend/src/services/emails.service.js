@@ -47,7 +47,7 @@ export const syncEmailsService = async (user_id) => {
     const auth = getAuth(user.google_access_token, user.google_refresh_token);
     const emails = await getEmails(auth);
 
-    console.log("AMOUNT OF EMAILS: ", emails.length);
+    console.log("AMOUNT OF EMAILS: ", emails.length); 
 
     for (const email of emails) {
       const detail = await getEmailDetail(auth, email.id);
@@ -71,6 +71,12 @@ export const syncEmailsService = async (user_id) => {
       if (attachments.length) {
         console.log("has some attachments");
         for (const att of attachments) {
+          //Disregard big pdfs
+          if (att.size > 5_000_000) {
+            console.log("Skipping large attachment");
+            continue;
+          }
+
           //Find pdfs:
           if (att.filename.endsWith(".pdf")) {
             console.log("has a pdf");
@@ -102,7 +108,7 @@ export const syncEmailsService = async (user_id) => {
                   console.log("PARSED IMG:", parsed);
 
 
-            if (parsed?.amount && parsed?.due_date) break;
+            if (parsed?.amount != null && parsed?.due_date) break;
           }
         }
         //Find in body text:

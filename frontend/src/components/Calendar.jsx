@@ -124,8 +124,12 @@ function Calendar() {
     const url = isPaid
       ? `${BACKEND_API_URL}/events/${realId}/unpay`
       : `${BACKEND_API_URL}/events/${realId}/pay`;
+    const token = localStorage.getItem("token");
 
-    await fetch(url, { method: "PATCH" });
+    await fetch(url, { 
+      method: "PATCH",
+      headers: {Authorization: `Bearer ${token}`, "Content-Type": "application/json"},
+    });
 
     fetchEvents();
     setShowModal(false);
@@ -150,6 +154,12 @@ function Calendar() {
   };
 
   const handleDelete = async () => {
+    //If it's a suggestion, delete it only from the frontend
+    if (selectedEvent.extendedProps?.isSuggestion) {
+      setEvents(prev => prev.filter(e => e.id != selectedEvent.id));
+      setShowModal(false);
+      return;
+    }
     const token = localStorage.getItem("token");
     await fetch(`${BACKEND_API_URL}/events/${selectedEvent.id}`,
     {

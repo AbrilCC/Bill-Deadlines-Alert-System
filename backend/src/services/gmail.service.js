@@ -15,7 +15,8 @@ const KEYWORDS = [
     "vencimiento",
     "importe",
     "pago",
-    "pagar"
+    "pagar",
+    "factura"
 ];
 
 const senderQuery = TRUSTED_SENDERS.map(sender => `from:${sender}`).join(" OR ");;
@@ -95,6 +96,7 @@ export async function getAttachments(auth, message) {
             attachments.push({
                 filename: part.filename,
                 data: buffer,
+                size: buffer.length,
             });
         }
     }
