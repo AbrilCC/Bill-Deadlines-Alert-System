@@ -11,9 +11,9 @@ export const createSingleEvent = async (client, event) => {
   const result = await client.query(
     `INSERT INTO events 
     (user_id, type, description, amount, due_date, paid, source, email_id, preferred_days)
-    VALUES ($1, $2, $3, $4, $5, false, $6, $7) 
+    VALUES ($1, $2, $3, $4, $5, false, $6, $7, $8) 
     RETURNING *`,
-    [user_id, type, description, amount, due_date, source, email_id, preferred_days]
+    [user_id, type, description, amount, due_date, source, email_id, preferred_days || [] ]
   );
 
   return result.rows[0];

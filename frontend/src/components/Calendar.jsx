@@ -132,12 +132,14 @@ function Calendar() {
   };
 
   const handleEdit = async () => {
+    const token = localStorage.getItem("token");
     await fetch(
       `${BACKEND_API_URL}/events/${selectedEvent.id}`,
       {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+           Authorization: `Bearer ${localStorage.getItem("token")}`
         },
         body: JSON.stringify(editForm)
       }
@@ -148,8 +150,13 @@ function Calendar() {
   };
 
   const handleDelete = async () => {
-    await fetch(`${BACKEND_API_URL}/events/${selectedEvent.id}`, {
-      method: "DELETE",
+    const token = localStorage.getItem("token");
+    await fetch(`${BACKEND_API_URL}/events/${selectedEvent.id}`,
+    {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
     });
 
     setShowModal(false);
@@ -291,7 +298,7 @@ function Calendar() {
                           <button key={day} type="button" className={
                                   editForm.preferred_days.includes(day)
                                   ? "selectedDay"
-                                  : ""} onClick={() => toggleDay(day)}>
+                                  : ""} onClick={() => toggleDay(day.value)}>
                               {day}
                           </button>
                       ))}
