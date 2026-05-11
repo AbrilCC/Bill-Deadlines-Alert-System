@@ -30,8 +30,13 @@ function Calendar() {
 
   
   function parseLocalDate(dateStr) {
-    const [year, month, day] = dateStr.split("-");
-    return new Date(year, month - 1, day);
+    const d = new Date(dateStr);
+
+    return new Date(
+      d.getUTCFullYear(),
+      d.getUTCMonth(),
+      d.getUTCDate()
+    );
   }
 
   const fetchEvents = async () => {
@@ -101,6 +106,7 @@ function Calendar() {
     }
     console.log(data);
     console.log(formatted);
+    console.log("EVENTS TO CALENDAR:", [...formatted, ...suggestionEvents]);
     setEvents([...formatted, ...suggestionEvents]);
   };
 

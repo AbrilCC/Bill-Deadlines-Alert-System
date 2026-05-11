@@ -28,10 +28,13 @@ export default function CreateSingle({ setView }) {
       body: JSON.stringify({...form, preferred_days: preferredDays, source: "manual"}),
     });
     if (res.ok) {
-      setView("calendar");
+      alert("Evento creado");
+      setTimeout(() => {setView("calendar");}, 200); 
+    } else {
+      alert("Error creando evento");
     }
 
-    alert("Evento creado");
+    
   };
 
   function toggleDay(day) {
@@ -93,7 +96,7 @@ export default function CreateSingle({ setView }) {
                     className={
                         preferredDays.includes(day.value)
                         ? "selectedDay"
-                        : "" } onClick={() => toggleDay(day)}>
+                        : "" } onClick={() => toggleDay(day.value)}>
                     {day.label}
                 </button>
             ))}
