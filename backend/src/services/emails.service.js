@@ -5,7 +5,7 @@ import {
   getBody,
   getAttachments,
 } from "./gmail.service.js";
-import { parseInvoice, parseInvoiceFromText, detectType, extractTextFromImage } from "./parser.service.js";
+import { parseInvoice, parseInvoiceFromText, detectType, extractTextFromImage, looksLikeInvoice } from "./parser.service.js";
 import { createSingleEvent } from "./events.service.js";
 import client from "../utils/supabaseClient.js";
 
@@ -87,7 +87,7 @@ export const syncEmailsService = async (user_id) => {
               }
             }
 
-            if (parsed?.amount && parsed?.due_date) break;
+            if (parsed?.amount != null && parsed?.due_date) break;
           }
 
           //Find images:
@@ -112,6 +112,10 @@ export const syncEmailsService = async (user_id) => {
       } else if (bodyText || subject) {
         console.log("has no attachments");
         const combinedText = `${subject}\n${bodyText}`;
+        if (!looksLikeInvoice(combinedText)) {
+          console.log("Skipping non-invoice email");
+          continue;
+        }
         parsed = parseInvoiceFromText(combinedText);
         console.log("no-attachments-body has been parsed. PARSED:", parsed);
       }

@@ -127,8 +127,8 @@ function Calendar() {
 
     await fetch(url, { method: "PATCH" });
 
-    setShowModal(false);
     fetchEvents();
+    setShowModal(false);
   };
 
   const handleEdit = async () => {
@@ -139,7 +139,7 @@ function Calendar() {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-           Authorization: `Bearer ${localStorage.getItem("token")}`
+           Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(editForm)
       }

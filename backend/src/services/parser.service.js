@@ -8,11 +8,8 @@ const pdf = require("pdf-parse");
 //Tambien incluye casos de 10,000,99 -> 10000.99
 function normalizeAmount(str) {
   if (!str) return null;
-
   let cleaned = str.replace(/\s/g, "");
 
-  // Caso raro: 154,201,00
-  // Interpretarlo como 154201,00
   if ((cleaned.match(/,/g) || []).length === 2) {
     const lastComma = cleaned.lastIndexOf(",");
     
@@ -27,6 +24,29 @@ function normalizeAmount(str) {
   }
   const value = parseFloat(cleaned);
   return isNaN(value) ? null : value;
+}
+
+export function looksLikeInvoice(text) {
+  const lower = text.toLowerCase();
+  const invoiceKeywords = [
+    "vencimiento",
+    "fecha de vencimiento",
+    "factura",
+    "importe",
+    "total a pagar",
+    "saldo",
+    "abonar"
+  ];
+
+  const hasKeyword = invoiceKeywords.some(word =>
+    lower.includes(word)
+  );
+
+  const hasDate = /\d{2}\/\d{2}\/\d{4}/.test(text);
+
+  const hasMoney = /\$\s?[\d.,]+/.test(text);
+
+  return hasKeyword && (hasDate || hasMoney);
 }
 
 
