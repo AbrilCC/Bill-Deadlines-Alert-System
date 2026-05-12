@@ -23,8 +23,8 @@ const senderQuery = TRUSTED_SENDERS.map(sender => `from:${sender}`).join(" OR ")
 const keywordQuery = KEYWORDS.map(word => `subject:${word}`).join(" OR ");
 
 /* Defino las queries en 1 solo lugar, ya que tengo 1 sola funcion para hacer queries */
-//const query = `(${senderQuery}) AND (${keywordQuery}) newer_than:30d`;
-const query = `(${keywordQuery}) newer_than:30d`;
+const query = `(${senderQuery}) AND (${keywordQuery}) newer_than:30d`;
+//const query = `(${keywordQuery}) newer_than:30d`;
 
 
 export function getAuth(access_token, refresh_token) {
