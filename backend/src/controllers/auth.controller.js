@@ -6,7 +6,7 @@ import {
     generateToken
 } from "../services/auth.service.js";
 import { validatePassword } from "../utils/validators.js"
-import { oauth2Client } from "../services/gmail.service.js";
+import { getAuth, getGmailAccount } from "../services/gmail.service.js";
 import { sendResetPasswordEmail } from "../services/mail.service.js"
 
 const SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"];
@@ -14,31 +14,55 @@ const SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"];
 
 export const googleAuth = (req, res) => {
     const token = req.query.token;
+    const oauth2Client = new google.auth.OAuth2(
+        process.env.GOOGLE_CLIENT_ID,
+        process.env.GOOGLE_CLIENT_SECRET,
+        process.env.GOOGLE_REDIRECT_URI
+    );
     const url = oauth2Client.generateAuthUrl({
         access_type: "offline",
         scope: SCOPES,
         prompt: "consent",
         state: token
     });
-
     res.redirect(url);
 };
 
 export const googleCallback = async (req, res) => {
   try {
     const code = req.query.code;
+    const url = oauth2Client.generateAuthUrl({
+        access_type: "offline",
+        scope: SCOPES,
+        prompt: "consent",
+        state: token
+    });
     const { tokens } = await oauth2Client.getToken(code);
-
     const token = req.query.state;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const auth = getAuth(tokens.access_token, tokens.refresh_token);
+    const gmailAccount = await getGmailAccount(auth);
+
+    const existingUser = await client.query(`
+      SELECT google_refresh_token
+      FROM users
+      WHERE id = $1
+      `, [decoded.id]
+    );
+
+    const refreshToken =
+      tokens.refresh_token ||
+      existingUser.rows[0]?.google_refresh_token;
 
     await client.query(`
       UPDATE users
       SET google_access_token = $1,
           google_refresh_token = $2,
+          gmail_account = $3,
           gmail_connected = true
-      WHERE id = $3
-    `, [tokens.access_token, tokens.refresh_token, decoded.id]);
+      WHERE id = $4
+    `, [tokens.access_token, refreshToken, gmailAccount, decoded.id]);
 
     res.redirect(process.env.FRONTEND_URL);
   } catch (error) {

@@ -8,20 +8,27 @@ const pdf = require("pdf-parse");
 //Tambien incluye casos de 10,000,99 -> 10000.99
 function normalizeAmount(str) {
   if (!str) return null;
-  let cleaned = str.replace(/\s/g, "");
+  let cleaned = str.replace(/\s/g, "").replace(/\$/g, "");
+  const hasComma = cleaned.includes(",");
+  const hasDot = cleaned.includes(".");
 
-  if ((cleaned.match(/,/g) || []).length === 2) {
-    const lastComma = cleaned.lastIndexOf(",");
-    
-    cleaned =
-      cleaned.slice(0, lastComma).replace(/,/g, "") +
-      "." +
-      cleaned.slice(lastComma + 1);
-  } else {
-    cleaned = cleaned
-      .replace(/\./g, "") // elimina miles
-      .replace(",", "."); // convierte decimal
+  //Format 10.000,00
+  if (hasComma && hasDot && cleaned.lastIndexOf(",") > cleaned.lastIndexOf(".")) {
+    cleaned = cleaned.replace(/\./g, "").replace(",", ".");
   }
+
+  //Format 10,000.00
+  else if (hasComma && hasDot && cleaned.lastIndexOf(".") > cleaned.lastIndexOf(",")) {
+    cleaned = cleaned.replace(/,/g, "");
+  }
+
+  //Format 10000,00
+  else if (hasComma) {
+    cleaned = cleaned.replace(",", ".");
+  }
+
+  //Format 10000.00 is already alright
+  
   const value = parseFloat(cleaned);
   return isNaN(value) ? null : value;
 }

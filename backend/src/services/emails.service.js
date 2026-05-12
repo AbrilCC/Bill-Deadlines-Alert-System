@@ -142,6 +142,12 @@ export const syncEmailsService = async (user_id) => {
       });
 
       try {
+        console.log("INSERTING EVENT", {
+          email_id: email.id,
+          type: detectType(subject, from, bodyText),
+          amount: parsed.amount,
+          due_date: parsed.due_date,
+        });
         //Push the event to the DB
         await createSingleEvent(client, {
           user_id,
@@ -153,6 +159,7 @@ export const syncEmailsService = async (user_id) => {
           email_id: email.id,
           requires_manual_review: parsed.amount == null || !parsed.due_date,
         });
+        console.log("EXISTING RESULT:", existing.rows.length);
       } catch (error) {
         if (error.code === "23505") continue; // duplicate key error
         throw error;

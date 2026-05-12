@@ -202,8 +202,6 @@ function Calendar() {
       const token = localStorage.getItem("token");
       window.location.href = `${BACKEND_API_URL}/auth/google?token=${token}`;
 
-      await handleSyncEmails();
-
     } catch (error) {
       console.log(error);
     }
@@ -343,7 +341,7 @@ function Calendar() {
             <button onClick={handleDelete}>Eliminar notificación</button>
             {selectedEvent.extendedProps.email_id && (
               <a
-                href={`https://mail.google.com/mail/u/all/#inbox/${selectedEvent.extendedProps.email_id}`}
+                href={`https://mail.google.com/mail/#inbox/${selectedEvent.extendedProps.email_id}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >Ver mail</a>

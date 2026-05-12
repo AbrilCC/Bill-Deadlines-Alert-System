@@ -26,13 +26,13 @@ const keywordQuery = KEYWORDS.map(word => `subject:${word}`).join(" OR ");
 //const query = `(${senderQuery}) AND (${keywordQuery}) newer_than:30d`;
 const query = `(${keywordQuery}) newer_than:30d`;
 
-export const oauth2Client = new google.auth.OAuth2(
-  process.env.GOOGLE_CLIENT_ID,
-  process.env.GOOGLE_CLIENT_SECRET,
-  process.env.GOOGLE_REDIRECT_URI
-);
 
 export function getAuth(access_token, refresh_token) {
+    const oauth2Client = new google.auth.OAuth2(
+        process.env.GOOGLE_CLIENT_ID,
+        process.env.GOOGLE_CLIENT_SECRET,
+        process.env.GOOGLE_REDIRECT_URI
+    );
     oauth2Client.setCredentials({
         access_token,
         refresh_token
@@ -40,6 +40,12 @@ export function getAuth(access_token, refresh_token) {
 
     return oauth2Client;
 };
+
+export async function getGmailAccount(auth) {
+    const gmail = google.gmail({ version: "v1", auth});
+    const profile = await gmail.users.getProfile({ userId: "me" });
+    return profile.data.emailAddress;
+}
 
 export async function getEmails(auth) {
     const gmail = google.gmail({ version: "v1", auth});
@@ -49,7 +55,7 @@ export async function getEmails(auth) {
         q: query,
     });
 
-    return res.data.messages|| [];
+    return res.data.messages || [];
 };
 
 export async function getEmailDetail(auth, messageId) {
