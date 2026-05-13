@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { google } from "googleapis";
 import client from "../utils/supabaseClient.js";
 import {
     hashPassword,
@@ -31,14 +32,13 @@ export const googleAuth = (req, res) => {
 export const googleCallback = async (req, res) => {
   try {
     const code = req.query.code;
-    const url = oauth2Client.generateAuthUrl({
-        access_type: "offline",
-        scope: SCOPES,
-        prompt: "consent",
-        state: token
-    });
-    const { tokens } = await oauth2Client.getToken(code);
     const token = req.query.state;
+    const oauth2Client = new google.auth.OAuth2(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET,
+      process.env.GOOGLE_REDIRECT_URI
+    );
+    const { tokens } = await oauth2Client.getToken(code);
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     const auth = getAuth(tokens.access_token, tokens.refresh_token);
@@ -65,6 +65,7 @@ export const googleCallback = async (req, res) => {
     `, [tokens.access_token, refreshToken, gmailAccount, decoded.id]);
 
     res.redirect(process.env.FRONTEND_URL);
+    
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
