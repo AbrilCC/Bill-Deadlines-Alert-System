@@ -1,4 +1,5 @@
 import client from "../utils/supabaseClient.js";
+import { editTrustedSenders } from "../services/events.service.js"
 
 export const getDashboardStatus = async (req, res) => {
   try {
