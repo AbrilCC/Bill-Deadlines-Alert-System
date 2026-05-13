@@ -9,6 +9,7 @@ export const syncEmails = async (req, res) => {
       message: "Sync complete"
     });
   } catch (err) {
+    console.error("SYNC EMAILS ERROR:", err);
     res.status(500).json({
       success: false,
       error: err.message
