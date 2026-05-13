@@ -23,8 +23,20 @@ function PaymentsChart() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-  fetch(`${BACKEND_API_URL}/dashboard/monthly-summary`)
-    .then(res => res.json())
+  const token = localStorage.getItem("token");
+  fetch(`${BACKEND_API_URL}/dashboard/monthly-summary`,
+    { 
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  )
+    .then(async (res) => {
+      if (!res.ok) {
+        throw new Error("Unauthorized");
+      }
+      return res.json();
+    })
     .then(data => {
       const daysInMonth = new Date(
         new Date().getFullYear(),

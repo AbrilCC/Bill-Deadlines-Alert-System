@@ -183,6 +183,18 @@ export const updateRule = async (client, rule_id, user_id, data) => {
   return ruleRes.rows[0];
 };
 
+export const editTrustedSenders = async (client, user_id, data) => {
+  const { sendersArray } = data;
+  const res = await client.query(
+    `UPDATE users
+    SET trusted_senders = $1
+    WHERE id = $2
+    RETURNING trusted_senders`,
+    [sendersArray, user_id]
+  );
+  return res.rows[0];
+}
+
 export const deleteRule = async (client, rule_id, user_id) => {
   //Delete associated events
   await client.query(

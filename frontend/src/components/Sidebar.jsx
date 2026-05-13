@@ -4,10 +4,14 @@ import {
   CreditCard,
   Bot,
   FolderCog,
-  ArrowUpFromLine
+  ArrowUpFromLine,
+  AlertTriangle
 } from "lucide-react";
 
-function Sidebar({ setView, view }) {
+function Sidebar({ setView, view, trustedSenders }) {
+
+  const missingTrustedSenders = trustedSenders.length === 0;
+
   return (
     <div className="sidebar">
         <div className="sidebarTitle">
@@ -18,6 +22,8 @@ function Sidebar({ setView, view }) {
       <button className={view === "dashboard" ? "activeSidebar" : ""} onClick={() => setView("dashboard")}>
         <LayoutDashboard size={18} />
         Página principal
+        {missingTrustedSenders && (<AlertTriangle size={18} color="#ff9800" />
+)}
       </button>
 
       <button className={view === "calendar" ? "activeSidebar" : ""} onClick={() => setView("calendar")}>

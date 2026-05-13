@@ -22,10 +22,20 @@ function normalizeAmount(str) {
     cleaned = cleaned.replace(/,/g, "");
   }
 
+  //Format 10,000,00
+  else if (commas >= 2) {
+    const lastComma = cleaned.lastIndexOf(",");
+    cleaned =
+      cleaned.slice(0, lastComma).replace(/,/g, "") +
+      "." +
+      cleaned.slice(lastComma + 1);
+  }
+
   //Format 10000,00
-  else if (hasComma) {
+  else if (commas === 1) {
     cleaned = cleaned.replace(",", ".");
   }
+  
 
   //Format 10000.00 is already alright
   

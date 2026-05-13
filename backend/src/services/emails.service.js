@@ -42,10 +42,21 @@ export const syncEmailsService = async (user_id) => {
     const user = userRes.rows[0];
 
     if (!user?.google_access_token) {
-    throw new Error("Gmail no conectado");
+      throw new Error("Gmail no conectado");
     }
+    const trustedSendersRes = await client.query(
+      `SELECT trusted_senders
+      FROM users
+      WHERE id = $1`,
+      [user_id]);
+
+    const trustedSenders = trustedSendersRes.rows[0]?.trusted_senders || [];
+    if (!trustedSenders.length) {
+      throw new Error("Configura antes tus remitentes confiables en la Página Principal!");
+    }
+
     const auth = getAuth(user.google_access_token, user.google_refresh_token);
-    const emails = await getEmails(auth);
+    const emails = await getEmails(auth, trustedSenders);
 
     console.log("AMOUNT OF EMAILS: ", emails.length); 
 
@@ -57,8 +68,8 @@ export const syncEmailsService = async (user_id) => {
       const subject = headers.find(h => h.name === "Subject")?.value || "";
       const from = headers.find(h => h.name === "From")?.value || "";
       const existing = await client.query(
-        `SELECT 1 FROM events WHERE email_id = $1`,
-        [email.id]
+        `SELECT 1 FROM events WHERE email_id = $1 AND user_id = $2`,
+        [email.id, user_id]
       );
 
       //console.log("EMAIL LINK: https://mail.google.com/mail/u/0/#inbox/", email_id);

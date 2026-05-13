@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./components/dashboard/Dashboard";
 import Calendar from "./components/Calendar";
@@ -11,9 +11,31 @@ import Auth from "./Login";
 import "../styles.css"
 import { LogIn } from "lucide-react";
 
+const BACKEND_API_URL = import.meta.env.VITE_BACKEND_URL;
+
 function App() {
     const token = localStorage.getItem("token");    
+    const [trustedSenders, setTrustedSenders] = useState([]);
+    const [gmailConnected, setGmailConnected] = useState(false);
     const [view, setView] = useState("dashboard");
+
+    const fetchDashboardStatus = async () => {
+        const res = await fetch(
+        `${BACKEND_API_URL}/dashboard/status`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+        );
+        const data = await res.json();
+        setTrustedSenders(data.trusted_senders || []);
+        setGmailConnected(data.gmail_connected);
+    };
+
+    useEffect(() => {
+        fetchDashboardStatus();
+    }, []);
 
     if (!token) {
         return <Auth />;    //Only show the site to registered users
@@ -42,13 +64,13 @@ function App() {
 
             <div className="appLayout">
 
-            <Sidebar setView={setView} view={view}/>
+            <Sidebar setView={setView} view={view} trustedSenders={trustedSenders}/>
 
             <div className="mainContent">
 
-                {view === "dashboard" && <Dashboard />}
+                {view === "dashboard" && <Dashboard trustedSenders={trustedSenders} setTrustedSenders={setTrustedSenders}/>}
 
-                {view === "calendar" && <Calendar />}
+                {view === "calendar" && <Calendar gmailConnected={gmailConnected}/>}
 
                 {view === "admin" && <Admin />}
 

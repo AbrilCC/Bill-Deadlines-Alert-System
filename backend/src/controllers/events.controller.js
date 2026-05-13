@@ -9,6 +9,7 @@ import {
   updateRule,
   deleteEvent,
   deleteRule,
+  editTrustedSenders,
 } from "../services/events.service.js";
 import client from "../utils/supabaseClient.js";
 

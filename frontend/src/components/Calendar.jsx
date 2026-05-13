@@ -5,7 +5,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 
 const BACKEND_API_URL = import.meta.env.VITE_BACKEND_URL;
 
-function Calendar() {
+function Calendar({gmailConnected}) {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -120,6 +120,7 @@ function Calendar() {
   useEffect(() => {
     fetchEvents();
   }, []);
+
 
   const handleTogglePaid = async () => {
     const isPaid = selectedEvent.extendedProps.paid;
@@ -243,7 +244,11 @@ function Calendar() {
     <div style={{ width: "100%" }} className="card">
       <h2>Calendario de pagos</h2>
 
-      <button onClick={handleSyncEmails}>Sincronizar con Gmail</button>
+      <button onClick={handleSyncEmails} disabled={!gmailConnected}
+      title={!gmailConnected ? "Debes conectar tu cuenta de gmail primero para poder sincronizar tus mails" : ""}
+      style={{opacity: !gmailConnected ? 0.5 : 1, cursor: !gmailConnected ? "not-allowed" : "pointer"}}>
+        Sincronizar con Gmail
+      </button>
       <button onClick={handleConnectGoogle}>Conectar mi Gmail</button>
 
       <div style={{ width: "100%" }}>

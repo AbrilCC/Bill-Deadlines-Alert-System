@@ -1,5 +1,5 @@
 import { google } from "googleapis";
-
+/*
 const TRUSTED_SENDERS = [
     "avisos@aysadigital.com.ar",    //AGUA
     "facturadigital@edenor.com",    //LUZ
@@ -7,7 +7,7 @@ const TRUSTED_SENDERS = [
     "no-reply@metrogas.com.ar",  //GAS
     "factura@email.claro.com.ar",   //CLARO
     "facturacion@email.personal.com.ar" //PERSONAL
-];
+];*/
 
 const KEYWORDS = [
     "saldo",
@@ -19,12 +19,11 @@ const KEYWORDS = [
     "factura"
 ];
 
-const senderQuery = TRUSTED_SENDERS.map(sender => `from:${sender}`).join(" OR ");;
 const keywordQuery = KEYWORDS.map(word => `subject:${word}`).join(" OR ");
 
-/* Defino las queries en 1 solo lugar, ya que tengo 1 sola funcion para hacer queries */
+/* Defino las queries en 1 solo lugar, ya que tengo 1 sola funcion para hacer queries 
 const query = `(${senderQuery}) AND (${keywordQuery}) newer_than:30d`;
-//const query = `(${keywordQuery}) newer_than:30d`;
+//const query = `(${keywordQuery}) newer_than:30d`;*/
 
 
 export function getAuth(access_token, refresh_token) {
@@ -47,8 +46,13 @@ export async function getGmailAccount(auth) {
     return profile.data.emailAddress;
 }
 
-export async function getEmails(auth) {
+export async function getEmails(auth, trustedSenders) {
     const gmail = google.gmail({ version: "v1", auth});
+    if (!trustedSenders.length) {
+        return [];
+    }
+    const senderQuery = trustedSenders.map(sender => `from:${sender}`).join(" OR ");
+    const query = `(${senderQuery}) AND (${keywordQuery}) newer_than:30d`;
 
     const res = await gmail.users.messages.list({
         userId: "me", //The user authenticated with the token
