@@ -31,7 +31,7 @@ function Senders({trustedSenders, setTrustedSenders}) {
     updated[editingIndex] = editingValue;
     setTrustedSenders(updated);
     await saveTrustedSenders(updated);
-    
+
     setEditingIndex(null);
     setEditingValue("");
   }
@@ -77,7 +77,7 @@ function Senders({trustedSenders, setTrustedSenders}) {
 
           <div className="modal" onClick={(e) => e.stopPropagation()}>
 
-            <h2>Mis remitentes confiables:</h2>
+            <h2 className="checklistHeader">Mis remitentes confiables:</h2>
 
             {trustedSenders.map((sender, index) => (
 

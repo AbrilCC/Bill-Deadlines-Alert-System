@@ -9,7 +9,7 @@ function Checklist() {
       : [
           {
             id: 1,
-            text: "Pagar tarjeta",
+            text: "Agregá acá tus tareas pendientes",
             completed: false
           }
         ];
@@ -50,7 +50,7 @@ function Checklist() {
   }
 
   return (
-    <div className="card">
+    <div className="card checklistCard">
 
       <div className="checklistHeader">
         <h2>📝 Mis tareas pendientes</h2>
@@ -74,11 +74,12 @@ function Checklist() {
 
         {tasks.map(task => (
           <div key={task.id} className={`checklistTask ${task.completed ? "completedTask" : ""}`}>
-
-            <input type="checkbox" checked={task.completed} onChange={() => toggleTask(task.id)}/>
-            <span> {task.text} </span>
+            <div className="checklistTaskLeft">
+                <input type="checkbox" checked={task.completed} onChange={() => toggleTask(task.id)}/>
+                <span> {task.text} </span>
+            </div>
             <button className="deleteTaskBtn" onClick={() => deleteTask(task.id)}>
-              ✕
+              🗑️
             </button>
 
           </div>
