@@ -17,6 +17,14 @@ function Calendar({gmailConnected}) {
     due_date: "",
     preferred_days: []
   });
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [showReminderPopup, setShowReminderPopup] = useState(false);
+  const [showReminderModal, setShowReminderModal] = useState(false);
+  const [reminderForm, setReminderForm] = useState({
+      title: "",
+      description: "",
+      time: ""
+  });
   const [syncLoading, setSyncLoading] = useState(false);
   const dayMap = {
       sunday: 0,
@@ -62,6 +70,7 @@ function Calendar({gmailConnected}) {
           description: e.description,
           paid: e.paid,
           email_id: e.email_id,
+          payment_method: e.payment_method,
           preferred_days: e.preferred_days,
         },
       };
@@ -83,8 +92,6 @@ function Calendar({gmailConnected}) {
 
       //Look for preferred days 1 week before the due date
       for (const day of e.preferred_days || []) {
-        console.log("PREFERRED DAYS:", e.preferred_days);
-        console.log(typeof e.preferred_days);
         
         const targetDay = dayMap[day];
         const current = new Date(startWindow);
@@ -111,10 +118,33 @@ function Calendar({gmailConnected}) {
         }
       }
     }
-    console.log(data);
-    console.log(formatted);
-    console.log("EVENTS TO CALENDAR:", [...formatted, ...suggestionEvents]);
-    setEvents([...formatted, ...suggestionEvents]);
+    const reminders = await fetchReminders();
+    setEvents([...formatted, ...suggestionEvents, ...reminders]);
+  };
+
+  const fetchReminders = async () => {
+    const token = localStorage.getItem("token");
+    const res = await fetch(`${BACKEND_API_URL}/reminders`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+    const data = await res.json();
+
+    return data.map(r => ({
+      id: `reminder-${r.id}`,
+      title: `📝 ${r.type}`,
+      start: parseLocalDate(r.reminder_date),
+      backgroundColor: "#2e6e89",
+      extendedProps: {
+        isReminder: true,
+        reminderId: r.id,
+        description: r.description,
+        reminder_time: r.reminder_time
+      }
+    }));
   };
 
   useEffect(() => {
@@ -181,6 +211,25 @@ function Calendar({gmailConnected}) {
     fetchEvents();
   };
 
+  const handleDeleteReminder = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      await fetch(
+        `${BACKEND_API_URL}/reminders/${selectedEvent.extendedProps.reminderId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      setShowModal(false);
+      fetchEvents();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleSyncEmails = async () => {
     try {
       setSyncLoading(true);
@@ -222,6 +271,28 @@ function Calendar({gmailConnected}) {
     }
   }
 
+  async function createReminder() {
+    const token = localStorage.getItem("token");
+    await fetch(`${BACKEND_API_URL}/reminders`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          type: reminderForm.title,
+          description: reminderForm.description,
+          reminder_date: selectedDate,
+          reminder_time:
+            reminderForm.time || "09:00"
+        })
+      }
+    );
+    setShowReminderModal(false);
+    fetchEvents();
+  }
+
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("es-AR", {
       style: "currency",
@@ -251,7 +322,7 @@ function Calendar({gmailConnected}) {
       </button>
 
       <div className="tooltipWrapper">
-        <button onClick={handleConnectGoogle} disabled="gmailConnected"
+        <button onClick={handleConnectGoogle} disabled={gmailConnected}
         style={{"opacity": gmailConnected ? 0.5 : 1, "cursor": gmailConnected ? "not-allowed" : "pointer"}}>
           Conectar mi Gmail</button>
 
@@ -277,7 +348,9 @@ function Calendar({gmailConnected}) {
                 color: arg.event.extendedProps.paid ? "#f0f0f0" : "white"}}>
                 <div style={{"fontSize": "18px"}}><strong>{arg.event.title}</strong></div>
                 <div>{arg.event.extendedProps.description}</div>
-                <div>{formatCurrency(arg.event.extendedProps.amount)}</div>
+                {!arg.event.extendedProps.isReminder && (
+                  <div>{formatCurrency(arg.event.extendedProps.amount)}</div>
+                )}
               </div>
             )}
             eventClick={(info) => {
@@ -290,6 +363,10 @@ function Calendar({gmailConnected}) {
                 preferred_days: info.event.extendedProps.preferred_days || []
               });
               setShowModal(true);
+            }}
+            dateClick={(info) => {
+              setSelectedDate(info.dateStr);
+              setShowReminderPopup(true);
             }}
           />
       </div>
@@ -315,6 +392,8 @@ function Calendar({gmailConnected}) {
                       editForm.due_date ? new Date(editForm.due_date).toISOString().split("T")[0] : ""
                     } onChange={(e) => setEditForm({...editForm, due_date: e.target.value})}/>
 
+                  <p>Método de pago: {selectedEvent.extendedProps.payment_method || "No definido"}</p>
+
                   <label>Días en los que normalmente puedo pagar:</label>
                   <div className="daysSelector">
                       {[
@@ -336,25 +415,38 @@ function Calendar({gmailConnected}) {
                   </div>
                 </>
               ) : (
-                <>
-                  <h2>{selectedEvent.title}</h2>
+                selectedEvent.extendedProps.isReminder ? (
+                  <>
+                    <h2>{selectedEvent.title}</h2>
+                    <p>{selectedEvent.extendedProps.description}</p>
+                    <p>Hora:{" "}{selectedEvent.extendedProps.reminder_time || "09:00"}</p>
+                    <p>Fecha:{" "}{new Date(selectedEvent.start).toLocaleDateString("es-AR")}</p>
+                  </>
+                ) : (
+                  <>
+                    <h2>{selectedEvent.title}</h2>
+                    <p>{selectedEvent.extendedProps.description}</p>
+                    <p>Monto: {formatCurrency(selectedEvent.extendedProps.amount)}</p>
 
-                  <p>{selectedEvent.extendedProps.description}</p>
-                  <p>Monto: {formatCurrency(selectedEvent.extendedProps.amount)}</p>
+                    <p>Vencimiento: {new Date(selectedEvent.start).toLocaleDateString("es-AR")}</p>
 
-                  <p>Vencimiento: {new Date(selectedEvent.start).toLocaleDateString("es-AR")}</p>
-
-                  <p>Estado del pago: {selectedEvent.extendedProps.paid ? "Pagado" : "Pendiente"}</p>
-                </>
+                    <p>Estado del pago: {selectedEvent.extendedProps.paid ? "Pagado" : "Pendiente"}</p>
+                  </>
               )
-            }
+            )}
 
-            <button onClick={() => setEditing(true)}>Editar</button>
-            {editing && (<button onClick={handleEdit}>Guardar cambios</button>)}
-            <button onClick={handleTogglePaid}>{selectedEvent.extendedProps.paid
-              ? "Marcar como NO pagado"
-              : "Marcar como pagado"}</button>
-            <button onClick={handleDelete}>Eliminar notificación</button>
+            {!selectedEvent.extendedProps.isReminder &&(
+              <>
+                <button onClick={() => setEditing(true)}>Editar</button>
+                {editing && (<button onClick={handleEdit}>Guardar cambios</button>)}
+                <button onClick={handleTogglePaid}>{selectedEvent.extendedProps.paid
+                  ? "Marcar como NO pagado"
+                  : "Marcar como pagado"}</button>
+              </>
+            )}
+            
+            
+            <button onClick={selectedEvent.extendedProps.isReminder ? handleDeleteReminder : handleDelete}>Eliminar notificación</button>
             {selectedEvent.extendedProps.email_id && (
               <a
                 href={`https://mail.google.com/mail/#inbox/${selectedEvent.extendedProps.email_id}`}
@@ -363,6 +455,34 @@ function Calendar({gmailConnected}) {
               >Ver mail</a>
             )}
 
+          </div>
+        </div>
+      )}
+
+      {showReminderPopup && (
+        <div className="reminderPopup">
+            <button className="createReminderBtn"
+              onClick={() => { setShowReminderModal(true); setShowReminderPopup(false);}}>
+              ¿Crear recordatorio?
+            </button>
+        </div>
+      )}
+      {showReminderModal && (
+        <div className="modalOverlay">
+          <div className="modal">
+            <h2>Nuevo recordatorio</h2>
+            <input placeholder="Título" value={reminderForm.title}
+              onChange={(e) => setReminderForm({...reminderForm, title: e.target.value})}/>
+
+            <textarea placeholder="Descripción" value={reminderForm.description}
+              onChange={(e) => setReminderForm({...reminderForm, description: e.target.value})}/>
+
+            <input type="time" value={reminderForm.time}
+              onChange={(e) => setReminderForm({...reminderForm, time: e.target.value})}/>
+
+            <button onClick={createReminder}>
+              Crear recordatorio
+            </button>
           </div>
         </div>
       )}

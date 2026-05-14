@@ -50,10 +50,10 @@ function Checklist() {
   }
 
   return (
-    <div className="card checklistCard">
+    <div className="card">
 
       <div className="checklistHeader">
-        <h2>📝 Mis tareas pendientes</h2>
+        <h3>📝 Mis tareas pendientes</h3>
       </div>
 
       <div className="checklistInputRow">

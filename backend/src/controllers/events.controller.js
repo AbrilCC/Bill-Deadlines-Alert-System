@@ -43,6 +43,13 @@ export const createSingle = async (req, res) => {
 
 export const createWeekly = async (req, res) => {
   try {
+    const { type, amount, due_date } = req.body;
+    
+    if (!type || !amount || !due_date) {
+      return res.status(400).json({
+        error: "Faltan campos obligatorios"
+      });
+    }
     const events = await createWeeklyEvents(client, {...req.body, user_id: req.user.id});
     res.json(events);
   } catch (error) {
@@ -53,6 +60,13 @@ export const createWeekly = async (req, res) => {
 
 export const createMonthly = async (req, res) => {
   try {
+    const { type, amount, due_date } = req.body;
+    
+    if (!type || !amount || !due_date) {
+      return res.status(400).json({
+        error: "Faltan campos obligatorios"
+      });
+    }
     const events = await createMonthlyEvents(client, {...req.body, user_id: req.user.id});
     res.json(events);
   } catch (error) {

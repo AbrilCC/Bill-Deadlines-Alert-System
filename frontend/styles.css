@@ -247,7 +247,7 @@ input {
 .checklistHeader {
   margin-bottom: 18px;
 }
-.checklistHeader h2 {
+.checklistHeader h3 {
   margin: 0;
   color: #1f2a40;
   font-size: 34px;
@@ -314,6 +314,7 @@ input {
   cursor: pointer;
   accent-color: #df6b17;
   flex-shrink: 0;
+   transform: translateY(3px);
 }
 .checklistTask span {
   font-size: 17px;
@@ -678,6 +679,8 @@ input {
     color: #666;
 }
 
+/* ---------------------------CALENDAR--------------------------- */
+
 /* PARA LAS BOXES DE VENCIMIENTOS EN EL CALENDARIO */
 .event-box {
   /*min-width: 180px;*/
@@ -689,6 +692,33 @@ input {
   color: white;
   background: #df6b17;
   cursor: pointer;
+}
+
+/* PARA LAS BOXES DE RECORDATORIOS EN EL CALENDARIO */
+.reminderPopup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 18px;
+  border-radius: 18px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  z-index: 9999;
+  border: 2px solid #ececec;
+}
+.createReminderBtn {
+  background: #3a99a8;
+  color: white;
+  border: none;
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.createReminderBtn:hover {
+  opacity: 0.92;
 }
 
 .fc-daygrid-event {

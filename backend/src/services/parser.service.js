@@ -91,8 +91,6 @@ export async function parseInvoice(buffer) {
   }
   const text = data.text || "";
   const lowerText = text.toLowerCase();
-  console.log("PDF TEXT:");
-  console.log(text);
 
   // ===== BUSCAR PARES FECHA + IMPORTE =====
   const paymentMatches = [

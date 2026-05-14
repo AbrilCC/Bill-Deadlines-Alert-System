@@ -33,7 +33,6 @@ function isValidInvoiceText(text) {
 
 export const syncEmailsService = async (user_id) => {
   try {
-    console.log("STARTING SYNC...")
     const userRes = await client.query(
     `SELECT google_access_token, google_refresh_token
     FROM users
@@ -41,11 +40,6 @@ export const syncEmailsService = async (user_id) => {
     [user_id]
     );
     const user = userRes.rows[0];
-    console.log("USER:", {
-      hasAccess: !!user?.google_access_token,
-      hasRefresh: !!user?.google_refresh_token
-    });
-
 
     if (!user?.google_refresh_token) {
       throw new Error("Tu sesión de Gmail expiró. Reconectá tu cuenta.");
@@ -57,13 +51,11 @@ export const syncEmailsService = async (user_id) => {
       [user_id]);
 
     const trustedSenders = trustedSendersRes.rows[0]?.trusted_senders || [];
-    console.log("TRUSTED SENDERS: ", trustedSenders)
     if (!trustedSenders.length) {
       throw new Error("Configura antes tus remitentes confiables en la Página Principal!");
     }
 
     const auth = getAuth(user.google_access_token, user.google_refresh_token);
-    console.log("BEFORE GET EMAILS...")
     const emails = await getEmails(auth, trustedSenders);
 
     console.log("AMOUNT OF EMAILS: ", emails.length); 
@@ -149,24 +141,7 @@ export const syncEmailsService = async (user_id) => {
 
       if (!parsed ||  !parsed.due_date) continue;
 
-      console.log("PARSED:", parsed);
-      console.log("DUE DATE:", parsed.due_date);
-      console.log("FORMATTED:", formatDate(parsed.due_date));
-      console.log({
-        amount: parsed.amount,
-        due_date: parsed.due_date,
-        requires_manual_review:
-          parsed.amount == null ||
-          !parsed.due_date,
-      });
-
       try {
-        console.log("INSERTING EVENT", {
-          email_id: email.id,
-          type: detectType(subject, from, bodyText),
-          amount: parsed.amount,
-          due_date: parsed.due_date,
-        });
         //Push the event to the DB
         await createSingleEvent(client, {
           user_id,
@@ -178,7 +153,6 @@ export const syncEmailsService = async (user_id) => {
           email_id: email.id,
           requires_manual_review: parsed.amount == null || !parsed.due_date,
         });
-        console.log("EXISTING RESULT:", existing.rows.length);
       } catch (error) {
         if (error.code === "23505") continue; // duplicate key error
         throw error;

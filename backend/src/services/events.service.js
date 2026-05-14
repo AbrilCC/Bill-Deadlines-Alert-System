@@ -128,15 +128,16 @@ export const createMonthlyEvents = async (client, data) => {
 };
 
 export const updateEvent = async (client, id, data) => {
-  const { user_id, type, description, amount, due_date } = data;
+  const { user_id, type, description, amount, due_date, payment_method  } = data;
   const result = await client.query(
     `UPDATE events SET
       type = $1,
       description = $2,
       amount = $3,
-      due_date = $4
-      WHERE id = $5 AND user_id = $6 RETURNING *`,
-    [type, description, amount, due_date, id, user_id]
+      due_date = $4,
+      payment_method = $5
+      WHERE id = $6 AND user_id = $7 RETURNING *`,
+    [type, description, amount, due_date, payment_method, id, user_id]
   );
 
   return result.rows[0];

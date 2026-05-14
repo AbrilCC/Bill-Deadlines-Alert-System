@@ -12,7 +12,7 @@ const BACKEND_API_URL = import.meta.env.VITE_BACKEND_URL;
 
 const COLORS = [
   "#f7931e",
-  "#22abe2",
+  "#53b8e0",
   "#ed6a11",
   "#2e6e89", 
   "#f9be70",

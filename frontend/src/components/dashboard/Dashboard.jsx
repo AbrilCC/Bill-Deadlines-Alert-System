@@ -6,11 +6,11 @@ function Dashboard({trustedSenders, setTrustedSenders}) {
   return (
     <div className="dashboardGrid">
       
-      <PaymentsChart />
-
       <Senders trustedSenders={trustedSenders} setTrustedSenders={setTrustedSenders}/>
 
       <Checklist />
+
+      <PaymentsChart />      
 
     </div>
   );

@@ -12,6 +12,7 @@ import dashboardRoutes from "./routes/dashboard.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import preferencesRoutes from "./routes/preferences.routes.js";
 import uploadRoutes from "./routes/upload.routes.js"
+import remindersRoutes from "./routes/reminders.routes.js"
 
 const PORT = process.env.PORT || 3000;
 
@@ -38,6 +39,7 @@ app.use(dashboardRoutes);
 app.use(adminRoutes);
 app.use(preferencesRoutes);
 app.use("/upload", uploadRoutes);
+app.use(remindersRoutes);
 
 app.get("/", (req, res) => {
   res.send("API running");
