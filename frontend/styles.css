@@ -240,6 +240,16 @@ input {
 .adminCard:hover {
   transform: translateY(-3px);
 }
+.adminCard h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+.adminCard p {
+  margin: 8px 0;
+}
+.adminCard .paymentTag {
+  margin-top: 18px;
+}
 .adminModalButtons {
   display: flex;
   gap: 10px;
@@ -271,6 +281,24 @@ input {
     border: 1px solid rgba(255,255,255,0.1);
     font-size: 14px;
     color: #ddd;
+}
+
+.modal input,
+.modal textarea,
+.modal select {
+  width: 100%;
+  margin-top: 12px;
+  margin-bottom: 14px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #d6d6d6;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+.modal textarea {
+  min-height: 90px;
+  resize: vertical;
 }
 
 

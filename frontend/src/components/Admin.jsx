@@ -121,7 +121,7 @@ export default function Admin() {
                     <h2 className="adminSectionTitle">Servicios de pago único:</h2>                    
                     <div className="adminGrid">
                         {data.single.map(event => (
-                            <div key={event.id} className="modal"
+                            <div key={event.id} className="adminCard"
                             onClick={() => {setSelectedItem(event); setSelectedType("event"); setModalOpen(true);}}>
                                 <h3>{event.type}</h3>
                                 <p>{event.description}</p>
@@ -138,7 +138,7 @@ export default function Admin() {
                     <h2 className="adminSectionTitle">Servicios semanales:</h2>
                     <div className="adminGrid">
                         {data.weekly.map(rule => (
-                            <div key={rule.id} className="modal"
+                            <div key={rule.id} className="adminCard"
                             onClick={() => {setSelectedItem(rule); setSelectedType("rule"); setModalOpen(true);}}>
                                 <h3>{rule.type}</h3>
                                 <p>{rule.description}</p>
@@ -156,7 +156,7 @@ export default function Admin() {
                     <h2 className="adminSectionTitle">Servicios mensuales:</h2>
                     <div className="adminGrid">
                         {data.monthly.map(rule => (
-                            <div key={rule.id} className="modal"
+                            <div key={rule.id} className="adminCard"
                             onClick={() => {setSelectedItem(rule); setSelectedType("rule"); setModalOpen(true);}}>
                                 <h3>{rule.type}</h3>
                                 <p>{rule.description}</p>
@@ -173,7 +173,7 @@ export default function Admin() {
                     <h2 className="adminSectionTitle">Servicios importados desde Gmail:</h2>
                     <div className="adminGrid">
                         {data.gmail.map(event => (
-                            <div key={event.id} className="modal"
+                            <div key={event.id} className="adminCard"
                             onClick={() => {setSelectedItem(event); setSelectedType("event"); setModalOpen(true);}}>
                                 <h3>{event.type}</h3>
                                 <p>{event.description}</p>
