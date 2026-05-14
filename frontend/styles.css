@@ -247,9 +247,7 @@ input {
 .adminCard p {
   margin: 8px 0;
 }
-.adminCard .paymentTag {
-  margin-top: 18px;
-}
+
 .adminCard button {
   display: inline-block;
   width: auto;
@@ -363,30 +361,32 @@ input {
   position: relative;
   display: inline-block;
 }
+.tooltipWrapper button {
+  background: #bbdfe7;
+  color: black;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.2s;
+}
 
 .tooltipText {
   visibility: hidden;
-
   position: absolute;
-
   bottom: 120%;
   left: 50%;
   transform: translateX(-50%);
-
   background: #222;
   color: white;
-
+  font-size: 10px;
   padding: 8px 12px;
-
   border-radius: 10px;
-
   font-size: 13px;
-
   width: 220px;
-
   opacity: 0;
   transition: opacity 0.2s ease;
-
   z-index: 999;
 }
 

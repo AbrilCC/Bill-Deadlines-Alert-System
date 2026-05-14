@@ -126,9 +126,9 @@ export default function Admin() {
                                 <h4>{event.type}</h4>
                                 <p>{event.description}</p>
                                 <p>{formatCurrency(event.amount)}</p>
-                                <div className="paymentTag">
+                                {/*<div className="paymentTag">
                                     {event.payment_method || <h4>Agregá un método de pago</h4>}
-                                </div>
+                                </div>*/}
                             </div>
                         ))}
                     </div>
@@ -143,9 +143,9 @@ export default function Admin() {
                                 <h4>{rule.type}</h4>
                                 <p>{rule.description}</p>
                                 <p>{formatCurrency(rule.amount)}</p>
-                                <div className="paymentTag">
+                                {/*<div className="paymentTag">
                                     {rule.payment_method || <h4>Agregá un método de pago</h4>}
-                                </div>
+                                </div>*/}
                             </div>
                         ))}
                     </div>
@@ -158,12 +158,12 @@ export default function Admin() {
                         {data.monthly.map(rule => (
                             <div key={rule.id} className="adminCard"
                             onClick={() => {setSelectedItem(rule); setSelectedType("rule"); setModalOpen(true);}}>
-                                <e>{rule.type}</h4>
+                                <h4>{rule.type}</h4>
                                 <p>{rule.description}</p>
                                 <p>{formatCurrency(rule.amount)}</p>
-                                <div className="paymentTag">
+                                {/*<div className="paymentTag">
                                     {rule.payment_method || <h4>Agregá un método de pago</h4>}
-                                </div>
+                                </div>*/}
                             </div>
                         ))}
                     </div>
@@ -178,9 +178,9 @@ export default function Admin() {
                                 <h4>{event.type}</h4>
                                 <p>{event.description}</p>
                                 <p>{formatCurrency(event.amount)}</p>
-                                <div className="paymentTag">
+                                {/*<div className="paymentTag">
                                     {event.payment_method || <h4>Agregá un método de pago</h4>}
-                                </div>
+                                </div>*/}
                             </div>
                         ))}
                     </div>
@@ -229,9 +229,10 @@ export default function Admin() {
                             <h2>{selectedItem.type}</h2>
                             <p>{selectedItem.description}</p>
                             <p>{formatCurrency(selectedItem.amount)}</p>
+                            {/*
                             <div className="paymentTag">
                                 {selectedItem.payment_method || <h3>Agregá un método de pago</h3>}
-                            </div>
+                            </div>*/}
                             <div className="tooltipWrapper">
                                 <button onClick={() => setEditing(true)}>
                                     Editar
