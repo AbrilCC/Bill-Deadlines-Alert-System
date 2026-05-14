@@ -249,7 +249,18 @@ function Calendar({gmailConnected}) {
       style={{opacity: !gmailConnected ? 0.5 : 1, cursor: !gmailConnected ? "not-allowed" : "pointer"}}>
         Sincronizar con Gmail
       </button>
-      <button onClick={handleConnectGoogle}>Conectar mi Gmail</button>
+
+      <div className="tooltipWrapper">
+        <button onClick={handleConnectGoogle} disabled="gmailConnected"
+        style={{"opacity": gmailConnected ? 0.5 : 1, "cursor": gmailConnected ? "not-allowed" : "pointer"}}>
+          Conectar mi Gmail</button>
+
+          {gmailConnected && (
+            <span className="tooltipText">
+              Tu Gmail ya está conectado
+            </span>
+          )}
+      </div>
 
       <div style={{ width: "100%" }}>
           <FullCalendar

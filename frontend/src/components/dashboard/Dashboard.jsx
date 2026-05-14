@@ -9,6 +9,8 @@ function Dashboard({trustedSenders, setTrustedSenders}) {
 
       <Senders trustedSenders={trustedSenders} setTrustedSenders={setTrustedSenders}/>
 
+      <Checklist />
+
     </div>
   );
 }
