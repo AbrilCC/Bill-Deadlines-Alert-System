@@ -31,20 +31,26 @@ function Sidebar({ setView, view, trustedSenders }) {
         Calendario
       </button>
 
-      <button className={view === "single" ? "activeSidebar" : ""} onClick={() => setView("single")}>
-        <CreditCard size={18} />
-        Agregar pago único
-      </button>
-      
-      <button className={view === "weekly" ? "activeSidebar" : ""} onClick={() => setView("weekly")}>
-        <CreditCard size={18} />
-        Agregar pagos semanales
-      </button>
+      <div className="sidebarDropdown">
+        <button className="sidebarDropdownBtn">
+          <CreditCard size={18} />
+          Agregar vencimientos
+        </button>
 
-      <button className={view === "monthly" ? "activeSidebar" : ""} onClick={() => setView("monthly")}>
-        <CreditCard size={18} />
-        Agregar pagos mensuales
-      </button>
+        <div className="sidebarDropdownContent">
+          <button className={view === "single" ? "activeSidebar" : ""} onClick={() => setView("single")}>
+            Vencimiento de pago único
+          </button>
+
+          <button className={view === "weekly" ? "activeSidebar" : ""} onClick={() => setView("weekly")}>
+            Vencimiento de pago semanal
+          </button>
+
+          <button className={view === "monthly" ? "activeSidebar" : ""} onClick={() => setView("monthly")}>
+            Vencimiento de pago mensual
+          </button>
+        </div>
+      </div>
 
       <button className={view === "admin" ? "activeSidebar" : ""} onClick={() => setView("admin")}>
         <FolderCog size={18} />

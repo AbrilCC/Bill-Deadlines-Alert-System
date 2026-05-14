@@ -41,39 +41,42 @@ function getCurrentAndNextWeekRange() {
   };
 }
 
-async function getCurrentWeekEvents() {
+async function getCurrentWeekEvents(user_id) {
   const { start, end } = getCurrentWeekRange();
 
   const res = await client.query(`
     SELECT * FROM events
     WHERE due_date BETWEEN $1 AND $2
+    AND user_id = $3
     ORDER BY due_date ASC
-  `, [start, end]);
+  `, [start, end, user_id]);
 
   return res.rows;
 }
 
-async function getCurrentWeekPendingEvents() {
+async function getCurrentWeekPendingEvents(user_id) {
   const { start, end } = getCurrentWeekRange();
 
   const res = await client.query(`
     SELECT * FROM events
     WHERE paid = false
     AND due_date BETWEEN $1 AND $2
+    AND user_id = $3
     ORDER BY due_date ASC
-  `, [start, end]);
+  `, [start, end, user_id]);
 
   return res.rows;
 }
 
-async function getNextWeekEvents() {
+async function getNextWeekEvents(user_id) {
   const { start, end } = getNextWeekRange();
 
   const res = await client.query(`
     SELECT * FROM events
     WHERE due_date BETWEEN $1 AND $2
+    AND user_id = $3
     ORDER BY due_date ASC
-  `, [start, end]);
+  `, [start, end, user_id]);
 
   return res.rows;
 }
@@ -188,8 +191,14 @@ function formatNextWeekMessage(events) {
 
 bot.onText(/\/estaSemana/, async (msg) => {
   const chatId = msg.chat.id;
-
-  const events = await getCurrentWeekEvents();
+  const userRes = await client.query(
+    `SELECT id FROM users WHERE chat_id = $1`,
+    [chatId]);
+  const user = userRes.rows[0];
+  if (!user) {
+    return bot.sendMessage(chatId, "Usuario no encontrado");
+  }
+  const events = await getCurrentWeekEvents(user.id);
 
   const text = formatCurrentWeekMessage(events);
 
@@ -198,8 +207,14 @@ bot.onText(/\/estaSemana/, async (msg) => {
 
 bot.onText(/\/semanaSiguiente/, async (msg) => {
   const chatId = msg.chat.id;
-
-  const events = await getNextWeekEvents();
+  const userRes = await client.query(
+    `SELECT id FROM users WHERE chat_id = $1`,
+    [chatId]);
+  const user = userRes.rows[0];
+  if (!user) {
+    return bot.sendMessage(chatId, "Usuario no encontrado");
+  }
+  const events = await getNextWeekEvents(user.id);
 
   const text = formatNextWeekMessage(events);
 
@@ -208,8 +223,14 @@ bot.onText(/\/semanaSiguiente/, async (msg) => {
 
 bot.onText(/\/verPendientes/, async (msg) => {
   const chatId = msg.chat.id;
-
-  const events = await getCurrentWeekPendingEvents();
+  const userRes = await client.query(
+    `SELECT id FROM users WHERE chat_id = $1`,
+    [chatId]);
+  const user = userRes.rows[0];
+  if (!user) {
+    return bot.sendMessage(chatId, "Usuario no encontrado");
+  }
+  const events = await getCurrentWeekPendingEvents(user.id);
 
   const text = formatCurrentWeekPendingMessage(events);
 
@@ -217,35 +238,47 @@ bot.onText(/\/verPendientes/, async (msg) => {
 });
 
 bot.onText(/\/marcarPagado/, async (msg) => {
-    const chatId = msg.chat.id;
-    const { start, end } = getCurrentAndNextWeekRange();
+  const chatId = msg.chat.id;
+  const userRes = await client.query(
+    `SELECT id FROM users WHERE chat_id = $1`,
+    [chatId]);
+  const user = userRes.rows[0];
+  if (!user) {
+    return bot.sendMessage(chatId, "Usuario no encontrado");
+  }
+  const { start, end } = getCurrentAndNextWeekRange(user.id);
 
-    const events = await client.query(
-        `SELECT id, type, due_date
-        FROM events
-        WHERE paid = false
-        AND due_date BETWEEN $1 AND $2
-        ORDER BY due_date ASC`,
-        [start, end]);
+  const events = await client.query(
+      `SELECT id, type, due_date
+      FROM events
+      WHERE user_id = $1 AND paid = false
+      AND due_date BETWEEN $2 AND $3
+      ORDER BY due_date ASC`,
+      [user.id, start, end]);
 
-    const keyboard = events.rows.map(e => [{
-        text: e.type,
-        callback_data: `pay_${e.id}`
-    }]);
+  const keyboard = events.rows.map(e => [{
+      text: e.type,
+      callback_data: `pay_${e.id}`
+  }]);
 
-    bot.sendMessage(chatId, "Seleccioná el servicio que ya pagaste:", {
-        reply_markup: {
-            inline_keyboard: keyboard
-        }
-    }); 
+  bot.sendMessage(chatId, "Seleccioná el servicio que ya pagaste:", {
+      reply_markup: {
+          inline_keyboard: keyboard
+      }
+  }); 
 });
 
 bot.on("callback_query", async (query) => {
   const id = query.data.split("_")[1];
+  const userRes = await client.query(
+    `SELECT id FROM users WHERE chat_id = $1`,
+    [chatId]
+  );
+  const user = userRes.rows[0];
 
   await client.query(`
-    UPDATE events SET paid = true WHERE id = $1
-  `, [id]);
+    UPDATE events SET paid = true WHERE id = $1 AND user_id = $2
+  `, [id, user.id]);
 
   bot.answerCallbackQuery(query.id, { text: "Marcado como pagado ✅" });
 });
@@ -280,12 +313,12 @@ bot.onText(/\/paginaWeb/, async (msg) => {
 //------------------------ BOT MESSAGES --------------------------------------//
 ///// SEND WEEKLY MESSAGE /////
 cron.schedule("0 9 * * 4", async () => {
-  const users = await client.query(`SELECT chat_id FROM users`);
-
-  const events = await getNextWeekEvents();
-  const text = formatNextWeekMessage(events);
-
+  const users = await client.query(`SELECT id, chat_id FROM users WHERE chat_id IS NOT NULL`);
+  
   for (const u of users.rows) {
+    const events = await getNextWeekEvents(u.id);
+    const text = formatNextWeekMessage(events);
+
     await bot.sendMessage(u.chat_id, text, { parse_mode: "Markdown" });
   }
 }, {timezone: "America/Argentina/Buenos_Aires"});

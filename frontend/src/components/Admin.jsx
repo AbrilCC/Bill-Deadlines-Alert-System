@@ -220,7 +220,7 @@ export default function Admin() {
                                 value={customPaymentMethod} onChange={(e) => setCustomPaymentMethod(e.target.value)}/>
                             )}
 
-                            <button onClick={saveChanges}>
+                            <button className="tooltipWrapper" onClick={saveChanges}>
                                 Guardar cambios
                             </button>
                         </>

@@ -116,6 +116,44 @@ input {
     color: white !important;
 }
 
+.sidebarDropdown {
+  position: relative;
+}
+
+.sidebarDropdownBtn {
+  width: 100%;
+}
+
+.sidebarDropdownContent {
+  max-height: 0;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+
+  background: #1f2a40;
+
+  margin-left: 15px;
+  border-left: 2px solid #fe6601;
+
+  transition:
+    max-height 0.25s ease,
+    opacity 0.2s ease;
+
+  opacity: 0;
+}
+
+.sidebarDropdown:hover .sidebarDropdownContent {
+  max-height: 220px;
+  opacity: 1;
+}
+
+.sidebarDropdownContent button {
+  font-size: 15px;
+  padding-left: 20px;
+  height: 48px;
+}
+
 /* ---------------------------MAIN--------------------------- */
 .main {
     width: 100%;
@@ -239,6 +277,7 @@ input {
 }
 .adminCard:hover {
   transform: translateY(-3px);
+  background-color: #f5dac8;
 }
 .adminCard h3 {
   margin-top: 0;
@@ -281,9 +320,6 @@ input {
 }
 .adminModalButtons button:hover {
   opacity: 0.9;
-}
-.adminCard button:hover {
-    background: #bbdfe7;
 }
 .paymentTag {
     display: inline-block;
