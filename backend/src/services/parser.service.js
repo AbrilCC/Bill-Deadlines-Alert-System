@@ -9,8 +9,10 @@ const pdf = require("pdf-parse");
 function normalizeAmount(str) {
   if (!str) return null;
   let cleaned = str.replace(/\s/g, "").replace(/\$/g, "");
+  cleaned = cleaned.replace(/[^\d.,-]/g, "");
   const hasComma = cleaned.includes(",");
   const hasDot = cleaned.includes(".");
+  const commas = (amount.match(/,/g) || []).length;
 
   //Format 10.000,00
   if (hasComma && hasDot && cleaned.lastIndexOf(",") > cleaned.lastIndexOf(".")) {
@@ -35,8 +37,16 @@ function normalizeAmount(str) {
   else if (commas === 1) {
     cleaned = cleaned.replace(",", ".");
   }
-  
 
+  //Format 10.000.00
+  else if (!hasComma && (cleaned.match(/\./g) || []).length >= 2) {
+    const lastDot = cleaned.lastIndexOf(".");
+    cleaned =
+      cleaned.slice(0, lastDot).replace(/\./g, "") +
+      "." +
+      cleaned.slice(lastDot + 1);
+  }
+  
   //Format 10000.00 is already alright
   
   const value = parseFloat(cleaned);
