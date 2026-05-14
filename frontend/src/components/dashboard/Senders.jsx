@@ -66,7 +66,9 @@ function Senders({trustedSenders, setTrustedSenders}) {
   return (
     <>
       <div className="card" onClick={() => setShowModal(true)} style={{ cursor: "pointer" }}>
-        <h3 className="checklistHeader">Remitentes de facturas</h3>
+        <div className="checklistHeader">
+          <h3>Remitentes de facturas</h3>
+        </div>
         {missingTrustedSenders && (<AlertTriangle size={18} color="#ff9800" />)}
 
         <p>Para evitar cargar datos de phishing y publicidad, configurá las direcciones de mails de tus servicios.</p>

@@ -314,7 +314,7 @@ input {
   cursor: pointer;
   accent-color: #df6b17;
   flex-shrink: 0;
-   transform: translateY(3px);
+   transform: translateY(10px);
 }
 .checklistTask span {
   font-size: 17px;
@@ -342,7 +342,7 @@ input {
   transform: scale(1.08);
 }
 
-/* ---------------------------ADMIN PAGE--------------------------- */
+/* --------------------------ADMIN PAGE--------------------------- */
 .adminPage {
   padding: 24px;
 }

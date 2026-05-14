@@ -64,7 +64,9 @@ function PaymentsChart() {
 
   return (
     <div className="dashboardCard chartCard">
-      <h3 className="checklistHeader">Pagos del mes</h3>
+      <div className="checklistHeader">
+        <h3>Pagos del mes</h3>
+      </div>
 
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data}>
