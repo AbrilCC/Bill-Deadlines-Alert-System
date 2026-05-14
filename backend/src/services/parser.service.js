@@ -12,7 +12,7 @@ function normalizeAmount(str) {
   cleaned = cleaned.replace(/[^\d.,-]/g, "");
   const hasComma = cleaned.includes(",");
   const hasDot = cleaned.includes(".");
-  const commas = (amount.match(/,/g) || []).length;
+  const commas = (cleaned.match(/,/g) || []).length;
 
   //Format 10.000,00
   if (hasComma && hasDot && cleaned.lastIndexOf(",") > cleaned.lastIndexOf(".")) {
