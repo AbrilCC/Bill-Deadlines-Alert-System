@@ -140,7 +140,7 @@ export default function Admin() {
                         {data.weekly.map(rule => (
                             <div key={rule.id} className="adminCard"
                             onClick={() => {setSelectedItem(rule); setSelectedType("rule"); setModalOpen(true);}}>
-                                <h3>{rule.type}</h3>
+                                <h4>{rule.type}</h4>
                                 <p>{rule.description}</p>
                                 <p>{formatCurrency(rule.amount)}</p>
                                 <div className="paymentTag">
@@ -158,7 +158,7 @@ export default function Admin() {
                         {data.monthly.map(rule => (
                             <div key={rule.id} className="adminCard"
                             onClick={() => {setSelectedItem(rule); setSelectedType("rule"); setModalOpen(true);}}>
-                                <h3>{rule.type}</h3>
+                                <e>{rule.type}</h4>
                                 <p>{rule.description}</p>
                                 <p>{formatCurrency(rule.amount)}</p>
                                 <div className="paymentTag">
@@ -175,7 +175,7 @@ export default function Admin() {
                         {data.gmail.map(event => (
                             <div key={event.id} className="adminCard"
                             onClick={() => {setSelectedItem(event); setSelectedType("event"); setModalOpen(true);}}>
-                                <h3>{event.type}</h3>
+                                <h4>{event.type}</h4>
                                 <p>{event.description}</p>
                                 <p>{formatCurrency(event.amount)}</p>
                                 <div className="paymentTag">

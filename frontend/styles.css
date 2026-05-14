@@ -250,6 +250,20 @@ input {
 .adminCard .paymentTag {
   margin-top: 18px;
 }
+.adminCard button {
+  display: inline-block;
+  width: auto;
+  padding: 10px 18px;
+  margin: 10px 8px 0 0;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+.adminCard button:hover {
+    background: #bbdfe7;
+}
 .adminModalButtons {
   display: flex;
   gap: 10px;
