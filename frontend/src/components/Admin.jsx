@@ -227,8 +227,8 @@ export default function Admin() {
                         ) : (
                         <>
                             <h2>{selectedItem.type}</h2>
-                            <p>{selectedItem.description}</p>
-                            <p>{formatCurrency(selectedItem.amount)}</p>
+                            <p style={{"fontSize": "15px"}}>{selectedItem.description}</p>
+                            <p style={{"fontSize": "15px"}}>Monto: {formatCurrency(selectedItem.amount)}</p>
                             {/*
                             <div className="paymentTag">
                                 {selectedItem.payment_method || <h3>Agregá un método de pago</h3>}
