@@ -227,7 +227,7 @@ input {
   padding-left: 14px;
 }
 .adminCard {
-  background: linear-gradient(#df6b17, #ff8c42);
+  background: white;
   color: white;
   font-size: 28px;
   border-radius: 16px;

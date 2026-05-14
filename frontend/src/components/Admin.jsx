@@ -123,7 +123,7 @@ export default function Admin() {
                         {data.single.map(event => (
                             <div key={event.id} className="adminCard"
                             onClick={() => {setSelectedItem(event); setSelectedType("event"); setModalOpen(true);}}>
-                                <h3>{event.type}</h3>
+                                <h4>{event.type}</h4>
                                 <p>{event.description}</p>
                                 <p>{formatCurrency(event.amount)}</p>
                                 <div className="paymentTag">
