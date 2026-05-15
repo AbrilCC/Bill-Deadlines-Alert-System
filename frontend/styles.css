@@ -67,7 +67,7 @@ input {
 
 /* ---------------------------SIDEBAR--------------------------- */
 .sidebar {
-    width: 240px;
+    width: 100%;
     min-width: 240px;
     max-width: 240px;
     background: #24314b;
@@ -85,7 +85,8 @@ input {
   gap: 10px;
 }
 .sidebarLogo {
-  width: 65px;
+  width: 100%;
+  max-width: 65px;
   height: 65px;
   object-fit: contain;
   display: block;
@@ -157,11 +158,13 @@ input {
 /* ---------------------------MAIN--------------------------- */
 .main {
     width: 100%;
-    max-width: 1500px;
-    padding: 10px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px;
     display: flex;
     flex-direction: column;
     flex: 1;
+    box-sizing: border-box;
 }
 
 /* ---------------------------CARDS--------------------------- */
@@ -170,10 +173,10 @@ input {
     /*width: 1350px;*/
     width: 100%;
     max-width: 1350px;
-    padding: 20px;
+    padding: 16px;
     border-radius: 12px;
     box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
-    font-size: 20px;
+    font-size: 15px;
     margin: 20px auto;
 }
 .card input {
@@ -186,7 +189,7 @@ input {
     padding: 10px 18px;
     margin: 10px 8px 0 0;
 
-    font-size: 16px;
+    font-size: 12px;
     font-weight: 600;
 
     border-radius: 8px;
@@ -230,6 +233,14 @@ input {
   gap: 20px;
   align-items: start;
 }
+@media (max-width: 1100px) {
+  .dashboardGrid {
+    grid-template-columns: 1fr;
+  }
+  .chartCard {
+    grid-column: auto;
+  }
+}
 
 .dashboardCard {
   background: white;
@@ -253,7 +264,7 @@ input {
 .checklistHeader h3 {
   margin: 0;
   color: #1f2a40;
-  font-size: 34px;
+  font-size: clamp(1.4rem, 2vw, 1.8rem);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -359,7 +370,7 @@ input {
   margin-bottom: 40px;
 }
 .adminSectionTitle {
-  font-size: 28px;
+  font-size: 23px;
   margin-bottom: 18px;
   color: white;
 
@@ -369,7 +380,7 @@ input {
 .adminCard {
   background: white;
   color: black;
-  font-size: 28px;
+  font-size: 23px;
   border-radius: 16px;
   border-color: white;
   padding: 20px;
@@ -472,7 +483,8 @@ input {
   background: white;
   padding: 20px;
   border-radius: 12px;
-  width: 400px;
+  width: 100%;
+  max-width: 400px;
   position: relative;
   animation: fadeIn 0.2s ease;
 }
@@ -523,7 +535,8 @@ input {
   padding: 8px 12px;
   border-radius: 10px;
   font-size: 16px;
-  width: 220px;
+  width: 100%;
+  max-width: 220px;
   opacity: 0;
   transition: opacity 0.2s ease;
   z-index: 999;
@@ -554,7 +567,8 @@ input {
 }
 
 .spinner {
-  width: 70px;
+  width: 100%;
+  max-width: 70px;
   height: 70px;
 
   border: 7px solid rgba(255,255,255,0.2);
@@ -575,6 +589,7 @@ input {
 
 /* ---------------------------FORMS--------------------------- */
 #formStyle {
+    width: 100%;
     max-width: 1000px;
     margin: 0 auto;
     display: flex;
@@ -610,7 +625,8 @@ input {
     border: 1px solid #ccc;
 }
 .labelGroup {
-  width: 150px;
+  width: 100%;
+  max-width: 150px;
   display: flex;
   flex-direction: column;
 }
@@ -641,7 +657,8 @@ input {
 
 /* PARA EL END_DATE */
 .smallSelect {
-  width: 140px;
+  width: 100%;
+  max-width: 140px;
   padding: 6px;
   border-radius: 6px;
 }
