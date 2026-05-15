@@ -65,7 +65,7 @@ function Senders({trustedSenders, setTrustedSenders}) {
 
   return (
     <>
-      <div className="card" onClick={() => setShowModal(true)} style={{ cursor: "pointer" }}>
+      <div className="dashboardCard" onClick={() => setShowModal(true)} style={{ cursor: "pointer" }}>
         <div className="checklistHeader">
           <h3>Remitentes de facturas</h3>
         </div>
