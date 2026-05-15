@@ -419,7 +419,7 @@ function Calendar({gmailConnected}) {
                                   editForm.preferred_days.includes(day.value)
                                   ? "selectedDay"
                                   : ""} onClick={() => toggleDay(day.value)}>
-                              {day}
+                              {day.label}
                           </button>
                       ))}
                   </div>
@@ -480,7 +480,7 @@ function Calendar({gmailConnected}) {
           </div>
       )}
       {showReminderModal && (
-        <div className="modalOverlay">
+        <div className="modalOverlay" onClick={() => setShowReminderModal(false)}>
           <div className="modal">
             <h2>Nuevo recordatorio</h2>
             <input placeholder="Título" value={reminderForm.title}
