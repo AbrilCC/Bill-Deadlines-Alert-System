@@ -373,8 +373,8 @@ function Calendar({gmailConnected}) {
               const rect = info.dayEl.getBoundingClientRect();
               setSelectedDate(info.dateStr);
               setPopupPosition({
-                x: rect.left + window.scrollX + 10,
-                y: rect.top + window.scrollY + 10
+                x: rect.left + 10,
+                y: rect.top + 10
               });
               setShowReminderPopup(true);
             }}
@@ -471,7 +471,7 @@ function Calendar({gmailConnected}) {
 
       {showReminderPopup && (
         <div className="calendarPopupOverlay" onClick={() => setShowReminderPopup(false)}>
-          <div className="reminderPopup" style={{"left": "popupPosition.x", "top": "popupPosition.y"}}>
+          <div className="reminderPopup" style={{left: popupPosition.x, top: popupPosition.y}} onClick={(e) => e.stopPropagation()}>
               <button className="createReminderBtn"
                 onClick={() => { setShowReminderModal(true); setShowReminderPopup(false);}}>
                 ¿Crear recordatorio?

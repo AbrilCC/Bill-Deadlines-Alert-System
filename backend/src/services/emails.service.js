@@ -75,6 +75,7 @@ export const syncEmailsService = async (user_id) => {
 
       //console.log("EMAIL LINK: https://mail.google.com/mail/u/0/#inbox/", email_id);
       console.log("EMAIL:", email.id);
+      console.log({id: email.id, threadId: email.threadId});
       console.log("EXISTING:", existing.rows);
       if (existing.rows.length > 0) continue;
 
