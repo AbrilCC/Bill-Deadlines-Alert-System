@@ -27,6 +27,10 @@ function Calendar({gmailConnected}) {
       time: ""
   });
   const [syncLoading, setSyncLoading] = useState(false);
+  const [popupPosition, setPopupPosition] = useState({
+    x: 0,
+    y: 0
+  });
   const dayMap = {
       sunday: 0,
       monday: 1,
@@ -366,7 +370,12 @@ function Calendar({gmailConnected}) {
               setShowModal(true);
             }}
             dateClick={(info) => {
+              const rect = info.dayEl.getBoundingClientRect();
               setSelectedDate(info.dateStr);
+              setPopupPosition({
+                x: rect.left + window.scrollX + 10,
+                y: rect.top + window.scrollY + 10
+              });
               setShowReminderPopup(true);
             }}
           />
@@ -461,12 +470,14 @@ function Calendar({gmailConnected}) {
       )}
 
       {showReminderPopup && (
-        <div className="reminderPopup">
-            <button className="createReminderBtn"
-              onClick={() => { setShowReminderModal(true); setShowReminderPopup(false);}}>
-              ¿Crear recordatorio?
-            </button>
-        </div>
+        <div className="calendarPopupOverlay" onClick={() => setShowReminderPopup(false)}>
+          <div className="reminderPopup" style={{"left": "popupPosition.x", "top": "popupPosition.y"}}>
+              <button className="createReminderBtn"
+                onClick={() => { setShowReminderModal(true); setShowReminderPopup(false);}}>
+                ¿Crear recordatorio?
+              </button>
+          </div>
+          </div>
       )}
       {showReminderModal && (
         <div className="modalOverlay">

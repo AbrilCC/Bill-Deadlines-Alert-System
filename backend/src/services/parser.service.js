@@ -274,6 +274,7 @@ export function detectType(subject, sender, body) {
   if (/galicia/.test(from)) return "Banco Galicia";
   if (/edenor/.test(from)) return "Luz";
   if (/aysa/.test(from)) return "Aysa";
+  if (/selisiri/.test(from)) return "Selisiri";
 
   return "Factura";
 }

@@ -59,6 +59,7 @@ export const syncEmailsService = async (user_id) => {
     const emails = await getEmails(auth, trustedSenders);
 
     console.log("AMOUNT OF EMAILS: ", emails.length); 
+    console.log(emails.map(e => e.id));
 
     for (const email of emails) {
       const detail = await getEmailDetail(auth, email.id);

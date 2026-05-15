@@ -727,6 +727,31 @@ input {
   z-index: 9999;
   border: 2px solid #ececec;
 }
+.calendarPopupOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+}
+.reminderPopup {
+  position: absolute;
+  background: white;
+  padding: 14px;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+  border: 1px solid #ececec;
+  z-index: 9999;
+  animation: popupAppear 0.15s ease;
+}
+@keyframes popupAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 .createReminderBtn {
   background: #3a99a8;
   color: white;
