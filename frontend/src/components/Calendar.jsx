@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import esLocale from "@fullcalendar/core/locales/es";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import interactionPlugin from "@fullcalendar/interaction";
 
 const BACKEND_API_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -335,7 +336,7 @@ function Calendar({gmailConnected}) {
 
       <div style={{ width: "100%" }}>
           <FullCalendar
-            plugins={[dayGridPlugin]}
+            plugins={[dayGridPlugin, interactionPlugin]}
             locale={esLocale}
             initialView="dayGridMonth"
             height="auto"
