@@ -264,7 +264,7 @@ input {
 .checklistHeader h3 {
   margin: 0;
   color: #1f2a40;
-  font-size: clamp(1.4rem, 2vw, 1.8rem);
+  font-size: 15px;
   display: flex;
   align-items: center;
   gap: 10px;
