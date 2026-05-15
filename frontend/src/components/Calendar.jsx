@@ -140,7 +140,7 @@ function Calendar({gmailConnected}) {
 
     return data.map(r => ({
       id: `reminder-${r.id}`,
-      title: `📝 ${r.type}`,
+      title: `📝 ${r.title}`,
       start: parseLocalDate(r.reminder_date),
       backgroundColor: "#2e6e89",
       extendedProps: {
@@ -286,7 +286,7 @@ function Calendar({gmailConnected}) {
           Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
-          type: reminderForm.title,
+          title: reminderForm.title,
           description: reminderForm.description,
           reminder_date: selectedDate,
           reminder_time:
@@ -407,18 +407,18 @@ function Calendar({gmailConnected}) {
                   <label>Días en los que normalmente puedo pagar:</label>
                   <div className="daysSelector">
                       {[
-                          "monday",
-                          "tuesday",
-                          "wednesday",
-                          "thursday",
-                          "friday",
-                          "saturday",
-                          "sunday"
+                          { label: "Lunes", value: "monday" },
+                          { label: "Martes", value: "tuesday" },
+                          { label: "Miércoles", value: "wednesday" },
+                          { label: "Jueves", value: "thursday" },
+                          { label: "Viernes", value: "friday" },
+                          { label: "Sábado", value: "saturday" },
+                          { label: "Domingo", value: "sunday" }
                       ].map(day => (
-                          <button key={day} type="button" className={
-                                  editForm.preferred_days.includes(day)
+                          <button key={day.value} type="button" className={
+                                  editForm.preferred_days.includes(day.value)
                                   ? "selectedDay"
-                                  : ""} onClick={() => toggleDay(day)}>
+                                  : ""} onClick={() => toggleDay(day.value)}>
                               {day}
                           </button>
                       ))}

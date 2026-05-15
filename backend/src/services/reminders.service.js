@@ -1,12 +1,12 @@
 export const createReminder = async (client, data) => {
   try {  
-    const { user_id, type, description, reminder_date, reminder_time } = data;
+    const { user_id, title, description, reminder_date, reminder_time } = data;
     const result = await client.query(
       `INSERT INTO reminders
-      (user_id, type, description, reminder_date, reminder_time)
+      (user_id, title, description, reminder_date, reminder_time)
       VALUES ($1, $2, $3, $4, $5)
       RETURNING *`,
-      [user_id, type, description, reminder_date, reminder_time]
+      [user_id, title, description, reminder_date, reminder_time]
     );
     return result.rows[0];
 

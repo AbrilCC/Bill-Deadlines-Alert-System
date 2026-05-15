@@ -772,20 +772,12 @@ input {
   box-shadow: 0 10px 25px rgba(0,0,0,0.2);
   z-index: 9999;
   border: 2px solid #ececec;
+  animation: popupAppear 0.15s ease;
 }
 .calendarPopupOverlay {
   position: fixed;
   inset: 0;
   z-index: 9998;
-}
-.reminderPopup {
-  position: absolute;
-  background: white;
-  padding: 14px;
-  border-radius: 14px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.18);
-  border: 1px solid #ececec;
-  z-index: 9999;
   animation: popupAppear 0.15s ease;
 }
 @keyframes popupAppear {

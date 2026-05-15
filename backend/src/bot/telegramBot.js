@@ -81,6 +81,22 @@ async function getNextWeekEvents(user_id) {
   return res.rows;
 }
 
+async function getTodayReminders(user_id) {
+  const today = moment()
+    .tz("America/Argentina/Buenos_Aires")
+    .format("YYYY-MM-DD");
+
+  const res = await client.query(`
+    SELECT *
+    FROM reminders
+    WHERE user_id = $1
+    AND reminder_date = $2
+    ORDER BY reminder_time ASC
+  `, [user_id, today]);
+
+  return res.rows;
+}
+
 function getEmoji(type) {
   const map = {
     "Personal": "📱",
@@ -185,6 +201,23 @@ function formatNextWeekMessage(events) {
     }
     msg += `💰 *Total: ${formatCurrency(total)}*`;
     return msg;
+}
+
+///// TODAY'S REMINDERS /////
+function formatTodayReminders(reminders) {
+  if (!reminders.length) return null;
+  let msg = "📝 *Recordatorios de hoy:*\n\n";
+  for (const r of reminders) {
+    msg += `🔔 *${r.title}*\n`;
+    if (r.description) {
+      msg += `${r.description}\n`;
+    }
+    if (r.reminder_time) {
+      msg += `🕘 ${r.reminder_time}\n`;
+    }
+    msg += `\n`;
+  }
+  return msg;
 }
 
 //------------------------ BOT COMMANDS --------------------------------------//
@@ -320,6 +353,26 @@ cron.schedule("0 9 * * 4", async () => {
     const text = formatNextWeekMessage(events);
 
     await bot.sendMessage(u.chat_id, text, { parse_mode: "Markdown" });
+  }
+}, {timezone: "America/Argentina/Buenos_Aires"});
+
+///// SEND DAILY REMINDERS /////
+cron.schedule("0 9 * * *", async () => {
+  const users = await client.query(`
+    SELECT id, chat_id
+    FROM users
+    WHERE chat_id IS NOT NULL
+  `);
+
+  for (const u of users.rows) {
+    const reminders = await getTodayReminders(u.id);
+    if (!reminders.length) continue;
+    const text = formatTodayReminders(reminders);
+    await bot.sendMessage(
+      u.chat_id,
+      text,
+      { parse_mode: "Markdown" }
+    );
   }
 }, {timezone: "America/Argentina/Buenos_Aires"});
 
