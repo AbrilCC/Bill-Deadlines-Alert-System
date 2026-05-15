@@ -94,18 +94,18 @@ function Senders({trustedSenders, setTrustedSenders}) {
                   (<input value={editingValue}
                     onChange={(e) => setEditingValue(e.target.value)}/>
 
-                  ) : (<div style={{ flex: 1 }}>{sender}</div>
+                  ) : (<div className="senderText">{sender}</div>
                   )}
 
                 {editingIndex === index ?
                   (<button onClick={saveEdit}>Guardar</button>
                   ) : (
-                    <button onClick={() => handleEdit(index)}>
+                    <button className="senderIconBtn" onClick={() => handleEdit(index)}>
                       <Pencil size={18} />
                     </button>
                   )}
 
-                <button onClick={() => handleDelete(index)}>
+                <button className="senderIconBtn" onClick={() => handleDelete(index)}>
                   <Trash2 size={18} />
                 </button>
               </div>

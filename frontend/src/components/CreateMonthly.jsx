@@ -67,31 +67,31 @@ export default function CreateMonthly({ setView }) {
     };
 
   return (
-    <div className="card" id="formStyle">
+    <form className="card" id="formStyle" onSubmit={handleSubmit}>
       <h2>Agregar pagos mensuales</h2>
 
       <div className="formInputRow">
         <label>Nombre:</label>
-        <input name="type" placeholder="Nombre (ej: Inglés)" onChange={handleChange} />
+        <input name="type" required placeholder="Nombre (ej: Inglés)" onChange={handleChange} />
       </div>
 
       <div className="formInputRow">
         <label>Descripción:</label>
-        <input name="description" placeholder="Descripción (ej: clases de Cata)" onChange={handleChange} />
+        <input name="description" required placeholder="Descripción (ej: clases de Cata)" onChange={handleChange} />
       </div>
 
       <div className="formInputRow">
         <label>Monto:</label>
         <div className="inputWithSymbol">
           <span>$</span>
-          <input type="number" step="0.01" min="0" name="amount" placeholder="El precio actual de cada cuota" onChange={handleChange} />
+          <input type="number" required step="0.01" min="0" name="amount" placeholder="El precio actual de cada cuota" onChange={handleChange} />
         </div>
       </div>
 
       <div className="formInputRow">
         <label>Primera cuota:</label>
         
-        <DatePicker selected={startDate} onChange={(date) => {
+        <DatePicker required selected={startDate} onChange={(date) => {
           setStartDate(date);
           setForm({ ...form, start_date: date.toISOString() });
         }} dateFormat="dd/MM/yyyy" className="customDate"/>
@@ -136,7 +136,7 @@ export default function CreateMonthly({ setView }) {
         </div>
       </div>
 
-      <button onClick={handleSubmit}>Generar</button>
-    </div>
+      <button type="submit">Generar</button>
+    </form>
   );
 }

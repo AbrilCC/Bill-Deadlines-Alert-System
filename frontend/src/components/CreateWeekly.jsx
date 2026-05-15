@@ -23,7 +23,8 @@ export default function CreateWeekly({ setView }) {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     if (!form.type || !form.amount || !form.start_date) {
         alert("Completá todos los campos obligatorios");
         return;
@@ -52,31 +53,31 @@ export default function CreateWeekly({ setView }) {
     };
 
   return (
-    <div className="card" id="formStyle">
+    <form className="card" id="formStyle" onSubmit={handleSubmit}>
       <h2>Agregar pagos semanales</h2>
 
       <div className="formInputRow">
         <label>Nombre:</label>
-        <input name="type" placeholder="Nombre (ej: Inglés)" onChange={handleChange} />
+        <input name="type" required placeholder="Nombre (ej: Inglés)" onChange={handleChange} />
       </div>
 
       <div className="formInputRow">
         <label>Descripción:</label>
-        <input name="description" placeholder="Descripción (ej: clases de Cata)" onChange={handleChange} />
+        <input name="description" required placeholder="Descripción (ej: clases de Cata)" onChange={handleChange} />
       </div>
 
       <div className="formInputRow">
         <label>Monto:</label>
         <div className="inputWithSymbol">
           <span>$</span>
-          <input type="number" step="0.01" min="0" name="amount" placeholder="El precio actual de cada cuota" onChange={handleChange} />
+          <input type="number" required step="0.01" min="0" name="amount" placeholder="El precio actual de cada cuota" onChange={handleChange} />
         </div>
       </div>
 
       <div className="formInputRow">
-        <label>Fecha de inicio:</label>
+        <label>Fecha del primer vencimiento:</label>
         
-        <DatePicker selected={startDate} onChange={(date) => {
+        <DatePicker required selected={startDate} onChange={(date) => {
         setStartDate(date);
         setForm({ ...form, start_date: date.toISOString(), weekday: date.getDay() });
         }} dateFormat="dd/MM/yyyy" className="customDate"/>
@@ -117,7 +118,7 @@ export default function CreateWeekly({ setView }) {
         </div>
       </div>
 
-      <button onClick={handleSubmit}>Generar</button>
-    </div>
+      <button type="submit">Generar</button>
+    </form>
   );
 }

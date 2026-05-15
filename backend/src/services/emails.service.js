@@ -58,10 +58,15 @@ export const syncEmailsService = async (user_id) => {
     const auth = getAuth(user.google_access_token, user.google_refresh_token);
     const emails = await getEmails(auth, trustedSenders);
 
-    console.log("AMOUNT OF EMAILS: ", emails.length); 
-    console.log(emails.map(e => e.id));
-
+    const uniqueThreads = new Map();
     for (const email of emails) {
+      if (!uniqueThreads.has(email.threadId)) {
+        uniqueThreads.set(email.threadId, email);
+      }
+    }
+    const dedupedEmails = [...uniqueThreads.values()];
+
+    for (const email of dedupedEmails) {
       const detail = await getEmailDetail(auth, email.id);
       const attachments = await getAttachments(auth, detail);
       const bodyText = await getBody(detail);
@@ -73,9 +78,7 @@ export const syncEmailsService = async (user_id) => {
         [email.id, user_id]
       );
 
-      //console.log("EMAIL LINK: https://mail.google.com/mail/u/0/#inbox/", email_id);
       console.log("EMAIL:", email.id);
-      console.log({id: email.id, threadId: email.threadId});
       console.log("EXISTING:", existing.rows);
       if (existing.rows.length > 0) continue;
 
