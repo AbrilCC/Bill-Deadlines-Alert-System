@@ -98,7 +98,7 @@ function Senders({trustedSenders, setTrustedSenders}) {
                   )}
 
                 {editingIndex === index ?
-                  (<button onClick={saveEdit}>Guardar</button>
+                  (<button className="addSenderBtn" onClick={saveEdit}>Guardar</button>
                   ) : (
                     <button className="senderIconBtn" onClick={() => handleEdit(index)}>
                       <Pencil size={18} />

@@ -5,6 +5,7 @@ export const postReminder = async (req, res) => {
   try {
     console.log("REQ.USER:", req.user);
     console.log("REQ.BODY:", req.body);
+    console.log("USER ID:", req.user.id);
     const reminder = await createReminder(client, {user_id: req.user.id, ...req.body});
     res.status(201).json(reminder);
   } catch (error) {

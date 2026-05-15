@@ -1,14 +1,23 @@
 export const createReminder = async (client, data) => {
-  const { user_id, type, description, reminder_date, reminder_time } = data;
-  const result = await client.query(
-    `INSERT INTO reminders
-    (user_id, type, description, reminder_date, reminder_time)
-    VALUES ($1, $2, $3, $4, $5)
-    RETURNING *`,
-    [user_id, type, description, reminder_date, reminder_time]
-  );
+  try {  
+    const { user_id, type, description, reminder_date, reminder_time } = data;
+    const result = await client.query(
+      `INSERT INTO reminders
+      (user_id, type, description, reminder_date, reminder_time)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING *`,
+      [user_id, type, description, reminder_date, reminder_time]
+    );
+    return result.rows[0];
 
-  return result.rows[0];
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      error: error.message,
+      detail: error.detail,
+      stack: error.stack
+    });
+  }
 };
 
 export const getReminders = async (client, user_id) => {
