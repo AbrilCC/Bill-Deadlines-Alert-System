@@ -8,7 +8,7 @@ import {
   AlertTriangle
 } from "lucide-react";
 
-function Sidebar({ setView, view, trustedSenders }) {
+function Sidebar({ setView, view, trustedSenders, userData }) {
 
   const missingTrustedSenders = trustedSenders.length === 0;
 
@@ -66,6 +66,12 @@ function Sidebar({ setView, view, trustedSenders }) {
         <Bot size={18} />
         Chatear con Boti        
       </button>
+
+      <div className="sidebarUserInfo">
+        <p className="sidebarUserEmail">
+            {userData?.email}
+        </p>
+      </div>
 
     </div>
   );

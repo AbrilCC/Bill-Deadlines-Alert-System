@@ -6,7 +6,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 
 const BACKEND_API_URL = import.meta.env.VITE_BACKEND_URL;
 
-function Calendar({gmailConnected}) {
+function Calendar({gmailConnected, userData}) {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -329,11 +329,23 @@ function Calendar({gmailConnected}) {
     <div style={{ width: "100%" }} className="card">
       <h2>Calendario de pagos</h2>
 
-      <button onClick={handleSyncEmails} disabled={!gmailConnected}
-      title={!gmailConnected ? "Debes conectar tu cuenta de gmail primero para poder sincronizar tus mails" : ""}
-      style={{opacity: !gmailConnected ? 0.5 : 1, cursor: !gmailConnected ? "not-allowed" : "pointer"}}>
-        Sincronizar con Gmail
-      </button>
+      <div className="tooltipWrapper">
+        <button onClick={handleSyncEmails} disabled={!gmailConnected}
+        title={!gmailConnected ? "Debes conectar tu cuenta de gmail primero para poder sincronizar tus mails" : ""}
+        style={{opacity: !gmailConnected ? 0.5 : 1, cursor: !gmailConnected ? "not-allowed" : "pointer"}}>
+          Sincronizar con Gmail
+        </button>
+
+        {gmailConnected && (
+          <span className="tooltipText">
+            Sincronizar con la cuenta:
+            <br />
+            {userData?.gmail_account}
+          </span>
+        )}
+      </div>
+
+      
 
       <div className="tooltipWrapper">
         <button onClick={handleConnectGoogle} disabled={gmailConnected}

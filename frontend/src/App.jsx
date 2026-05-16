@@ -17,7 +17,21 @@ function App() {
     const token = localStorage.getItem("token");    
     const [trustedSenders, setTrustedSenders] = useState([]);
     const [gmailConnected, setGmailConnected] = useState(false);
+    const [userData, setUserData] = useState("");
     const [view, setView] = useState("dashboard");
+
+    async function fetchUserData() {
+        const token = localStorage.getItem("token");
+
+        const res = await fetch(`${BACKEND_API_URL}/users/me`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        const data = await res.json();
+        setUserData(data);
+    }
 
     const fetchDashboardStatus = async () => {
         const res = await fetch(
@@ -64,13 +78,13 @@ function App() {
 
             <div className="appLayout">
 
-            <Sidebar setView={setView} view={view} trustedSenders={trustedSenders}/>
+            <Sidebar setView={setView} view={view} trustedSenders={trustedSenders} userData={userData}/>
 
             <div className="mainContent">
 
                 {view === "dashboard" && <Dashboard trustedSenders={trustedSenders} setTrustedSenders={setTrustedSenders}/>}
 
-                {view === "calendar" && <Calendar gmailConnected={gmailConnected}/>}
+                {view === "calendar" && <Calendar gmailConnected={gmailConnected} userData={userData}/>}
 
                 {view === "admin" && <Admin />}
 
