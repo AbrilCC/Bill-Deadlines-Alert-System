@@ -299,6 +299,11 @@ function Calendar({gmailConnected}) {
       }
     );
     setShowReminderModal(false);
+    setReminderForm({
+      title: "",
+      description: "",
+      time: ""
+    });
     fetchEvents();
   }
 
@@ -488,14 +493,16 @@ function Calendar({gmailConnected}) {
       )}
       {showReminderModal && (
         <div className="modalOverlay" onClick={() => setShowReminderModal(false)}>
-          <div className="modal">
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
             <h2>Nuevo recordatorio</h2>
-            <input placeholder="Título" value={reminderForm.title}
+            <input placeholder="Nombre" value={reminderForm.title}
               onChange={(e) => setReminderForm({...reminderForm, title: e.target.value})}/>
 
             <textarea placeholder="Descripción" value={reminderForm.description}
               onChange={(e) => setReminderForm({...reminderForm, description: e.target.value})}/>
 
+            <label>Horario del recordatorio (opcional)</label>
+            <p className="helperText">Si no elegís uno, se utilizará 09:00 por defecto.</p>
             <input type="time" value={reminderForm.time}
               onChange={(e) => setReminderForm({...reminderForm, time: e.target.value})}/>
 
