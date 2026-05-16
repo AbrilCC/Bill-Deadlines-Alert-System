@@ -25,10 +25,6 @@ export default function CreateWeekly({ setView }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.type || !form.amount || !form.start_date) {
-        alert("Completá todos los campos obligatorios");
-        return;
-    }
     const token = localStorage.getItem("token");
     const res = await fetch(`${BACKEND_API_URL}/events/weekly`, {
       method: "POST",
@@ -39,7 +35,6 @@ export default function CreateWeekly({ setView }) {
     if (res.ok) {
       setView("calendar");
     }
-    alert("Eventos generados");
   };
 
   function toggleDay(day) {

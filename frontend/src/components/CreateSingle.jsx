@@ -28,12 +28,8 @@ export default function CreateSingle({ setView }) {
       body: JSON.stringify({...form, preferred_days: preferredDays, source: "manual"}),
     });
     if (res.ok) {
-      alert("Evento creado");
       setTimeout(() => {setView("calendar");}, 200); 
-    } else {
-      alert("Error creando evento");
     }
-
     
   };
 

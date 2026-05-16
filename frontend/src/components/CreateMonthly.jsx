@@ -53,7 +53,6 @@ export default function CreateMonthly({ setView }) {
     if (res.ok) {
       setView("calendar");
     }
-    alert("Eventos generados");
   };
 
   function toggleDay(day) {

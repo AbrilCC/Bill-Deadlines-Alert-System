@@ -49,6 +49,7 @@ function App() {
 
     useEffect(() => {
         fetchDashboardStatus();
+        fetchUserData();
     }, []);
 
     if (!token) {
