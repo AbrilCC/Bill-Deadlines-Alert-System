@@ -17,7 +17,7 @@ function App() {
     const token = localStorage.getItem("token");    
     const [trustedSenders, setTrustedSenders] = useState([]);
     const [gmailConnected, setGmailConnected] = useState(false);
-    const [userData, setUserData] = useState("");
+    const [userData, setUserData] = useState(null);
     const [view, setView] = useState("dashboard");
 
     async function fetchUserData() {
