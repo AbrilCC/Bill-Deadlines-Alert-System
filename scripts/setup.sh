@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Ojo, tenemos que chusmear que esto sea todo necesario
-
 echo "Installing backend..."
 cd ..
 cd backend
