@@ -180,8 +180,12 @@ function Calendar({gmailConnected}) {
 
   const handleEdit = async () => {
     const token = localStorage.getItem("token");
+    const realId =
+    selectedEvent.extendedProps.isSuggestion
+    ? selectedEvent.extendedProps.originalEventId
+    : selectedEvent.id;
     await fetch(
-      `${BACKEND_API_URL}/events/${selectedEvent.id}`,
+      `${BACKEND_API_URL}/events/${realId}`,
       {
         method: "PATCH",
         headers: {
@@ -382,7 +386,7 @@ function Calendar({gmailConnected}) {
       </div>
 
       {showModal && selectedEvent && (
-        <div className="modalOverlay" onClick={() => setShowModal(false)}>
+        <div className="modalOverlay" onClick={() => {setShowModal(false); setEditing(false)}}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
 
             <button className="closeBtn" onClick={() => {setShowModal(false); setEditing(false)}}>X</button>
@@ -447,8 +451,11 @@ function Calendar({gmailConnected}) {
 
             {!selectedEvent.extendedProps.isReminder &&(
               <>
+              {!editing ? (
                 <button onClick={() => setEditing(true)}>Editar</button>
-                {editing && (<button onClick={handleEdit}>Guardar cambios</button>)}
+              ) : (
+                <button onClick={handleEdit}>Guardar cambios</button>
+              )}               
                 <button onClick={handleTogglePaid}>{selectedEvent.extendedProps.paid
                   ? "Marcar como NO pagado"
                   : "Marcar como pagado"}</button>
