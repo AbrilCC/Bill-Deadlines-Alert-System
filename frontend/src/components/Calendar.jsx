@@ -181,9 +181,9 @@ function Calendar({gmailConnected}) {
   const handleEdit = async () => {
     const token = localStorage.getItem("token");
     const realId =
-    selectedEvent.extendedProps.isSuggestion
-    ? selectedEvent.extendedProps.originalEventId
-    : selectedEvent.id;
+      selectedEvent.extendedProps.isSuggestion
+      ? selectedEvent.extendedProps.originalEventId
+      : selectedEvent.id;
     await fetch(
       `${BACKEND_API_URL}/events/${realId}`,
       {
@@ -195,9 +195,9 @@ function Calendar({gmailConnected}) {
         body: JSON.stringify(editForm)
       }
     );
+    await fetchEvents();
     setEditing(false);
     setShowModal(false);
-    fetchEvents();
   };
 
   const handleDelete = async () => {
