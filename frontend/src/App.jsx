@@ -48,9 +48,11 @@ function App() {
     };
 
     useEffect(() => {
-        fetchDashboardStatus();
-        fetchUserData();
-    }, []);
+        if (token) {
+            fetchDashboardStatus();
+            fetchUserData();
+        }
+    }, [token]);
 
     if (!token) {
         return <Auth />;    //Only show the site to registered users
