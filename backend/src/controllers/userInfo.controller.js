@@ -1,3 +1,5 @@
+import client from "../utils/supabaseClient.js";
+
 export async function getCurrentUser(req, res) {
     const userId = req.user.id;
 
