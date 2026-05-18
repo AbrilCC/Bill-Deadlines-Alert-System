@@ -35,6 +35,7 @@ export default function Admin() {
                 }
             );
             const json = await res.json();
+            console.log(json);
             setData(json);
         } catch (error) {
             console.log(error);
@@ -71,6 +72,8 @@ export default function Admin() {
                 type: editType,
                 description: editDescription,
                 amount: editAmount,
+                due_date: selectedItem.due_date,
+                preferred_days: selectedItem.preferred_days || [],
                 payment_method:
                     paymentMethod === "Otro..."
                     ? customPaymentMethod
@@ -198,7 +201,7 @@ export default function Admin() {
                             <>
                             <input value={editType} onChange={(e) => setEditType(e.target.value)}/>
 
-                            <textarea value={editDescription}
+                            <input value={editDescription}
                             onChange={(e) => setEditDescription(e.target.value)}/>
 
                             <input type="number" value={editAmount}
@@ -220,9 +223,11 @@ export default function Admin() {
                                 value={customPaymentMethod} onChange={(e) => setCustomPaymentMethod(e.target.value)}/>
                             )}
 
-                            <button className="tooltipWrapper" onClick={saveChanges}>
-                                Guardar cambios
-                            </button>
+                            <div className="tooltipWrapper">
+                                <button onClick={saveChanges}>
+                                    Guardar cambios
+                                </button>
+                            </div>
                         </>
                         ) : (
                         <>

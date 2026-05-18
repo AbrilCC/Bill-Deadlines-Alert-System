@@ -254,17 +254,6 @@ export function detectType(subject, sender, body) {
   const text = (subject + " " + body).toLowerCase();
   const from = sender.toLowerCase();
 
-  //if (from.includes("fibertel")) return "Fibertel";
-  //if (from.includes("personal")) return "Personal";
-  //if (from.includes("claro")) return "Claro";
-  //if (from.includes("visa")) return "Tarjeta Visa";
-  //if (from.includes("mastercard")) return "Tarjeta Mastercard";
-  //if (from.includes("santander")) return "Banco Santander";
-  //if (from.includes("galicia")) return "Banco Galicia";
-  //if (from.includes("inglés")) return "Inglés";  
-  //if (from.includes("edenor")) return "Luz";
-  //if (from.includes("aysa")) return "Aysa";
-
   if (/personal/.test(from)) return "Personal";
   if (/fibertel/.test(from)) return "Fibertel";
   if (/claro/.test(from)) return "Claro";
@@ -274,7 +263,6 @@ export function detectType(subject, sender, body) {
   if (/galicia/.test(from)) return "Banco Galicia";
   if (/edenor/.test(from)) return "Luz";
   if (/aysa/.test(from)) return "Aysa";
-  if (/selisiri/.test(from)) return "Selisiri";
 
   return "Factura";
 }

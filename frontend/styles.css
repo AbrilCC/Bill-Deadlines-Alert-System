@@ -191,7 +191,7 @@ input {
     font-size: 15px;
     margin: 20px auto;
     border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: 0 0 30px rgba(106, 142, 215, 0.3);
+    box-shadow: 0 0 30px rgba(136, 170, 240, 0.9);
 }
 .card input {
     margin-bottom: 30px;
@@ -547,6 +547,8 @@ input {
   max-width: 700px;
   position: relative;
   animation: fadeIn 0.2s ease;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 0 30px rgba(136, 170, 240, 0.9);
 }
 
 @keyframes fadeIn {

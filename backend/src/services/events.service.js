@@ -131,12 +131,12 @@ export const updateEvent = async (client, id, data) => {
   const { user_id, type, description, amount, due_date, payment_method, preferred_days } = data;
   const result = await client.query(
     `UPDATE events SET
-      type = $1,
-      description = $2,
-      amount = $3,
-      due_date = $4,
-      payment_method = $5,
-      preferred_days = $6
+      type = COALESCE($1, type),
+      description = COALESCE($2, description),
+      amount = COALESCE($3, amount),
+      due_date = COALESCE($4, due_date),
+      payment_method = COALESCE($5, payment_method),
+      preferred_days = COALESCE($6, preferred_days)
       WHERE id = $7 AND user_id = $8 RETURNING *`,
     [type, description, amount, due_date, payment_method, preferred_days, id, user_id]
   );

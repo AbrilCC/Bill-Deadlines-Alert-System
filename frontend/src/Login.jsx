@@ -54,11 +54,6 @@ function Auth() {
 
             // For Login / Register
             localStorage.setItem("token", data.token);
-            alert(
-                mode === "login"
-                    ? "Inición sesiada ✅"
-                    : "Cuenta creada ✅"
-            );
             window.location.reload();
 
         } catch (error) {

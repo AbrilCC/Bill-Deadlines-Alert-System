@@ -67,7 +67,7 @@ export default function CreateSingle({ setView }) {
 
       <div className="formInputRow">
         <label>Fecha de vencimiento:</label>        
-        <DatePicker selected={startDate} onChange={(date) => {
+        <DatePicker required selected={startDate} onChange={(date) => {
           setStartDate(date);
           const localDate =`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 

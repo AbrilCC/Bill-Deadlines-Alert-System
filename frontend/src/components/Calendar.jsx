@@ -462,6 +462,7 @@ function Calendar({gmailConnected, userData}) {
                     <p>Vencimiento: {new Date(selectedEvent.start).toLocaleDateString("es-AR")}</p>
 
                     <p>Estado del pago: {selectedEvent.extendedProps.paid ? "Pagado" : "Pendiente"}</p>
+                    <p>Método de pago:{" "}{selectedEvent.extendedProps.payment_method || "No definido"}</p>
                   </>
               )
             )}
@@ -510,11 +511,11 @@ function Calendar({gmailConnected, userData}) {
             <input placeholder="Nombre" value={reminderForm.title}
               onChange={(e) => setReminderForm({...reminderForm, title: e.target.value})}/>
 
-            <textarea placeholder="Descripción" value={reminderForm.description}
+            <input placeholder="Descripción" value={reminderForm.description}
               onChange={(e) => setReminderForm({...reminderForm, description: e.target.value})}/>
 
-            <label>Horario del recordatorio (opcional)</label>
-            <p className="helperText">Si no elegís uno, se utilizará 09:00 por defecto.</p>
+            <label>Horario del recordatorio <small>(opcional)</small></label>
+            <small>Si no elegís uno, se utilizará 09:00 por defecto.</small>
             <input type="time" value={reminderForm.time}
               onChange={(e) => setReminderForm({...reminderForm, time: e.target.value})}/>
 
