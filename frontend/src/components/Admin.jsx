@@ -80,8 +80,21 @@ export default function Admin() {
                     : paymentMethod
             })
         });
+        const updatedPaymentMethod =
+            paymentMethod === "Otro..."
+            ? customPaymentMethod
+            : paymentMethod;
+
+        setSelectedItem({
+            ...selectedItem,
+            type: editType,
+            description: editDescription,
+            amount: editAmount,
+            payment_method: updatedPaymentMethod
+        });
 
         await fetchData();
+        setEditing(false);
     };
 
     async function deleteService() {
