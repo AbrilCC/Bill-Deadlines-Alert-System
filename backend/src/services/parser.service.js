@@ -254,15 +254,18 @@ export function detectType(subject, sender, body) {
   const text = (subject + " " + body).toLowerCase();
   const from = sender.toLowerCase();
 
-  if (/personal/.test(text)) return "Personal";
   if (/fibertel/.test(text)) return "Fibertel";
-  if (/claro/.test(text)) return "Claro";
   if (/visa/.test(text)) return "Tarjeta Visa";
   if (/mastercard/.test(text)) return "Tarjeta Mastercard";
   if (/santander/.test(text)) return "Banco Santander";
   if (/galicia/.test(text)) return "Banco Galicia";
   if (/edenor/.test(text)) return "Luz";
   if (/aysa/.test(text)) return "Aysa";
+  if (/metrogas/.test(text)) return "Metrogas";
+  if (/huerto/.test(text)) return "Colegio";
+  if (/claro/.test(text)) return "Claro";
+  if (/personal/.test(text)) return "Personal";
+
 
   return "Factura";
 }
