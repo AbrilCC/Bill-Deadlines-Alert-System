@@ -1,3 +1,5 @@
+import axios from "axios";
+import * as cheerio from "cheerio";
 import {
   getAuth,
   getEmails,
@@ -29,6 +31,42 @@ function isValidInvoiceText(text) {
   ];
 
   return requiredKeywords.some(word => lower.includes(word));
+}
+
+//Border case: this specific company that I know it uses an external link to get the amount info 
+function extractClaroFacturaLink(html) {
+    const $ = cheerio.load(html);
+    let facturaLink = null;
+    $("a").each((_, el) => {
+        const text = $(el).text().trim().toLowerCase();
+
+        if (text.includes("mirá tu factura") || text.includes("mira tu factura")) {
+            facturaLink = $(el).attr("href");
+        }
+    });
+    return facturaLink;
+}
+async function fetchClaroFacturaPage(url) {
+    const response = await axios.get(url, {
+        timeout: 10000
+    });
+
+    return response.data;
+}
+function parseClaroFacturaPage(html) {
+    const text = html
+        .replace(/<[^>]*>/g, " ")
+        .replace(/\s+/g, " ");
+    const amountMatch = text.match(/total a pagar actualizado\s*\$?\s*([\d.,]+)/i);
+    const dueDateMatch = text.match(/vencimiento\s*(\d{2}\/\d{2}\/\d{2,4})/i);
+    return {
+        amount: amountMatch
+            ? normalizeAmount(amountMatch[1])
+            : null,
+        due_date: dueDateMatch
+            ? dueDateMatch[1]
+            : null
+    };
 }
 
 export const syncEmailsService = async (user_id) => {
@@ -70,6 +108,7 @@ export const syncEmailsService = async (user_id) => {
       const detail = await getEmailDetail(auth, email.id);
       const attachments = await getAttachments(auth, detail);
       const bodyText = await getBody(detail);
+      console.log("BODY TEXT:", bodyText);
       const headers = detail.payload.headers;
       const subject = headers.find(h => h.name === "Subject")?.value || "";
       const from = headers.find(h => h.name === "From")?.value || "";
@@ -81,6 +120,21 @@ export const syncEmailsService = async (user_id) => {
       console.log("EMAIL:", email.id);
       console.log("EXISTING:", existing.rows);
       if (existing.rows.length > 0) continue;
+
+      //Border case: Claro mails
+      if (body.toLowerCase().includes("factura@email.claro.com.ar")) {
+        const facturaLink = extractClaroFacturaLink(bodyText);
+        if (facturaLink) {
+          try {
+            const facturaHtml = await fetchClaroFacturaPage(facturaLink);
+            parsed = parseClaroFacturaPage(facturaHtml);
+            console.log("PARSED CLARO PAGE:", parsed);
+
+          } catch (err) {
+            console.log("Error parsing Claro page", err.message);
+          }
+        } 
+      }//end of border case
 
       let parsed = null;
 

@@ -106,7 +106,7 @@ function getEmoji(type) {
     "Tarjeta Mastercard": "💳",
     "Banco Santander": "🏛️",
     "Banco Galicia": "🏛️",
-    "Luz": "💡",
+    "Edenor": "💡",
     "Aysa": "💧",
     "Inglés": "📖",
     "Factura": "📄"

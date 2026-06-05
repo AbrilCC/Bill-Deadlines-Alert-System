@@ -259,7 +259,7 @@ export function detectType(subject, sender, body) {
   if (/mastercard/.test(from)) return "Tarjeta Mastercard";
   if (/santander/.test(from)) return "Banco Santander";
   if (/galicia/.test(from)) return "Banco Galicia";
-  if (/edenor/.test(from)) return "Luz";
+  if (/edenor/.test(from)) return "Edenor";
   if (/aysa/.test(from)) return "Aysa";
   if (/metrogas/.test(from)) return "Metrogas";
   if (/aranceles/.test(from)) return "Colegio";
