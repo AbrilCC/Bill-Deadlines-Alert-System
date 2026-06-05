@@ -17,7 +17,7 @@ const KEYWORDS = [
     "pago",
     "pagar",
     "factura",
-    "resumen de tarjeta"
+    "resumen"
 ];
 const keywordQuery = KEYWORDS.map(word => `subject:${word}`).join(" OR ");
 

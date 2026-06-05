@@ -122,7 +122,8 @@ export const syncEmailsService = async (user_id) => {
       if (existing.rows.length > 0) continue;
 
       //Border case: Claro mails
-      if (bodyText.toLowerCase().includes("factura@email.claro.com.ar")) {
+      if (from.toLowerCase().includes("factura@email.claro.com.ar")) {
+        console.log("EL FROM AGARRO QUE VIENE DE CLARO!!!!!!")
         const facturaLink = extractClaroFacturaLink(bodyText);
         if (facturaLink) {
           try {
