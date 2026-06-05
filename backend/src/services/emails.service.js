@@ -112,6 +112,7 @@ export const syncEmailsService = async (user_id) => {
       const headers = detail.payload.headers;
       const subject = headers.find(h => h.name === "Subject")?.value || "";
       const from = headers.find(h => h.name === "From")?.value || "";
+      console.log("FROM:", from);
       const existing = await client.query(
         `SELECT 1 FROM events WHERE email_id = $1 AND user_id = $2`,
         [email.id, user_id]
