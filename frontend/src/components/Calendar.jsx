@@ -63,7 +63,7 @@ function Calendar({gmailConnected, userData}) {
       }
     );
     const data = await res.json();
-    console.log(data);
+    console.log("LOG DE DATA: ", data);
 
     const formatted = data.map(e => {
       return {
