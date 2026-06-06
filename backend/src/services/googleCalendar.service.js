@@ -13,14 +13,19 @@ export async function createCalendarEvent(user, event) {
     });
 
     const calendar = google.calendar({ version: "v3", auth});
+    const dateOnly = new Date(event.due_date).toISOString().split("T")[0];
+    const nextDay = new Date(event.due_date);
+    
+    nextDay.setDate(nextDay.getDate() + 1);
+    const nextDayOnly = nextDay.toISOString().split("T")[0];
 
     const res = await calendar.events.insert({
         calendarId: "primary",
         requestBody: {
             summary: event.type,
             description: event.description,
-            start: {date: event.due_date},
-            end: {date: event.due_date}
+            start: {date: dateOnly},
+            end: {date: nextDayOnly}
         }
     });
 
