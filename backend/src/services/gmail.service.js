@@ -46,7 +46,7 @@ export async function getEmails(auth, trustedSenders) {
         return [];
     }
     const senderQuery = trustedSenders.map(sender => `from:${sender}`).join(" OR ");
-    const query = `(${senderQuery}) AND (${keywordQuery}) newer_than:30d`;
+    const query = `(${senderQuery}) AND (${keywordQuery}) newer_than:31d`;
 
     const res = await gmail.users.messages.list({
         userId: "me", //The user authenticated with the token

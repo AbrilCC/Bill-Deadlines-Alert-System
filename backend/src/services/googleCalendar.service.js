@@ -1,5 +1,23 @@
 import { google } from "googleapis";
 
+function buildCalendarEvent(event) {
+    const amount =
+        event.amount != null
+            ? `$${Number(event.amount).toLocaleString("es-AR")}`
+            : "Monto pendiente";
+
+    const dateOnly = new Date(event.due_date).toISOString().split("T")[0];
+    const nextDay = new Date(event.due_date);
+    nextDay.setDate(nextDay.getDate() + 1);
+
+    return {
+        summary: `${event.type} - ${amount}`,
+        description: `Monto: ${amount} ${event.description || ""}`.trim(),
+        start: {date: dateOnly},
+        end: {date: nextDay.toISOString().split("T")[0]}
+    };
+}
+
 export async function createCalendarEvent(user, event) {
     const auth = new google.auth.OAuth2(
         process.env.GOOGLE_CLIENT_ID,
@@ -21,12 +39,7 @@ export async function createCalendarEvent(user, event) {
 
     const res = await calendar.events.insert({
         calendarId: "primary",
-        requestBody: {
-            summary: event.type,
-            description: event.description,
-            start: {date: dateOnly},
-            end: {date: nextDayOnly}
-        }
+        requestBody: buildCalendarEvent(event)
     });
 
     return res.data.id;
@@ -49,12 +62,7 @@ export async function updateCalendarEvent(user, googleEventId, event) {
     const res = await calendar.events.update({
         calendarId: "primary",
         eventId: googleEventId,
-        requestBody: {
-            summary: event.type,
-            description: event.description,
-            start: {date: event.due_date},
-            end: {date: event.due_date}
-        }
+        requestBody: buildCalendarEvent(event)
     });
 
     return res.data.id;    
