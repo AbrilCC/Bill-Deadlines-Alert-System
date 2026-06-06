@@ -108,11 +108,14 @@ export const syncEmailsService = async (user_id) => {
       const detail = await getEmailDetail(auth, email.id);
       const attachments = await getAttachments(auth, detail);
       const bodyText = await getBody(detail);
-      console.log("BODY TEXT:", bodyText);
+      //console.log("BODY TEXT:", bodyText);
       const headers = detail.payload.headers;
       const subject = headers.find(h => h.name === "Subject")?.value || "";
       const from = headers.find(h => h.name === "From")?.value || "";
       console.log("FROM:", from);
+      console.log("FROM RAW:", JSON.stringify(from));
+      const from_bool = from.toLowerCase().includes("factura@email.claro.com.ar")
+      console.log("FORM INCLUDES?", from_bool)
       const existing = await client.query(
         `SELECT 1 FROM events WHERE email_id = $1 AND user_id = $2`,
         [email.id, user_id]
@@ -121,6 +124,7 @@ export const syncEmailsService = async (user_id) => {
       console.log("EMAIL:", email.id);
       console.log("EXISTING:", existing.rows);
       if (existing.rows.length > 0) continue;
+      let parsed = null;
 
       //Border case: Claro mails
       if (from.toLowerCase().includes("factura@email.claro.com.ar")) {
@@ -137,8 +141,6 @@ export const syncEmailsService = async (user_id) => {
           }
         } 
       }//end of border case
-
-      let parsed = null;
 
       if (attachments.length) {
         console.log("has some attachments");
