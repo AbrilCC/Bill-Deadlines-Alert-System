@@ -132,7 +132,7 @@ export const syncEmailsService = async (user_id) => {
       if (isClaro) {
         const parsedBody = parseInvoiceFromText(bodyText);
         parsed = {
-          amount = null,
+          amount: null,
           due_date: parsedBody?.due_date ?? null
         }
       }//end of border case
