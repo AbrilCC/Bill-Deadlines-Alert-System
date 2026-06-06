@@ -10,7 +10,7 @@ import { validatePassword } from "../utils/validators.js"
 import { getAuth, getGmailAccount } from "../services/gmail.service.js";
 import { sendResetPasswordEmail } from "../services/mail.service.js"
 
-const SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"];
+const SCOPES = ["https://www.googleapis.com/auth/gmail.readonly", "https://www.googleapis.com/auth/calendar.events"];
 
 
 export const googleAuth = (req, res) => {
