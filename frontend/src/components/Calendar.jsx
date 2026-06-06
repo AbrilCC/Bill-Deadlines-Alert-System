@@ -463,17 +463,17 @@ function Calendar({gmailConnected, userData}) {
                 ) : (
                   <>
                     <h2>{selectedEvent.title}</h2>
-                    <h6>{selectedEvent.extendedProps.description}</h6>
-                    <p><h6>Monto:</h6> {
+                    <h3>{selectedEvent.extendedProps.description}</h3>
+                    <p><h3>Monto:</h3> {
                         selectedEvent.extendedProps.amount == null
                           ? <span><TriangleAlert size={17}/>Clickeá Ver mail para encontrar el monto</span>
                           : formatCurrency(selectedEvent.extendedProps.amount)
                       }</p>
 
-                    <p><h6></h6>Vencimiento: {new Date(selectedEvent.start).toLocaleDateString("es-AR")}</p>
+                    <p><h3>Vencimiento:</h3> {new Date(selectedEvent.start).toLocaleDateString("es-AR")}</p>
 
-                    <p><h6>Estado del pago:</h6> {selectedEvent.extendedProps.paid ? "Pagado" : "Pendiente"}</p>
-                    <p><h6>Método de pago:</h6> {selectedEvent.extendedProps.payment_method || "No definido"}</p>
+                    <p><h3>Estado del pago:</h3> {selectedEvent.extendedProps.paid ? "Pagado" : "Pendiente"}</p>
+                    <p><h3>Método de pago:</h3> {selectedEvent.extendedProps.payment_method || "No definido"}</p>
                   </>
               )
             )}
