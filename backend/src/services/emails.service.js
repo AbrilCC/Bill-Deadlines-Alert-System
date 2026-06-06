@@ -35,6 +35,7 @@ function isValidInvoiceText(text) {
 
 //Border case: this specific company that I know it uses an external link to get the amount info 
 function extractClaroFacturaLink(html) {
+    console.log("Entro al extract link!!")
     const $ = cheerio.load(html);
     let facturaLink = null;
     $("a").each((_, el) => {
@@ -130,9 +131,11 @@ export const syncEmailsService = async (user_id) => {
       if (from.toLowerCase().includes("factura@email.claro.com.ar")) {
         console.log("EL FROM AGARRO QUE VIENE DE CLARO!!!!!!")
         const facturaLink = extractClaroFacturaLink(bodyText);
+        console.log("LINK:", facturaLink)
         if (facturaLink) {
           try {
             const facturaHtml = await fetchClaroFacturaPage(facturaLink);
+            console.log("HTML: ", facturaHtml)
             parsed = parseClaroFacturaPage(facturaHtml);
             console.log("PARSED CLARO PAGE:", parsed);
 
