@@ -128,81 +128,73 @@ export const syncEmailsService = async (user_id) => {
       let parsed = null;
 
       //Border case: Claro mails
-      if (from.toLowerCase().includes("factura@email.claro.com.ar")) {
-        console.log("EL FROM AGARRO QUE VIENE DE CLARO!!!!!!")
-        const facturaLink = extractClaroFacturaLink(bodyText);
-        console.log("LINK:", facturaLink)
-        if (facturaLink) {
-          try {
-            const facturaHtml = await fetchClaroFacturaPage(facturaLink);
-            console.log("HTML: ", facturaHtml)
-            parsed = parseClaroFacturaPage(facturaHtml);
-            console.log("PARSED CLARO PAGE:", parsed);
-
-          } catch (err) {
-            console.log("Error parsing Claro page", err.message);
-          }
-        } 
+      const isClaro = from.toLowerCase().includes("factura@email.claro.com.ar")
+      if (isClaro) {
+        const parsedBody = parseInvoiceFromText(bodyText);
+        parsed = {
+          amount = null,
+          due_date: parsedBody?.due_date ?? null
+        }
       }//end of border case
 
-      if (attachments.length) {
-        console.log("has some attachments");
-        for (const att of attachments) {
-          //Disregard big pdfs
-          if (att.size > 5_000_000) {
-            console.log("Skipping large attachment");
-            continue;
-          }
-
-          //Find pdfs:
-          if (att.filename.endsWith(".pdf")) {
-            console.log("has a pdf");
-            
-            parsed = await parseInvoice(att.data);
-                  console.log("PARSED PDF:", parsed);
-
-            
-            //OCR fallback if no data was found:
-            if (parsed.amount == null && parsed.due_date == null) {
-              console.log("has an image pdf");
-              const text = await extractTextFromImage(att.data);
-              if (isValidInvoiceText(text)){
-                parsed = parseInvoiceFromText(text);
-                    console.log("PARSED OCR:", parsed);
-              }
+      if (!parsed) {
+        if (attachments.length) {
+          console.log("has some attachments");
+          for (const att of attachments) {
+            //Disregard big pdfs
+            if (att.size > 5_000_000) {
+              console.log("Skipping large attachment");
+              continue;
             }
 
-            if (parsed?.amount != null && parsed?.due_date) break;
+            //Find pdfs:
+            if (att.filename.endsWith(".pdf")) {
+              console.log("has a pdf");
+              
+              parsed = await parseInvoice(att.data);
+                    console.log("PARSED PDF:", parsed);
+
+              //OCR fallback if no data was found:
+              if (parsed.amount == null && parsed.due_date == null) {
+                console.log("has an image pdf");
+                const text = await extractTextFromImage(att.data);
+                if (isValidInvoiceText(text)){
+                  parsed = parseInvoiceFromText(text);
+                      console.log("PARSED OCR:", parsed);
+                }
+              }
+              if (parsed?.amount != null && parsed?.due_date) break;
+            }
+
+            //Find images:
+            if (!parsed && (att.filename.endsWith(".png") || 
+                att.filename.endsWith(".jpg") ||
+                att.filename.endsWith(".jpeg"))) {
+                  console.log("has an image, no pdf");
+              const text = await extractTextFromImage(att.data);
+              parsed = parseInvoiceFromText(text);
+                    console.log("PARSED IMG:", parsed);
+
+
+              if (parsed?.amount != null && parsed?.due_date) break;
+            }
           }
-
-          //Find images:
-          if (!parsed && (att.filename.endsWith(".png") || 
-              att.filename.endsWith(".jpg") ||
-              att.filename.endsWith(".jpeg"))) {
-                console.log("has an image, no pdf");
-            const text = await extractTextFromImage(att.data);
-            parsed = parseInvoiceFromText(text);
-                  console.log("PARSED IMG:", parsed);
-
-
-            if (parsed?.amount != null && parsed?.due_date) break;
-          }
-        }
-        //Find in body text:
+          //Find in body text:
           if ((!parsed || !parsed.amount || !parsed.due_date) && bodyText) {
             parsed = parseInvoiceFromText(bodyText);
                   console.log("PARSED BODY:", parsed);
 
           }
-      } else if (bodyText || subject) {
-        console.log("has no attachments");
-        const combinedText = `${subject}\n${bodyText}`;
-        if (!looksLikeInvoice(combinedText)) {
-          console.log("Skipping non-invoice email");
-          continue;
+        } else if (bodyText || subject) {
+          console.log("has no attachments");
+          const combinedText = `${subject}\n${bodyText}`;
+          if (!looksLikeInvoice(combinedText)) {
+            console.log("Skipping non-invoice email");
+            continue;
+          }
+          parsed = parseInvoiceFromText(combinedText);
+          console.log("no-attachments-body has been parsed. PARSED:", parsed);
         }
-        parsed = parseInvoiceFromText(combinedText);
-        console.log("no-attachments-body has been parsed. PARSED:", parsed);
       }
 
       if (!parsed ||  !parsed.due_date) continue;

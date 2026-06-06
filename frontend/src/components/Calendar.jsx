@@ -3,6 +3,7 @@ import FullCalendar from "@fullcalendar/react";
 import esLocale from "@fullcalendar/core/locales/es";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import { TriangleAlert } from "lucide-react";
 
 const BACKEND_API_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -376,7 +377,12 @@ function Calendar({gmailConnected, userData}) {
                 <div style={{"fontSize": "18px"}}><strong>{arg.event.title}</strong></div>
                 <div>{arg.event.extendedProps.description}</div>
                 {!arg.event.extendedProps.isReminder && (
-                  <div>{formatCurrency(arg.event.extendedProps.amount)}</div>
+                  <div>
+                    {arg.event.extendedProps.amount == null
+                      ? <span><TriangleAlert size={10}/> " Completar monto"</span>
+                      : formatCurrency(arg.event.extendedProps.amount)
+                    }
+                  </div>
                 )}
               </div>
             )}
@@ -458,7 +464,11 @@ function Calendar({gmailConnected, userData}) {
                   <>
                     <h2>{selectedEvent.title}</h2>
                     <p>{selectedEvent.extendedProps.description}</p>
-                    <p>Monto: {formatCurrency(selectedEvent.extendedProps.amount)}</p>
+                    <p>Monto: {
+                        selectedEvent.extendedProps.amount == null
+                          ? <span><TriangleAlert size={10}/> " Completar monto"</span>
+                          : formatCurrency(selectedEvent.extendedProps.amount)
+                      }</p>
 
                     <p>Vencimiento: {new Date(selectedEvent.start).toLocaleDateString("es-AR")}</p>
 
