@@ -266,6 +266,5 @@ export function detectType(subject, sender, body) {
   if (/claro/.test(from)) return "Claro";
   if (/personal/.test(from)) return "Personal";
 
-
   return "Factura";
 }

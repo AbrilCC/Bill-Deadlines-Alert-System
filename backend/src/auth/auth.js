@@ -10,8 +10,8 @@ const __dirname = path.dirname(__filename);
 
 const CREDENTIALS_PATH = path.join(__dirname, "../../credentials.json");
 
-// The scope for reading Gmail labels.
-const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
+// The scope for reading Gmail labels and connecting to Google Calendar.
+const SCOPES = ["https://www.googleapis.com/auth/gmail.readonly", "https://www.googleapis.com/auth/calendar.events"];
 
 /**
  * Lists the labels in the user's account.

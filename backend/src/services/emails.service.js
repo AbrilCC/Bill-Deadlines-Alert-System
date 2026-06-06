@@ -9,6 +9,7 @@ import {
 } from "./gmail.service.js";
 import { parseInvoice, parseInvoiceFromText, detectType, extractTextFromImage, looksLikeInvoice } from "./parser.service.js";
 import { createSingleEvent } from "./events.service.js";
+import { createCalendarEvent } from "./googleCalendar.service.js"
 import client from "../utils/supabaseClient.js";
 
 //Para que la fecha se vea día/mes/año
@@ -114,9 +115,6 @@ export const syncEmailsService = async (user_id) => {
       const subject = headers.find(h => h.name === "Subject")?.value || "";
       const from = headers.find(h => h.name === "From")?.value || "";
       console.log("FROM:", from);
-      console.log("FROM RAW:", JSON.stringify(from));
-      const from_bool = from.toLowerCase().includes("factura@email.claro.com.ar")
-      console.log("FORM INCLUDES?", from_bool)
       const existing = await client.query(
         `SELECT 1 FROM events WHERE email_id = $1 AND user_id = $2`,
         [email.id, user_id]
@@ -201,7 +199,7 @@ export const syncEmailsService = async (user_id) => {
 
       try {
         //Push the event to the DB
-        await createSingleEvent(client, {
+        const createdEvent = await createSingleEvent(client, {
           user_id,
           type: detectType(subject, from, bodyText),
           description: parsed.amount == null ? "Falta el monto" : "Importado de gmail",
@@ -211,6 +209,21 @@ export const syncEmailsService = async (user_id) => {
           email_id: email.id,
           requires_manual_review: parsed.amount == null || !parsed.due_date,
         });
+
+        const userRes = await client.query(
+          `SELECT google_access_token, google_refresh_token
+          FROM users WHERE id = $1`,
+          [user_id]
+        );
+        const user = userRes.rows[0];
+        if (user?.google_refresh_token) {
+          const calendarEventId = await createCalendarEvent(user, createdEvent);
+          await client.query(
+            `UPDATE events
+            SET google_calendar_event_id = $1 WHERE id = $2`,
+            [calendarEventId, createdEvent.id]
+          );
+        }
       } catch (error) {
         if (error.code === "23505") continue; // duplicate key error
         throw error;
