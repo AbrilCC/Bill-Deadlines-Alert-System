@@ -204,7 +204,7 @@ export const syncEmailsService = async (user_id) => {
         await createSingleEvent(client, {
           user_id,
           type: detectType(subject, from, bodyText),
-          description: parsed.amount == null ? "Monto pendiente de completar" : "Importado de gmail",
+          description: parsed.amount == null ? "Falta el monto" : "Importado de gmail",
           amount: parsed.amount,
           due_date: formatDate(parsed.due_date),
           source: "gmail",

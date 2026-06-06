@@ -379,7 +379,7 @@ function Calendar({gmailConnected, userData}) {
                 {!arg.event.extendedProps.isReminder && (
                   <div>
                     {arg.event.extendedProps.amount == null
-                      ? <span><TriangleAlert size={10}/> " Completar monto"</span>
+                      ? <span><TriangleAlert size={17}/>Clickeá Ver mail para encontrar el monto</span>
                       : formatCurrency(arg.event.extendedProps.amount)
                     }
                   </div>
@@ -463,17 +463,17 @@ function Calendar({gmailConnected, userData}) {
                 ) : (
                   <>
                     <h2>{selectedEvent.title}</h2>
-                    <p>{selectedEvent.extendedProps.description}</p>
-                    <p>Monto: {
+                    <h6>{selectedEvent.extendedProps.description}</h6>
+                    <p><h6>Monto:</h6> {
                         selectedEvent.extendedProps.amount == null
-                          ? <span><TriangleAlert size={10}/> " Completar monto"</span>
+                          ? <span><TriangleAlert size={17}/>Clickeá Ver mail para encontrar el monto</span>
                           : formatCurrency(selectedEvent.extendedProps.amount)
                       }</p>
 
-                    <p>Vencimiento: {new Date(selectedEvent.start).toLocaleDateString("es-AR")}</p>
+                    <p><h6></h6>Vencimiento: {new Date(selectedEvent.start).toLocaleDateString("es-AR")}</p>
 
-                    <p>Estado del pago: {selectedEvent.extendedProps.paid ? "Pagado" : "Pendiente"}</p>
-                    <p>Método de pago:{" "}{selectedEvent.extendedProps.payment_method || "No definido"}</p>
+                    <p><h6>Estado del pago:</h6> {selectedEvent.extendedProps.paid ? "Pagado" : "Pendiente"}</p>
+                    <p><h6>Método de pago:</h6> {selectedEvent.extendedProps.payment_method || "No definido"}</p>
                   </>
               )
             )}
