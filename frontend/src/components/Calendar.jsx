@@ -188,7 +188,9 @@ function Calendar({gmailConnected, userData}) {
       : selectedEvent.id;
 
     const payload = {...editForm};
-    if (payload.amount && payload.description === )
+    if (payload.amount && payload.description === "Falta el monto") {
+      payload.description = "";
+    }
     await fetch(
       `${BACKEND_API_URL}/events/${realId}`,
       {
@@ -197,7 +199,7 @@ function Calendar({gmailConnected, userData}) {
           "Content-Type": "application/json",
            Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify(editForm)
+        body: JSON.stringify(payload)
       }
     );
     await fetchEvents();
@@ -432,8 +434,9 @@ function Calendar({gmailConnected, userData}) {
                   <input value={editForm.description} onChange={(e) =>
                       setEditForm({...editForm, description: e.target.value})}/>
 
-                  <input type="number" value={editForm.amount} 
-                  placeholder = {editForm.amount == null ? "Ingresá el monto encontrado en el mail" : ""}
+                  <input type="number" value={editForm.amount ?? ""} 
+                  className={!editForm.amount ? "missingAmountInput" : ""}
+                  placeholder="Ingresá el monto encontrado en el mail"
                   onChange={(e) =>
                       setEditForm({...editForm, amount: e.target.value})}/>
 

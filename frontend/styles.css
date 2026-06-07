@@ -569,6 +569,11 @@ input {
   cursor: pointer;
 }
 
+.missingAmountInput {
+  border: 2px solid #df6b17;
+  background: #fff8f2;
+}
+
 /* ---------------------------ADMIN PAGE BUTTON TIPS--------------------------- */
 .tooltipWrapper {
   position: relative;
