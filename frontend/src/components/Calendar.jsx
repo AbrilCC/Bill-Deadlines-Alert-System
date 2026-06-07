@@ -186,6 +186,9 @@ function Calendar({gmailConnected, userData}) {
       selectedEvent.extendedProps.isSuggestion
       ? selectedEvent.extendedProps.originalEventId
       : selectedEvent.id;
+
+    const payload = {...editForm};
+    if (payload.amount && payload.description === )
     await fetch(
       `${BACKEND_API_URL}/events/${realId}`,
       {
@@ -415,6 +418,12 @@ function Calendar({gmailConnected, userData}) {
 
             <button className="closeBtn" onClick={() => {setShowModal(false); setEditing(false)}}>X</button>
 
+            {editing && editForm.amount == null && (
+              <div className="warningBox">
+                <TriangleAlert size={18} /><span>No pudimos detectar el monto automáticamente.
+                  Hacé clic en "Ver mail" y completá el campo Monto.</span>
+              </div>
+            )}
             {editing ? (
                 <>
                   <input value={editForm.type} onChange={(e) => 
@@ -423,7 +432,9 @@ function Calendar({gmailConnected, userData}) {
                   <input value={editForm.description} onChange={(e) =>
                       setEditForm({...editForm, description: e.target.value})}/>
 
-                  <input type="number" value={editForm.amount} onChange={(e) =>
+                  <input type="number" value={editForm.amount} 
+                  placeholder = {editForm.amount == null ? "Ingresá el monto encontrado en el mail" : ""}
+                  onChange={(e) =>
                       setEditForm({...editForm, amount: e.target.value})}/>
 
                   <input type="date" value={
