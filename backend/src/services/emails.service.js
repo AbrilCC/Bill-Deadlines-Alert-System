@@ -98,13 +98,14 @@ export const syncEmailsService = async (user_id) => {
     const auth = getAuth(user.google_access_token, user.google_refresh_token);
     const emails = await getEmails(auth, trustedSenders);
 
-    const uniqueThreads = new Map();
-    for (const email of emails) {
-      if (!uniqueThreads.has(email.threadId)) {
-        uniqueThreads.set(email.threadId, email);
-      }
-    }
-    const dedupedEmails = [...uniqueThreads.values()];
+    //const uniqueThreads = new Map();
+    //for (const email of emails) {
+    //  if (!uniqueThreads.has(email.threadId)) {
+    //    uniqueThreads.set(email.threadId, email);
+    //  }
+    //}
+    //const dedupedEmails = [...uniqueThreads.values()];
+    const dedupedEmails = emails;
 
     for (const email of dedupedEmails) {
       const detail = await getEmailDetail(auth, email.id);
