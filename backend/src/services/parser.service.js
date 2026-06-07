@@ -262,7 +262,7 @@ export function detectType(subject, sender, body) {
   if (/edenor/.test(from)) return "Edenor";
   if (/aysa/.test(from)) return "Aysa";
   if (/metrogas/.test(from)) return "Metrogas";
-  if (/aranceles/.test(from)) return "Colegio";
+  if (/aranceles/.test(text)) return "Colegio Huerto";
   if (/claro/.test(from)) return "Claro";
   if (/personal/.test(from)) return "Personal";
 
