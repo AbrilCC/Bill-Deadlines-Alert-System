@@ -12,8 +12,9 @@ import userInfoRoutes from "./routes/userInfo.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import preferencesRoutes from "./routes/preferences.routes.js";
-import uploadRoutes from "./routes/upload.routes.js"
-import remindersRoutes from "./routes/reminders.routes.js"
+import uploadRoutes from "./routes/upload.routes.js";
+import remindersRoutes from "./routes/reminders.routes.js";
+import { startGmailSyncJob } from "./cron-jobs/gmailSync.job.js";
 
 const PORT = process.env.PORT || 3000;
 
@@ -46,6 +47,8 @@ app.use(remindersRoutes);
 app.get("/", (req, res) => {
   res.send("API running");
 });
+
+startGmailSyncJob();
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);

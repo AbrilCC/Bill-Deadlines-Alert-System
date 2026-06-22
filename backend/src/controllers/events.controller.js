@@ -219,6 +219,7 @@ export const removeRule = async (req, res) => {
       FROM users WHERE id = $1`,
       [req.user.id]
     );
+    const user = userRes.rows[0];
     if (user?.google_refresh_token) {
       for (const event of events.rows) {
         if (!event.google_calendar_event_id) continue;

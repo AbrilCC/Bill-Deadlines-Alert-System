@@ -86,4 +86,6 @@ export async function deleteCalendarEvent(user, googleEventId) {
         calendarId: "primary",
         eventId: googleEventId
     });
+
+    console.log(`Google Calendar event ${googleEventId} deleted`);
 }
