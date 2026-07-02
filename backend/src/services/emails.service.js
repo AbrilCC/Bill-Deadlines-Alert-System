@@ -123,7 +123,7 @@ export const syncEmailsService = async (user_id) => {
 
       console.log("EMAIL:", email.id);
       console.log("THREAD:", email.threadId)
-      console.log("EXISTING:", existing.rows);
+      console.log("EXISTING:", existing.rows ? "Yes" : "Nope");
       if (existing.rows.length > 0) continue;
       let parsed = null;
 

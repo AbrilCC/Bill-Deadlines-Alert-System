@@ -81,6 +81,23 @@ async function getNextWeekEvents(user_id) {
   return res.rows;
 }
 
+async function getTodayEvents(user_id) {
+  const today = moment()
+    .tz("America/Argentina/Buenos_Aires")
+    .format("YYYY-MM-DD");
+
+  const res = await client.query(`
+    SELECT *
+    FROM events
+    WHERE user_id = $1
+    AND paid = false
+    AND due_date = $2
+    ORDER BY due_date ASC
+  `, [user_id, today]);
+
+  return res.rows;
+}
+
 async function getTodayReminders(user_id) {
   const today = moment()
     .tz("America/Argentina/Buenos_Aires")
@@ -201,6 +218,20 @@ function formatNextWeekMessage(events) {
     }
     msg += `💰 *Total: ${formatCurrency(total)}*`;
     return msg;
+}
+
+///// TODAY'S EVENTS /////
+function formatTodayEvents(events) {
+  if (!events.length) return null;
+  let total = 0;
+  let msg = "⏰ *Hoy vencen estas facturas:*\n\n";
+  for (const e of events) {
+    msg += `${getEmoji(e.type)} *${e.type}*\n`;
+    msg += `💰 ${formatCurrency(e.amount)}\n\n`;
+
+    total += Number(e.amount);
+  }
+  return msg;
 }
 
 ///// TODAY'S REMINDERS /////
@@ -355,6 +386,18 @@ cron.schedule("0 9 * * 4", async () => {
     await bot.sendMessage(u.chat_id, text, { parse_mode: "Markdown" });
   }
 }, {timezone: "America/Argentina/Buenos_Aires"});
+
+///// SEND DAILY EVENTS /////
+cron.schedule("0 9 * * *", async () => {
+    const users = await client.query(`SELECT id, chat_id FROM users WHERE chat_id IS NOT NULL`);
+    
+    for (const u of users.rows) {
+      const events = await getTodayEvents(u.id);
+      if (!events.length) continue;
+      const text = formatTodayEvents(events);
+      await bot.sendMessage(u.chat_id, text, { parse_mode: "Markdown" });
+    }
+  }, {timezone: "America/Argentina/Buenos_Aires"});
 
 ///// SEND DAILY REMINDERS /////
 cron.schedule("0 9 * * *", async () => {
