@@ -49,10 +49,21 @@ export async function getEmails(auth, trustedSenders) {
     const query = `(${senderQuery}) AND (${keywordQuery}) newer_than:31d`;
     console.log(`QUERY: ${query}`);
 
-    const res = await gmail.users.messages.list({
+    /*const res = await gmail.users.messages.list({
         userId: "me", //The user authenticated with the token
         q: query,
-    });
+    });*/
+    const res = await axios.get(
+        "https://gmail.googleapis.com/gmail/v1/users/me/messages",
+        {
+            headers: {
+                Authorization: `Bearer ${access_token}`
+            },
+            params: {
+                q: query
+            }
+        }
+    );
 
     return res.data.messages || [];
 };
