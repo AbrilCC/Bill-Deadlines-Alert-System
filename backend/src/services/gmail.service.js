@@ -46,6 +46,7 @@ export async function getGmailAccount(auth) {
 
 export async function getEmails(auth, trustedSenders) {
     const gmail = google.gmail({ version: "v1", auth});
+    console.log(`CREDENTIALS: ${auth.credentials}`);
     if (!trustedSenders.length) {
         return [];
     }
