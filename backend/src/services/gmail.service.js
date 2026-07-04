@@ -54,11 +54,12 @@ export async function getEmails(auth, trustedSenders) {
         userId: "me", //The user authenticated with the token
         q: query,
     });*/
+    const accessToken = auth.credentials.access_token;
     const res = await axios.get(
         "https://gmail.googleapis.com/gmail/v1/users/me/messages",
         {
             headers: {
-                Authorization: `Bearer ${access_token}`
+                Authorization: `Bearer ${accessToken}`
             },
             params: {
                 q: query
