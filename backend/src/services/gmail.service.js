@@ -1,5 +1,8 @@
 import { google } from "googleapis";
 import axios from "axios";
+import pkg from "googleapis/package.json" with { type: "json" };
+
+console.log(pkg.version);
 /*
 const TRUSTED_SENDERS = [
     "avisos@aysadigital.com.ar",    //AGUA
