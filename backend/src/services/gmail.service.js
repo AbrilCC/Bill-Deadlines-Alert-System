@@ -2,7 +2,6 @@ import { google } from "googleapis";
 import axios from "axios";
 import pkg from "googleapis/package.json" with { type: "json" };
 
-console.log(pkg.version);
 /*
 const TRUSTED_SENDERS = [
     "avisos@aysadigital.com.ar",    //AGUA
@@ -46,13 +45,18 @@ export async function getGmailAccount(auth) {
 
 export async function getEmails(auth, trustedSenders) {
     const gmail = google.gmail({ version: "v1", auth});
-    console.log(`CREDENTIALS: ${auth.credentials}`);
+    console.log("CREDENTIALS:", auth.credentials);
+    console.log("PKG:", pkg.version);
+
     if (!trustedSenders.length) {
         return [];
     }
     const senderQuery = trustedSenders.map(sender => `from:${sender}`).join(" OR ");
     const query = `(${senderQuery}) AND (${keywordQuery}) newer_than:31d`;
     console.log(`QUERY: ${query}`);
+
+    const profile = await gmail.users.getProfile({userId: "me"});
+    console.log(profile.data);
 
     const res = await gmail.users.messages.list({
         userId: "me", //The user authenticated with the token
