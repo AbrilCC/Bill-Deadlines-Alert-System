@@ -33,6 +33,11 @@ export async function getGmailAccount(auth) {
 }
 
 export async function getEmails(auth, trustedSenders) {
+    console.log("ANTES REFRESH");
+    const refreshed = await auth.getAccessToken();
+    console.log("TOKEN REFRESCADO:", refreshed);
+    console.log(auth.credentials);
+    
     const gmail = google.gmail({ version: "v1", auth});
     console.log("CREDENTIALS:", auth.credentials);
 
@@ -52,6 +57,7 @@ export async function getEmails(auth, trustedSenders) {
             userId: "me"
         });*/
         const accessToken = auth.credentials.access_token;
+        console.log(accessToken === auth.credentials.access_token);
         const res = await axios.get(
             "https://gmail.googleapis.com/gmail/v1/users/me/profile",
             {
