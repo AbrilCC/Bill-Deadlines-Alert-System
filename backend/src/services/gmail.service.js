@@ -1,16 +1,5 @@
 import { google } from "googleapis";
 import axios from "axios";
-import pkg from "googleapis/package.json" with { type: "json" };
-
-/*
-const TRUSTED_SENDERS = [
-    "avisos@aysadigital.com.ar",    //AGUA
-    "facturadigital@edenor.com",    //LUZ
-    "facturahuertomosconi.noresponder@rudis.com.ar",    //COLEGIO
-    "no-reply@metrogas.com.ar",  //GAS
-    "factura@email.claro.com.ar",   //CLARO
-    "facturacion@email.personal.com.ar" //PERSONAL
-];*/
 
 const KEYWORDS = [
     "saldo",
@@ -46,7 +35,6 @@ export async function getGmailAccount(auth) {
 export async function getEmails(auth, trustedSenders) {
     const gmail = google.gmail({ version: "v1", auth});
     console.log("CREDENTIALS:", auth.credentials);
-    console.log("PKG:", pkg.version);
 
     if (!trustedSenders.length) {
         return [];
