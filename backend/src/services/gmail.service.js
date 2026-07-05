@@ -48,9 +48,21 @@ export async function getEmails(auth, trustedSenders) {
     console.log("Antes de getProfile");
     try {
         console.time("gmail");
-        const profile = await gmail.users.getProfile({
+        /*const profile = await gmail.users.getProfile({
             userId: "me"
-        });
+        });*/
+        const accessToken = auth.credentials.access_token;
+        const res = await axios.get(
+            "https://gmail.googleapis.com/gmail/v1/users/me/profile",
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    "Accept-Encoding": "identity"
+                }
+            }
+        );
+
+        console.log(res.data);
         console.timeEnd("gmail");
 
         console.log("Después de getProfile");
