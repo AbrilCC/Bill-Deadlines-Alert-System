@@ -111,21 +111,19 @@ export const syncEmailsService = async (user_id) => {
       const detail = await getEmailDetail(auth, email.id);
       const attachments = await getAttachments(auth, detail);
       const bodyText = await getBody(detail);
-      //console.log("BODY TEXT:", bodyText);
       const headers = detail.payload.headers;
       const subject = headers.find(h => h.name === "Subject")?.value || "";
       const from = headers.find(h => h.name === "From")?.value || "";
-      console.log("FROM:", from);
       const existing = await client.query(
         `SELECT 1 FROM events WHERE email_id = $1 AND user_id = $2`,
         [email.id, user_id]
       );
 
       console.log("----------------------------------------");
+      console.log("FROM:", from);
       console.log("EMAIL:", email.id);
       console.log("THREAD:", email.threadId)
-      console.log("Existing is: ", existing)
-      console.log("EXISTING:", existing.rows ? "Yes" : "Nope");
+      console.log("EXISTING:", existing.rowCount>0 ? "Yes" : "Nope");
       if (existing.rows.length > 0) continue;
       let parsed = null;
 

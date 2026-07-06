@@ -1,5 +1,4 @@
 import { google } from "googleapis";
-import axios from "axios";
 
 const KEYWORDS = [
     "saldo",
@@ -33,56 +32,22 @@ export async function getGmailAccount(auth) {
 }
 
 export async function getEmails(auth, trustedSenders) {
-    console.log("ANTES REFRESH");
-    const refreshed = await auth.getAccessToken();
-    console.log("TOKEN REFRESCADO:", refreshed);
-    console.log(auth.credentials);
-    
+    const refreshed = await auth.getAccessToken();    
     const gmail = google.gmail({ version: "v1", auth});
-    console.log("CREDENTIALS:", auth.credentials);
 
     if (!trustedSenders.length) {
         return [];
     }
     const senderQuery = trustedSenders.map(sender => `from:${sender}`).join(" OR ");
     const query = `(${senderQuery}) AND (${keywordQuery}) newer_than:31d`;
-    console.log(`QUERY: ${query}`);
-    /*try {
-        //const profile = await gmail.users.getProfile({
-            //userId: "me"
-        //});
-        const accessToken = auth.credentials.access_token;
-        console.log(accessToken === auth.credentials.access_token);
-        const res = await axios.get(
-            "https://gmail.googleapis.com/gmail/v1/users/me/profile",
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    "Accept-Encoding": "identity"
-                }
-            }
-        );
-
-        console.log(res.data);
-
-        console.log("Después de getProfile");
-        console.log(profile.data);
-
-    } catch (err) {
-        console.log("STATUS:", err.response?.status);
-        console.log("DATA:", err.response?.data);
-        throw err;
-
-        /*console.log("ERROR GETPROFILE");
-        console.dir(err, { depth: null });
-        throw err;*/
-    //}
-
-    const res = await gmail.users.messages.list({
-        userId: "me", //The user authenticated with the token
-        q: query,
-    });
-
+    try {
+        const res = await gmail.users.messages.list({
+            userId: "me", //The user authenticated with the token
+            q: query,
+        });
+    } catch (error) {
+        console.log(error)
+    }
     return res.data.messages || [];
 };
 
