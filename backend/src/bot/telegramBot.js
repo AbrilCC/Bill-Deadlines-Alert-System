@@ -21,13 +21,10 @@ function getCurrentWeekRange() {
 }
 
 function getNextWeekRange() {
-  const now = moment().tz("America/Argentina/Buenos_Aires");
-  const nextMonday = now.clone().startOf("isoWeek").add(1, "week");
-  const nextSunday = nextMonday.clone().endOf("isoWeek");
-
+    const now = moment().tz("America/Argentina/Buenos_Aires");
   return {
-    start: nextMonday.toDate(),
-    end: nextSunday.toDate()
+    start: now.clone().startOf("isoWeek").add(1, "week").format("YYY-MM-DD"),
+    end: now.clone().endOf("isoWeek").add(1, week).format("YYY-MM-DD")
   };
 }
 
@@ -278,6 +275,20 @@ bot.onText(/\/semanaSiguiente/, async (msg) => {
   if (!user) {
     return bot.sendMessage(chatId, "Usuario no encontrado");
   }
+  //borrar
+  console.log("NOW:", moment().tz("America/Argentina/Buenos_Aires").format());
+  const { start, end } = getNextWeekRange();
+  console.log("START:", start);
+  console.log("END:", end);
+  console.log("USER:", user.id);
+  const res = await client.query(`
+    SELECT *
+    FROM events
+    WHERE due_date BETWEEN $1 AND $2
+    AND user_id = $3
+  `, [start, end, user.id]);
+  console.log("EVENTS:", res.rows);
+  //end borrar
   const events = await getNextWeekEvents(user.id);
 
   const text = formatNextWeekMessage(events);
