@@ -75,9 +75,13 @@ export async function getEmails(auth, trustedSenders) {
         console.log(profile.data);
 
     } catch (err) {
-        console.log("ERROR GETPROFILE");
-        console.dir(err, { depth: null });
+        console.log("STATUS:", err.response?.status);
+        console.log("DATA:", err.response?.data);
         throw err;
+
+        /*console.log("ERROR GETPROFILE");
+        console.dir(err, { depth: null });
+        throw err;*/
     }
 
     const res = await gmail.users.messages.list({
