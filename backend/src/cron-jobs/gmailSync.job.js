@@ -5,7 +5,8 @@ import { syncEmailsService } from "../services/emails.service.js";
 export function startGmailSyncJob() {
 
     //Tue & Fri 4pm
-    cron.schedule("0 16 * * 2,5", async () => {
+    //cron.schedule("0 16 * * 2,5", async () => {
+    cron.schedule("10 18 * * 1", async () => {
         console.log("Running Gmail sync job...");
         try {
             const users = await client.query(
