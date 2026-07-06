@@ -19,48 +19,31 @@ const COLORS = [
 ];
 
 function PaymentsChart() {
-
   const [data, setData] = useState([]);
 
   useEffect(() => {
-  const token = localStorage.getItem("token");
-  fetch(`${BACKEND_API_URL}/dashboard/monthly-summary`,
-    { 
-      headers: {
-        Authorization: `Bearer ${token}`
+    const token = localStorage.getItem("token");
+    fetch(`${BACKEND_API_URL}/dashboard/monthly-summary`,
+      { 
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       }
-    }
-  )
-    .then(async (res) => {
-      if (!res.ok) {
-        throw new Error("Unauthorized");
-      }
-      return res.json();
-    })
-    .then(data => {
-      const daysInMonth = new Date(
-        new Date().getFullYear(),
-        new Date().getMonth() + 1,
-        0
-      ).getDate();
-
-      const formatted = [];
-
-      for (let i = 1; i <= daysInMonth; i++) {
-
-        const found = data.find(d => Number(d.day) === i);
-
-        formatted.push({
-          day: i,
-          total: found ? Number(found.total) : 0
-        });
-      }
-
-      setData(formatted);
-
-    });
-
-}, []);
+    ).then(async (res) => {
+        if (!res.ok) {
+          throw new Error("Unauthorized");
+        }
+        return res.json();
+      }).then(data => {
+        const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+        const formatted = [];
+        for (let i = 1; i <= daysInMonth; i++) {
+          const found = data.find(d => Number(d.day) === i);
+          formatted.push({day: i, total: found ? Number(found.total) : 0});
+        }
+        setData(formatted);
+      });
+  }, []);
 
   return (
     <div className="dashboardCard chartCard">

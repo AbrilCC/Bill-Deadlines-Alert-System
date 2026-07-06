@@ -47,10 +47,10 @@ input {
     margin-right: 20px;
 }
 .topbar .menu button {
-    color: #fe6601;
+    color: #f5dac8;
     text-decoration: none;
     font-weight: 600;
-    font-size: 25px;
+    font-size: 18px;
     border: none;
     background-color: transparent;
     cursor: pointer;
