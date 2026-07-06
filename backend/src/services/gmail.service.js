@@ -47,15 +47,10 @@ export async function getEmails(auth, trustedSenders) {
     const senderQuery = trustedSenders.map(sender => `from:${sender}`).join(" OR ");
     const query = `(${senderQuery}) AND (${keywordQuery}) newer_than:31d`;
     console.log(`QUERY: ${query}`);
-
-    /*const profile = await gmail.users.getProfile({userId: "me"});
-    console.log(profile.data);*/
-    console.log("Antes de getProfile");
-    try {
-        console.time("gmail");
-        /*const profile = await gmail.users.getProfile({
-            userId: "me"
-        });*/
+    /*try {
+        //const profile = await gmail.users.getProfile({
+            //userId: "me"
+        //});
         const accessToken = auth.credentials.access_token;
         console.log(accessToken === auth.credentials.access_token);
         const res = await axios.get(
@@ -69,7 +64,6 @@ export async function getEmails(auth, trustedSenders) {
         );
 
         console.log(res.data);
-        console.timeEnd("gmail");
 
         console.log("Después de getProfile");
         console.log(profile.data);
@@ -82,7 +76,7 @@ export async function getEmails(auth, trustedSenders) {
         /*console.log("ERROR GETPROFILE");
         console.dir(err, { depth: null });
         throw err;*/
-    }
+    //}
 
     const res = await gmail.users.messages.list({
         userId: "me", //The user authenticated with the token
