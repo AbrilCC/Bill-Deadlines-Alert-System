@@ -24,7 +24,7 @@ function getNextWeekRange() {
     const now = moment().tz("America/Argentina/Buenos_Aires");
   return {
     start: now.clone().startOf("isoWeek").add(1, "week").format("YYY-MM-DD"),
-    end: now.clone().endOf("isoWeek").add(1, week).format("YYY-MM-DD")
+    end: now.clone().endOf("isoWeek").add(1, "week").format("YYY-MM-DD")
   };
 }
 
