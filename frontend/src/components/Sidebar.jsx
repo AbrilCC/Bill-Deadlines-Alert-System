@@ -1,3 +1,4 @@
+import axios from "axios";
 import {
   LayoutDashboard,
   Calendar,
@@ -5,12 +6,24 @@ import {
   Bot,
   FolderCog,
   ArrowUpFromLine,
-  AlertTriangle
+  AlertTriangle,
 } from "lucide-react";
+
+const BACKEND_API_URL = import.meta.env.VITE_BACKEND_URL;
 
 function Sidebar({ setView, view, trustedSenders, userData }) {
 
   const missingTrustedSenders = trustedSenders.length === 0;
+
+  const openTelegram = async() => {
+    const token = localStorage.getItem("token");
+    const res = await axios.post(`${BACKEND_API_URL}/telegram/link`,
+      {
+        headers: { Authorization: `Bearer ${token}` }
+      }
+    );
+    window.open(res.data.url,"_blank");
+  }
 
   return (
     <div className="sidebar">
@@ -62,7 +75,7 @@ function Sidebar({ setView, view, trustedSenders, userData }) {
         Cargá tu factura
       </button>
 
-      <button onClick={() => window.open("https://t.me/payment_deadlines_alert_bot", "_blank")}>
+      <button onClick={openTelegram}>
         <Bot size={18} />
         Chatear con Boti        
       </button>

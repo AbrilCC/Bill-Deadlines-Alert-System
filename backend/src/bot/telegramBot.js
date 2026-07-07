@@ -23,8 +23,8 @@ function getCurrentWeekRange() {
 function getNextWeekRange() {
     const now = moment().tz("America/Argentina/Buenos_Aires");
   return {
-    start: now.clone().startOf("isoWeek").add(1, "week").format("YYY-MM-DD"),
-    end: now.clone().endOf("isoWeek").add(1, "week").format("YYY-MM-DD")
+    start: now.clone().startOf("isoWeek").add(1, "week").format("YYYY-MM-DD"),
+    end: now.clone().endOf("isoWeek").add(1, "week").format("YYYY-MM-DD")
   };
 }
 
@@ -345,6 +345,7 @@ bot.onText(/\/marcarPagado/, async (msg) => {
 
 bot.on("callback_query", async (query) => {
   const id = query.data.split("_")[1];
+  const chatId = query.message.chat.id;
   const userRes = await client.query(
     `SELECT id FROM users WHERE chat_id = $1`,
     [chatId]
@@ -386,6 +387,54 @@ bot.onText(/\/paginaWeb/, async (msg) => {
 });
 
 //------------------------ BOT MESSAGES --------------------------------------//
+///// START /////
+bot.onText(/\/start (.+)/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    const token = match[1];
+     try {
+        // Buscar el token
+        const tokenRes = await client.query(
+          `SELECT user_id, expires_at
+            FROM telegram_tokens
+            WHERE token = $1`,
+          [token]
+        );
+        if (!tokenRes.rowCount) {
+          return bot.sendMessage(chatId,
+              "❌ Este enlace ya expiró o no es válido. Intentá de nuevo.");
+        }
+        const row = tokenRes.rows[0];
+        // Verificar expiración
+        if (new Date(row.expires_at) < new Date()) {
+          await client.query(
+              `DELETE FROM telegram_tokens
+                WHERE token = $1`,
+              [token]);
+          return bot.sendMessage(chatId,
+              "⌛ Este enlace expiró. Volvé a abrir Telegram desde la página web.");
+        }
+        // Asociar el chat al usuario existente
+        await client.query(
+          `UPDATE users
+            SET chat_id = $1
+            WHERE id = $2`,
+          [chatId, row.user_id]
+        );
+        // Eliminar el token para que no pueda reutilizarse
+        await client.query(
+          `DELETE FROM telegram_tokens
+            WHERE token = $1`,
+          [token]
+        );
+        bot.sendMessage(chatId,
+            "✅ ¡Cuenta vinculada correctamente! Escribí Hola para comenzar.");
+
+    } catch (err) {
+        console.error(err);
+        bot.sendMessage(chatId, "❌ Error al vincular la cuenta.");
+    }
+});
+
 ///// SEND WEEKLY MESSAGE /////
 cron.schedule("0 9 * * 4", async () => {
   const users = await client.query(`SELECT id, chat_id FROM users WHERE chat_id IS NOT NULL`);
@@ -435,15 +484,7 @@ bot.on("message", async (msg) => {
   const text = msg.text?.toLowerCase();
   const chatId = msg.chat.id;
 
-  ///// IDENTIFY EACH USER CHAT /////
-  await client.query(`
-    INSERT INTO users (chat_id)
-    VALUES ($1)
-    ON CONFLICT (chat_id) DO NOTHING
-  `, [chatId]);
-
   if (!text) return;
-
   if (["hola", "buenas", "holis", "holi", "bot", "facturas"].includes(text)) {
     bot.sendMessage(chatId, `
 👋 Hola! Soy Boti 🤖, tu asistente de facturas.
