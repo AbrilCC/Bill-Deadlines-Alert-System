@@ -295,7 +295,7 @@ function formatWeekReminders(reminders){
     if(!reminders.length){ return ""; }
     let msg="\n📝 *Recordatorios*\n\n";
     for(const r of reminders){
-        const date = moment(r.reminder_date).tz("America/Argentina/Buenos_Aires").format("dddd D");
+        const date = moment(r.reminder_date).locale("es").format("dddd D");
         msg+=`🔔 *${r.title}*\n`;
         msg+=`${capitalize(date)}\n`;
         if(r.description){
