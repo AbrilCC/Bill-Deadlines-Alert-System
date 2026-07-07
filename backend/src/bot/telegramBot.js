@@ -318,9 +318,9 @@ bot.onText(/\/estaSemana/, async (msg) => {
     return bot.sendMessage(chatId, "Usuario no encontrado");
   }
   const events = await getCurrentWeekEvents(user.id);
-  bot.sendMessage(chatId, formatCurrentWeekMessage(events), {parse_mode:"Markdown"});
-
   const reminders = await getCurrentWeekReminders(user.id);
+  bot.sendMessage(chatId, formatCurrentWeekMessage(events, reminders), {parse_mode:"Markdown"});
+
   if (reminders.length) {
     bot.sendMessage(chatId, formatWeekReminders(reminders), {parse_mode:"Markdown"});
   }
