@@ -494,7 +494,7 @@ cron.schedule("0 9 * * *", async () => {
   }, {timezone: "America/Argentina/Buenos_Aires"});
 
 ///// SEND DAILY REMINDERS /////
-cron.schedule("0 9 * * *", async () => {
+cron.schedule("52 14 * * *", async () => {
   const users = await client.query(`
     SELECT id, chat_id
     FROM users
