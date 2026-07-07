@@ -14,9 +14,13 @@ const bot = telegramBot;
 ///// HELPERS /////
 function getCurrentWeekRange() {
   const now = moment().tz("America/Argentina/Buenos_Aires");
-  return {
+  /*return {
     start: now.clone().startOf("isoWeek").toDate(),
     end: now.clone().endOf("isoWeek").toDate()
+  };*/
+  return {
+    start: now.clone().startOf("isoWeek").add(1, "week").format("YYYY-MM-DD"),
+    end: now.clone().endOf("isoWeek").add(1, "week").format("YYYY-MM-DD")
   };
 }
 
@@ -31,7 +35,6 @@ function getNextWeekRange() {
 function getCurrentAndNextWeekRange() {
   const current = getCurrentWeekRange();
   const next = getNextWeekRange();
-
   return {
     start: current.start,
     end: next.end
@@ -111,6 +114,34 @@ async function getTodayReminders(user_id) {
   return res.rows;
 }
 
+async function getCurrentWeekReminders(user_id) {
+  const { start, end } = getCurrentWeekRange();
+
+  const res = await client.query(`
+    SELECT *
+    FROM reminders
+    WHERE user_id = $1
+    AND reminder_date BETWEEN $2 AND $3
+    ORDER BY reminder_date, reminder_time
+  `,[user_id, start, end]);
+
+  return res.rows;
+}
+
+async function getNextWeekReminders(user_id){
+  const {start, end}=getNextWeekRange();
+
+  const res=await client.query(`
+    SELECT *
+    FROM reminders
+    WHERE user_id = $1
+    AND reminder_date BETWEEN $2 AND $3
+    ORDER BY reminder_date, reminder_time
+  `,[user_id, start, end]);
+
+  return res.rows;
+}
+
 function getEmoji(type) {
   const map = {
     "Personal": "📱",
@@ -142,30 +173,42 @@ function formatCurrency(value) {
 
 //-------------------------------------------------------------------------//
 ///// CURRENT WEEK PAYMENTS /////
-function formatCurrentWeekMessage(events) {
-  if (!events.length) {
-    return "✅ No tenés vencimientos esta semana.";
-  }
-  let total = 0;
+function formatCurrentWeekMessage(events, reminders) {
+  let msg = "";
+  if (events.length) {
+      let total = 0;
+      let msg = "📅 *Vencimientos de esta semana:*\n\n";
 
-  let msg = "📅 *Vencimientos de esta semana:*\n\n";
+      for (const e of events) {
+        const date = new Date(e.due_date).toLocaleDateString("es-AR", {
+          weekday: "long"
+        });
+        msg += `${getEmoji(e.type)} *${e.type}*\n`;
+        msg += `   ${capitalize(date)} | ${formatCurrency(e.amount)}\n`;
+        msg += `   ${e.paid ? "✅ Pagado" : "⏳ Pendiente"}\n\n`;
 
-  for (const e of events) {
-    const date = new Date(e.due_date).toLocaleDateString("es-AR", {
-      weekday: "long"
-    });
-
-    const status = e.paid ? "✅ Pagado" : "⏳ Pendiente";
-
-    msg += `${getEmoji(e.type)} *${e.type}*\n`;
-    msg += `   ${capitalize(date)} | ${formatCurrency(e.amount)}\n`;
-    msg += `   ${status}\n\n`;
-
-    total += Number(e.amount);
+        total += Number(e.amount);
+      }
+      msg += `💰 *Total semanal: ${formatCurrency(total)}*`;
   }
 
-  msg += `💰 *Total semanal: ${formatCurrency(total)}*`;
+  if (reminders.length) {
+    msg += "\n📝 *Recordatorios*\n\n";
 
+    for (const r of reminders) {
+      const date = moment(r.reminder_date).tz("America/Argentina/Buenos_Aires").format("dddd");
+
+      msg += `🔔 *${r.title}*\n`;
+      msg += `${capitalize(date)}\n`;
+
+      if(r.reminder_time) { msg += `🕘 ${r.reminder_time}\n`; }
+      if(r.description) { msg += `${r.description}\n`; }
+      msg += "\n";
+    }
+  }
+  if (msg === "") {
+      return "✅ No tenés vencimientos ni recordatorios esta semana.";
+  }
   return msg;
 }
 
@@ -248,6 +291,25 @@ function formatTodayReminders(reminders) {
   return msg;
 }
 
+///// WEEKLY REMINDERS /////
+function formatWeekReminders(reminders){
+    if(!reminders.length){ return ""; }
+    let msg="\n📝 *Recordatorios*\n\n";
+    for(const r of reminders){
+        const date=new Date(r.reminder_date).toLocaleDateString("es-AR", {weekday:"long"});
+        msg+=`🔔 *${r.title}*\n`;
+        msg+=`${capitalize(date)}\n`;
+        if(r.reminder_time){
+            msg+=`🕘 ${r.reminder_time}\n`;
+        }
+        if(r.description){
+            msg+=`${r.description}\n`;
+        }
+        msg+="\n";
+    }
+    return msg;
+}
+
 //------------------------ BOT COMMANDS --------------------------------------//
 
 bot.onText(/\/estaSemana/, async (msg) => {
@@ -260,8 +322,9 @@ bot.onText(/\/estaSemana/, async (msg) => {
     return bot.sendMessage(chatId, "Usuario no encontrado");
   }
   const events = await getCurrentWeekEvents(user.id);
+  const reminders = await getCurrentWeekReminders(user.id);
 
-  const text = formatCurrentWeekMessage(events);
+  const text = formatCurrentWeekMessage(events, reminders);
 
   bot.sendMessage(chatId, text, {parse_mode: "Markdown"});
 });
@@ -275,23 +338,10 @@ bot.onText(/\/semanaSiguiente/, async (msg) => {
   if (!user) {
     return bot.sendMessage(chatId, "Usuario no encontrado");
   }
-  //borrar
-  console.log("NOW:", moment().tz("America/Argentina/Buenos_Aires").format());
-  const { start, end } = getNextWeekRange();
-  console.log("START:", start);
-  console.log("END:", end);
-  console.log("USER:", user.id);
-  const res = await client.query(`
-    SELECT *
-    FROM events
-    WHERE due_date BETWEEN $1 AND $2
-    AND user_id = $3
-  `, [start, end, user.id]);
-  console.log("EVENTS:", res.rows);
-  //end borrar
   const events = await getNextWeekEvents(user.id);
+  const reminders = await getNextWeekReminders(user.id);
 
-  const text = formatNextWeekMessage(events);
+  const text = formatNextWeekMessage(events) + formatWeekReminders(reminders);
 
   bot.sendMessage(chatId, text, { parse_mode: "Markdown" });
 });
@@ -306,8 +356,9 @@ bot.onText(/\/verPendientes/, async (msg) => {
     return bot.sendMessage(chatId, "Usuario no encontrado");
   }
   const events = await getCurrentWeekPendingEvents(user.id);
+  const reminders = await getCurrentWeekReminders(user.id);
 
-  const text = formatCurrentWeekPendingMessage(events);
+  const text = formatCurrentWeekPendingMessage(events) + formatWeekReminders(reminders);
 
   bot.sendMessage(chatId, text, { parse_mode: "Markdown"});
 });
@@ -441,7 +492,8 @@ cron.schedule("0 9 * * 4", async () => {
   
   for (const u of users.rows) {
     const events = await getNextWeekEvents(u.id);
-    const text = formatNextWeekMessage(events);
+    const reminders = await getNextWeekReminders(u.id);
+    const text = formatNextWeekMessage(events) + formatWeekReminders(reminders);
 
     await bot.sendMessage(u.chat_id, text, { parse_mode: "Markdown" });
   }

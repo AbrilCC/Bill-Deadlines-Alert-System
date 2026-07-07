@@ -19,10 +19,6 @@ import { startGmailSyncJob } from "./cron-jobs/gmailSync.job.js";
 
 const PORT = process.env.PORT || 3000;
 
-import pkg from "googleapis/package.json" with { type: "json" };
-console.log("Node:", process.version);
-console.log("Googleapis:", pkg.version);
-
 const app = express();
 app.use(cors({
   origin: "https://alertavencimientos.vercel.app"
