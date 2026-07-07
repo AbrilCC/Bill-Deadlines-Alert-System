@@ -469,7 +469,7 @@ bot.onText(/\/start (.+)/, async (msg, match) => {
 });
 
 ///// SEND WEEKLY MESSAGE /////
-cron.schedule("0 9 * * 4", async () => {
+cron.schedule("48 15 * * 2", async () => {
   const users = await client.query(`SELECT id, chat_id FROM users WHERE chat_id IS NOT NULL`);
   
   for (const u of users.rows) {
@@ -494,7 +494,7 @@ cron.schedule("0 9 * * *", async () => {
   }, {timezone: "America/Argentina/Buenos_Aires"});
 
 ///// SEND DAILY REMINDERS /////
-cron.schedule("52 14 * * *", async () => {
+cron.schedule("0 9 * * *", async () => {
   const users = await client.query(`
     SELECT id, chat_id
     FROM users
