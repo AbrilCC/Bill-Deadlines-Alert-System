@@ -191,20 +191,8 @@ function formatCurrentWeekMessage(events, reminders) {
       }
       msg += `💰 *Total semanal: ${formatCurrency(total)}*`;
   }
+  msg += formatWeekReminders(reminders);
 
-  if (reminders.length) {
-    msg += "\n📝 *Recordatorios*\n\n";
-
-    for (const r of reminders) {
-      const date = moment(r.reminder_date).tz("America/Argentina/Buenos_Aires").format("dddd D");
-
-      msg += `🔔 *${r.title}*\n`;
-      msg += `${capitalize(date)}\n`;
-
-      if(r.description) { msg += `${r.description}\n`; }
-      msg += "\n";
-    }
-  }
   if (msg === "") {
       return "✅ No tenés vencimientos ni recordatorios esta semana.";
   }
@@ -320,10 +308,6 @@ bot.onText(/\/estaSemana/, async (msg) => {
   const events = await getCurrentWeekEvents(user.id);
   const reminders = await getCurrentWeekReminders(user.id);
   bot.sendMessage(chatId, formatCurrentWeekMessage(events, reminders), {parse_mode:"Markdown"});
-
-  if (reminders.length) {
-    bot.sendMessage(chatId, formatWeekReminders(reminders), {parse_mode:"Markdown"});
-  }
 });
 
 bot.onText(/\/semanaSiguiente/, async (msg) => {
