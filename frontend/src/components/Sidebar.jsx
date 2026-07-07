@@ -17,7 +17,7 @@ function Sidebar({ setView, view, trustedSenders, userData }) {
 
   const openTelegram = async() => {
     const token = localStorage.getItem("token");
-    const res = await axios.post(`${BACKEND_API_URL}/telegram/link`,
+    const res = await axios.post(`${BACKEND_API_URL}/telegram/link`, {},
       {
         headers: { Authorization: `Bearer ${token}` }
       }

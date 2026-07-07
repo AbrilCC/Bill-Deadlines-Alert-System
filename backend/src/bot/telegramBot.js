@@ -19,8 +19,8 @@ function getCurrentWeekRange() {
     end: now.clone().endOf("isoWeek").toDate()
   };*/
   return {
-    start: now.clone().startOf("isoWeek").add(1, "week").format("YYYY-MM-DD"),
-    end: now.clone().endOf("isoWeek").add(1, "week").format("YYYY-MM-DD")
+    start: now.clone().startOf("isoWeek").format("YYYY-MM-DD"),
+    end: now.clone().endOf("isoWeek").format("YYYY-MM-DD")
   };
 }
 
@@ -196,12 +196,11 @@ function formatCurrentWeekMessage(events, reminders) {
     msg += "\n📝 *Recordatorios*\n\n";
 
     for (const r of reminders) {
-      const date = moment(r.reminder_date).tz("America/Argentina/Buenos_Aires").format("dddd");
+      const date = moment(r.reminder_date).tz("America/Argentina/Buenos_Aires").format("dddd D");
 
       msg += `🔔 *${r.title}*\n`;
       msg += `${capitalize(date)}\n`;
 
-      if(r.reminder_time) { msg += `🕘 ${r.reminder_time}\n`; }
       if(r.description) { msg += `${r.description}\n`; }
       msg += "\n";
     }
@@ -296,12 +295,9 @@ function formatWeekReminders(reminders){
     if(!reminders.length){ return ""; }
     let msg="\n📝 *Recordatorios*\n\n";
     for(const r of reminders){
-        const date=new Date(r.reminder_date).toLocaleDateString("es-AR", {weekday:"long"});
+        const date = moment(r.reminder_date).tz("America/Argentina/Buenos_Aires").format("dddd D");
         msg+=`🔔 *${r.title}*\n`;
         msg+=`${capitalize(date)}\n`;
-        if(r.reminder_time){
-            msg+=`🕘 ${r.reminder_time}\n`;
-        }
         if(r.description){
             msg+=`${r.description}\n`;
         }
@@ -322,11 +318,12 @@ bot.onText(/\/estaSemana/, async (msg) => {
     return bot.sendMessage(chatId, "Usuario no encontrado");
   }
   const events = await getCurrentWeekEvents(user.id);
+  bot.sendMessage(chatId, formatCurrentWeekMessage(events), {parse_mode:"Markdown"});
+
   const reminders = await getCurrentWeekReminders(user.id);
-
-  const text = formatCurrentWeekMessage(events, reminders);
-
-  bot.sendMessage(chatId, text, {parse_mode: "Markdown"});
+  if (reminders.length) {
+    bot.sendMessage(chatId, formatWeekReminders(reminders), {parse_mode:"Markdown"});
+  }
 });
 
 bot.onText(/\/semanaSiguiente/, async (msg) => {
@@ -339,11 +336,12 @@ bot.onText(/\/semanaSiguiente/, async (msg) => {
     return bot.sendMessage(chatId, "Usuario no encontrado");
   }
   const events = await getNextWeekEvents(user.id);
+  bot.sendMessage(chatId, formatNextWeekMessage(events), {parse_mode:"Markdown"});
+
   const reminders = await getNextWeekReminders(user.id);
-
-  const text = formatNextWeekMessage(events) + formatWeekReminders(reminders);
-
-  bot.sendMessage(chatId, text, { parse_mode: "Markdown" });
+  if (reminders.length) {
+    bot.sendMessage(chatId, formatWeekReminders(reminders), {parse_mode:"Markdown"});
+  }
 });
 
 bot.onText(/\/verPendientes/, async (msg) => {
