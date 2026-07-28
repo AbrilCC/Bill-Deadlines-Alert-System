@@ -92,9 +92,9 @@ export const createWeekly = async (req, res) => {
 
 export const createMonthly = async (req, res) => {
   try {
-    const { type, amount, due_date } = req.body;
+    const { type, amount, start_date } = req.body;
     
-    if (!type || !amount || !due_date) {
+    if (!type || !amount || !start_date) {
       return res.status(400).json({
         error: "Faltan campos obligatorios"
       });
@@ -165,16 +165,16 @@ export const patchRule = async (req, res) => {
   try {
     const updated = await updateRule(client, req.params.id, req.user.id, req.body);
     const events = await client.query(
-      `SELECT * FROM events WHERE rule_id = $1AND user_id = $2`,
-      [req.param.id, req.user.id]
+      `SELECT * FROM events WHERE rule_id = $1 AND user_id = $2`,
+      [req.params.id, req.user.id]
     );
     const userRes = await client.query(
       `SELECT google_access_token, google_refresh_token
       FROM users WHERE id = $1`,
       [req.user.id]
     );
-    if (user?.google_refresh_token) {
-      for (const event of events) {
+    if (userRes?.google_refresh_token) {
+      for (const event of events.rows) {
         if (!event.google_calendar_event_id) continue;
         await updateCalendarEvent(userRes.rows[0], event.google_calendar_event_id, event);
       }
